@@ -1,81 +1,81 @@
-cat << 'EOF' > README.md
 # 🚗 Ectpl-vimsys
 
-**Ectpl-vimsys** is a PHP-based **Insurance Management System** using **MySQL** for data storage.
+**Ectpl-vimsys** is a **Laravel-based Compulsory Third Party Liability Vehicle Insurance Management System** built on **PHP** with **MySQL** for reliable and secure data storage.
 
 ---
 
 ## 🎯 Highlights
 
 - ✅ Fully functional dashboard  
-- 🌐 Hosted on [NGINX SERVER](https://ectpl-vimsys.rf.gd)  
-- 🚀 Already implemented and **deployed in production** to select areas — especially in **Northern Mindanao**  
-- 👨‍💻 Developed by **Svnfnty**
+- ⚙️ Powered by the **Laravel Framework** (MVC architecture)  
+- 🌐 Hosted on an **Spaceship Server** – [Live System](https://ectpl-vimsys.com)  
+- 🚀 Fully implemented and **deployed in production** in select areas, particularly **Northern Mindanao**  
+- 👨‍💻 Developed by **Jundel Caroz**
 
 ---
 
-## 🔧 Features
+## 🔧 Core Features
 
 ### 🧍 Client Management  
-Manage customer profiles and track policy history with ease.
+Efficiently manage client profiles, policy records, and transaction history using Laravel’s structured data handling.
 
 ### 🧾 Claims Tracking  
-Handle claim submissions, processing, and resolution efficiently.
+Streamlined claims submission, verification, processing, and resolution with secure workflows.
 
 ### 📄 Policy Generation  
-Generate, manage, and renew insurance policies in a few clicks.
+Create, update, and renew insurance policies using dynamic Laravel-based forms and validations.
 
 ### 🚙 Vehicle Policy Management  
-End-to-end motor insurance management with:
-- Automated renewals  
-- Claims tracking  
-- Customer notifications  
-- Digital records for all vehicles  
+Complete motor insurance lifecycle management including:
+- Automated policy renewals  
+- Vehicle-specific claims tracking  
+- Client notifications  
+- Secure digital records  
 
 ---
 
 ## 🔐 Secure Number Series  
-- Advanced validation for policy numbers and receipts  
-- Prevents duplicates  
-- Compliant with insurance regulations
+- Laravel validation rules for policy and receipt numbers  
+- Duplicate prevention  
+- Compliance with insurance regulatory standards  
 
 ---
 
 ## 📊 Financial Reporting  
-- Sequential, audit-ready reports  
-- Premiums, claims, and revenue performance  
-- Customizable export options
+- Audit-ready, sequential reports  
+- Premium, claims, and revenue summaries  
+- Export-ready reports for accounting and compliance  
 
 ---
 
-## 🖨️ Dot Matrix Support  
-Legacy printer support for:
-- Seamless document printing  
-- System modernization without hardware changes
+## 🖨️ Dot Matrix Printer Support  
+Supports legacy printing systems to ensure:
+- Smooth document output  
+- Continued use of existing hardware  
+- Seamless system modernization  
 
 ---
 
-## 🏢 Insurance Partner Support
+## 🏢 Insurance Partner Integration
 
 ### Liberty Insurance  
-- Custom print templates  
-- Brand-consistent documentation  
+- Custom Laravel-based print templates  
+- Brand-consistent policy documents  
 
 ### Pacific Union  
-- Pre-configured templates  
-- Accurate and fast policy printing  
+- Pre-configured layouts  
+- Fast and accurate policy printing  
 
 ### Milestone Insurance  
-- Format-preserving print designs  
-- Regulatory-compliant templates
+- Regulation-compliant formats  
+- Print designs that preserve official templates  
 
 ---
 
 ## 🤖 AI Assistant  
-- 24/7 virtual support  
-- Helps with queries, document creation, and claim tracking  
+- 24/7 virtual assistance  
+- Supports user queries, document generation, and claim tracking  
 
 ---
 
-> Built to modernize insurance operations while supporting legacy workflows.
-EOF
+> Built with **Laravel** to modernize insurance operations while maintaining compatibility with legacy workflows.

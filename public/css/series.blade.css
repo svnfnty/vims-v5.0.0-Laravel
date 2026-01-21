@@ -1,0 +1,109 @@
+.card {
+    border: none;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} 
+
+.card-title {
+    font-size: 1.3rem;
+    color: #000;
+}
+
+.card-header {
+    padding: 1rem;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.btn-pill {
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-pill:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.select2 {
+    border-radius: 8px;
+    padding: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.table-responsive {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 1rem;
+    background-color: #fff;
+}
+
+.table-responsive .text-muted {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.dropdown-menu {
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar-gradient {
+    background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+    transition: width 0.3s ease;
+}
+
+/* Additional spacing and alignment */
+.mb-4 {
+    margin-bottom: 1.5rem !important;
+}
+
+.mt-4 {
+    margin-top: 1.5rem !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Adjusted colors for mobile view */
+@media (max-width: 768px) {
+    .sidebar {
+        background-color: #343a40;
+    }
+    .mobile-nav {
+        background-color: #007bff;
+        color: white;
+    }
+    .mobile-nav .menu-toggle {
+        color: white;
+    }
+    .mobile-nav .brand {
+        color: white;
+    }
+    .card {
+        background-color: #f8f9fa;
+        color: #212529;
+    }
+    .btn {
+        background-color: #007bff;
+        color: white;
+    }
+    .btn:hover {
+        background-color: #0056b3;
+    }
+    .table {
+        background-color: white;
+    }
+    .table thead {
+        background-color: #007bff;
+        color: white;
+    }
+}
