@@ -16,9 +16,11 @@ class DatabaseSeeder extends Seeder
         // \App\Models\Post::factory(50)->create();
         // \App\Models\Comment::factory(200)->create();
         $this->call(UsersTableSeeder::class);
-        $this->call(ClientListSeeder::class);
-        $this->call(InsuranceListSeeder::class);
         $this->call(CategoryListSeeder::class);
         $this->call(PolicyListSeeder::class);
+        $this->call(ClientListSeeder::class);
+        $this->call(InsuranceListSeeder::class);
+        
+       
     }
 }
