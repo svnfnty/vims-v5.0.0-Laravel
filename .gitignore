@@ -24,11 +24,6 @@ Homestead.yaml
 Thumbs.db
 /database/*.sqlite
 /database/*.sqlite3
-/database/seeders/*.php
-/database/factories/*.php
-/database/migrations/*.php
-# The following folders are unnecessary to keep in git and can be removed if present:
-
 /storage/framework/cache
 /storage/framework/sessions
 /storage/framework/testing
