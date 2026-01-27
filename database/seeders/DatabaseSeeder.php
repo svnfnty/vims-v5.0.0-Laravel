@@ -17,7 +17,8 @@ class DatabaseSeeder extends Seeder
         // \App\Models\Comment::factory(200)->create();
         $this->call(UsersTableSeeder::class);
         $this->call(CategoryListSeeder::class);
-        $this->call(PolicyListSeeder::class);
+        $this->call(PolicySeeder::class);
+        $this->call(SeriesSeeder::class);
         $this->call(ClientListSeeder::class);
         $this->call(InsuranceListSeeder::class);
         
