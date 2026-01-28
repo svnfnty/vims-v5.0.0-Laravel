@@ -8,7 +8,7 @@
 
 - ✅ Fully functional dashboard  
 - ⚙️ Powered by the **Laravel Framework** (MVC architecture)  
-- 🌐 Hosted on an **Railway Server** – [Live System]([https://vims-v500-laravel-production.up.railway.app/]))  
+- 🌐 Hosted on an **Railway Server** – https://vims-v500-laravel-production.up.railway.app/ 
 - 🚀 Fully implemented and **deployed in production** in select areas, particularly **Northern Mindanao**  
 - 👨‍💻 Developed by **Jundel Caroz**
 
