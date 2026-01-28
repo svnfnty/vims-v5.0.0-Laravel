@@ -93,8 +93,7 @@
                 </div>
                 <div class="filter-controls">
                     <select class="filter-select" id="statusFilter">
-                        <option value="all">All Status</option>
-                        <option value="active">Active</option>
+                       <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                     </select>
                 </div>
@@ -155,42 +154,42 @@
                 @csrf
                 <input type="hidden" id="formMethod" name="_method" value="POST">
 
-                <div class="form-group">
-                    <label for="firstname" class="form-label">First Name <span style="color: var(--danger);">*</span></label>
-                    <input type="text" class="form-control" id="firstname" name="firstname" required>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="firstname" name="firstname" placeholder=" " required>
+                    <label for="firstname">First Name <span style="color: var(--danger);">*</span></label>
                     <span class="error-message" id="firstname-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <label for="middlename" class="form-label">Middle Name</label>
-                    <input type="text" class="form-control" id="middlename" name="middlename">
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="middlename" name="middlename" placeholder=" ">
+                    <label for="middlename">Middle Name</label>
                 </div>
 
-                <div class="form-group">
-                    <label for="lastname" class="form-label">Last Name <span style="color: var(--danger);">*</span></label>
-                    <input type="text" class="form-control" id="lastname" name="lastname" required>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="lastname" name="lastname" placeholder=" " required>
+                    <label for="lastname">Last Name <span style="color: var(--danger);">*</span></label>
                     <span class="error-message" id="lastname-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" name="email">
+                <div class="floating-label">
+                    <input type="email" class="form-control" id="email" name="email" placeholder=" ">
+                    <label for="email">Email Address</label>
                     <span class="error-message" id="email-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <label for="address" class="form-label">Address <span style="color: var(--danger);">*</span></label>
-                    <textarea class="form-control" id="address" name="address" rows="4" required></textarea>
+                <div class="floating-label">
+                    <textarea class="form-control" id="address" name="address" rows="3" placeholder=" " required></textarea>
+                    <label for="address">Address <span style="color: var(--danger);">*</span></label>
                     <span class="error-message" id="address-error"></span>
                 </div>
 
-                <div class="form-group">
-                    <label for="status" class="form-label">Status <span style="color: var(--danger);">*</span></label>
-                    <select class="form-control" id="status" name="status" required>
+                <div class="floating-label">
+                    <select class="form-control" id="status" name="status" placeholder=" " required>
                         <option value="">Select Status</option>
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>
                     </select>
+                    <label for="status">Status <span style="color: var(--danger);">*</span></label>
                     <span class="error-message" id="status-error"></span>
                 </div>
 
