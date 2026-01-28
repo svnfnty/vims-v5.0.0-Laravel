@@ -102,7 +102,7 @@
                 </div>
             </div>
         </div>
-        <div class="container">
+        <div class="container-fluid">
             <header>
                 @yield('content')
             </header>
