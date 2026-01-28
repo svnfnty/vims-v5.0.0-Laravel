@@ -21,7 +21,7 @@ class Client extends Model
         'firstname',
         'middlename',
         'lastname',
-        'name',
+        'markup',
         'contact',
         'email',
         'address',
