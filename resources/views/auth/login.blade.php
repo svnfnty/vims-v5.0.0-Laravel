@@ -84,13 +84,13 @@
                     <div class="terms-check form-check mb-3 animate__animated animate__fadeInUp animate__delay-3s">
                         <input class="form-check-input" type="checkbox" id="accept-eula" name="accept-eula" required>
                         <label class="form-check-label" for="accept-eula">
-                            I accept the <a href="https://ectpl-vimsys.rf.gd/vims-v3.0.0/admin/NondisclosureAgreementEula.php" target="_blank">End-User Agreement (EULA)</a>
+                            I accept the <a href="#" target="_blank">End-User Agreement (EULA)</a>
                         </label>
                     </div>
                     <div class="terms-check form-check mb-4 animate__animated animate__fadeInUp animate__delay-4s">
                         <input class="form-check-input" type="checkbox" id="accept-nda" name="accept-nda" required>
                         <label class="form-check-label" for="accept-nda">
-                            I accept <a href="https://ectpl-vims-v3.0.0/admin/NondisclosureAgreementEula.php" target="_blank">Non-Disclosure Agreement (NDA)</a>
+                            I accept <a href="#" target="_blank">Non-Disclosure Agreement (NDA)</a>
                         </label>
                     </div>
                     <button type="submit" class="btn btn-primary btn-login w-100 mb-3 animate__animated animate__fadeInUp animate__delay-5s">
