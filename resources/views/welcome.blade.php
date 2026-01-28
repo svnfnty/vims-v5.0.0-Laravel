@@ -32,7 +32,7 @@
                 <a href="#testimonials">Testimonials</a>
                 <a href="#contact">Contact</a>
                 <div class="nav-actions mobile-only">
-                    <a href="https://vims-v500-laravel-production.up.railway.app/login" class="btn btn-primary">Login</a>
+                    <a href="http://vims-v500-laravel-production.up.railway.app/login" class="btn btn-primary">Login</a>
                     <a href="#contact" class="btn btn-outline">Support</a>
                 </div>
             </div>
@@ -51,7 +51,7 @@
                 <h1 data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">Modern Vehicle Insurance Management</h1>
                 <p data-aos="fade-up" data-aos-duration="1000" data-aos-delay="400">VIMSYS SAAS provides comprehensive, cloud-based vehicle insurance management solutions designed specifically for Misamis Oriental and surrounding regions, helping insurance providers streamline operations and enhance customer service.</p>
                 <div class="hero-buttons" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="600">
-                    <a href="https://vims-v500-laravel-production.up.railway.app/login" class="btn btn-primary">Access Portal</a>
+                    <a href="http://vims-v500-laravel-production.up.railway.app/login" class="btn btn-primary">Access Portal</a>
                     <a href="#features" class="btn btn-outline">Explore Features</a>
                 </div>
                 <div class="hero-stats" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="800">
@@ -125,7 +125,7 @@
                 <img src="https://ectpl-vimsys.com/dashboardliveprev.png" alt="Expanded VIMSYS Dashboard" class="expanded-dashboard">
             </div>
             <div class="modal-footer">
-                <a href="https://vims-v500-laravel-production.up.railway.app/login" class="btn btn-primary">Access Dashboard</a>
+                <a href="http://vims-v500-laravel-production.up.railway.app/login" class="btn btn-primary">Access Dashboard</a>
                 <button class="btn btn-outline" id="closeModalBtn">Close Preview</button>
             </div>
         </div>
@@ -221,7 +221,7 @@
                             <li><i class="fas fa-clock"></i> Mon-Fri: 8:00 AM - 5:00 PM</li>
                             <li><i class="fas fa-users"></i> Serving 15+ insurance providers</li>
                         </ul>
-                        <a href="https://vims-v500-laravel-production.up.railway.app/login" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Access Gingoog Portal</a>
+                        <a href="http://vims-v500-laravel-production.up.railway.app/login" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Access Gingoog Portal</a>
                     </div>
                 </div>
                 <div class="branch-card" data-aos="zoom-in" data-aos-duration="800" data-aos-delay="200">
