@@ -102,7 +102,7 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid py-4">
+        <div class="container-fluid">
             <header>
                 @yield('content')
             </header>
