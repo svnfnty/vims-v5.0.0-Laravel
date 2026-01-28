@@ -11,7 +11,7 @@
 /.phpunit.cache
 /.vscode
 /.zed
-/vendor
+/vendor/
 /auth.json
 /node_modules
 Homestead.json

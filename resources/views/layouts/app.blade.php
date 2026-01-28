@@ -9,13 +9,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    
+    <link rel="icon" href="https://ectpl-vimsys.com/vims-v4.0.0/uploads/logo-1738897187.png" type="image/png">
     <link rel="stylesheet" href="{{ asset('css/insurance.blade.css') }}">
-    
     <link rel="stylesheet" href="{{ asset('css/app.blade.css') }}">
-
     <link rel="stylesheet" href="{{ asset('css/series.blade.css') }}">
-    
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Include other scripts -->
@@ -25,76 +22,7 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <!-- Include SweetAlert library -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <style> 
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto; /* Enable vertical scrolling */
-            max-height: 100vh; /* Ensure it doesn't exceed the viewport height */
-        }
-        .sidebar-header {
-            flex-shrink: 0; /* Prevent shrinking */
-            position: sticky; /* Make the header fixed within the sidebar */
-            top: 0; /* Stick to the top of the sidebar */
-            z-index: 10; /* Ensure it stays above other content */
-            background: #23272e; /* Match the sidebar background */
-            padding: 1rem; /* Add padding for better spacing */
-        }
-        .sidebar::-webkit-scrollbar {
-            width: 8px; /* Customize scrollbar width */
-        }
-        .sidebar::-webkit-scrollbar-thumb {
-            background: #444; /* Customize scrollbar thumb color */
-            border-radius: 4px;
-        }
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: #555; /* Darker color on hover */
-        }
-
-        /* Added media queries for mobile responsiveness */
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                height: 100%;
-                width: 250px;
-                background-color: #f8f9fa;
-                z-index: 1050;
-                transform: translateX(-100%);
-                transition: transform 0.3s ease-in-out;
-            }
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .top-navbar {
-                left: 0;
-            }
-            .mobile-nav {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                background-color: #007bff;
-                color: white;
-                padding: 10px 15px;
-                position: fixed;
-                top: 0;
-                width: 100%;
-                z-index: 1050;
-            }
-            .mobile-nav .menu-toggle {
-                font-size: 1.5rem;
-                cursor: pointer;
-            }
-            .mobile-nav .brand {
-                font-size: 1.2rem;
-                font-weight: bold;
-            }
-        }
-    </style>
+    
 </head>
 <body>
     <div class="mobile-nav">
