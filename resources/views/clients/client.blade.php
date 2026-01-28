@@ -3,6 +3,7 @@
 @section('title', 'Client List')
 
 @section('content')
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     @import url('{{ asset("css/client.blade.css") }}');
@@ -182,10 +183,22 @@
                     <label for="address">Address <span style="color: var(--danger);">*</span></label>
                     <span class="error-message" id="address-error"></span>
                 </div>
-
+                <div class="floating-label">
+                    <select class="form-control" id="walkin_list" name="walkin_list" placeholder=" " required>
+                        <option value="">Select Walk-in</option>
+                        @forelse($walkin_list as $walkin)
+                            <option value="{{ $walkin->name }}" data-name="{{ $walkin->name }}" data-color="{{ $walkin->color }}">
+                                {{ $walkin->name }} ({{ $walkin->color }})
+                            </option>
+                        @empty
+                            <option value="">No walk-in types available</option>
+                        @endforelse
+                    </select>
+                    <label for="walkin_list">Walk-in List <span style="color: var(--danger);">*</span></label>
+                    <span class="error-message" id="walkin_list-error"></span>
+                </div>
                 <div class="floating-label">
                     <select class="form-control" id="status" name="status" placeholder=" " required>
-                        <option value="">Select Status</option>
                         <option value="1">Active</option>
                         <option value="0">Inactive</option>
                     </select>
@@ -219,6 +232,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
+    // Set default CSRF token for all AJAX requests
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
     $(document).ready(function() {
         let clientsData = [];
         let filteredData = [];
@@ -739,37 +759,64 @@
 
             const url = $('#clientForm').attr('action');
             const method = $('#formMethod').val();
+            
             const formData = {
                 firstname: $('#firstname').val(),
                 middlename: $('#middlename').val(),
                 lastname: $('#lastname').val(),
                 email: $('#email').val(),
                 address: $('#address').val(),
+                walkin_list: $('#walkin_list').val(),
                 status: $('#status').val(),
-                _token: $('input[name="_token"]').val(),
-                _method: method
+                _token: $('meta[name="csrf-token"]').attr('content')
             };
+
+            // Add _method field for PUT requests
+            if (method === 'PUT') {
+                formData._method = 'PUT';
+            }
+
+            console.log('Form Data:', formData);
+            console.log('URL:', url);
+            console.log('Method:', method);
+            console.log('CSRF Token:', $('meta[name="csrf-token"]').attr('content'));
 
             $.ajax({
                 url: url,
-                type: method === 'PUT' ? 'POST' : 'POST',
+                type: 'POST',
                 data: formData,
                 dataType: 'json',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
                 success: function(response) {
+                    console.log('Success:', response);
                     loadStats();
                     loadClients();
                     closeClientModal();
                     alert(response.message || 'Operation successful');
                 },
                 error: function(xhr) {
+                    console.error('Error:', xhr);
+                    console.error('Status:', xhr.status);
+                    console.error('Response:', xhr.responseText);
+                    
                     if (xhr.status === 422) {
                         const errors = xhr.responseJSON.errors;
                         $.each(errors, function(key, value) {
                             $('#' + key + '-error').text(value[0]);
                             $('#' + key).addClass('error');
                         });
+                        alert('Validation Error: Please check the form fields');
+                    } else if (xhr.status === 419) {
+                        alert('Error: Session expired. Please refresh the page and try again.');
+                        location.reload();
+                    } else if (xhr.status === 404) {
+                        alert('Error: Route not found. Please check your routes configuration.');
+                    } else if (xhr.responseJSON && xhr.responseJSON.error) {
+                        alert('Error: ' + xhr.responseJSON.error);
                     } else {
-                        alert('Error: ' + (xhr.responseJSON.message || 'An error occurred'));
+                        alert('Error: ' + xhr.status + ' - ' + xhr.statusText);
                     }
                 }
             });
@@ -788,8 +835,14 @@
                     loadClients();
                     alert('Client deleted successfully');
                 },
-                error: function() {
-                    alert('Error deleting client');
+                error: function(xhr) {
+                    console.error('Error:', xhr);
+                    if (xhr.status === 419) {
+                        alert('Error: Session expired. Please refresh the page and try again.');
+                        location.reload();
+                    } else {
+                        alert('Error deleting client');
+                    }
                 }
             });
         }

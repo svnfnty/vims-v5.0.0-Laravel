@@ -44,10 +44,10 @@
             <a class="nav-link {{ request()->routeIs('insurances.index') ? 'active' : '' }}" href="{{ route('insurances.index') }}">
                 <i class="bi bi-journal-check me-1"></i> Issue Insurances
             </a>
-            <div class="mt-3 mb-1 text-uppercase small text-secondary px-2">Forms</div>
+            <!--<div class="mt-3 mb-1 text-uppercase small text-secondary px-2">Forms</div>
             <a class="nav-link {{ request()->routeIs('application.form') ? 'active' : '' }}" href="{{ route('application.form') }}">
                 <i class="bi bi-file-earmark-text me-1"></i> Application
-            </a>
+            </a>-->
             <div class="mt-3 mb-1 text-uppercase small text-secondary px-2">Report</div>
             <a class="nav-link {{ request()->routeIs('policy.series') ? 'active' : '' }}" href="{{ route('policy.series') }}">
                 <i class="bi bi-card-list me-1"></i> Policy Series

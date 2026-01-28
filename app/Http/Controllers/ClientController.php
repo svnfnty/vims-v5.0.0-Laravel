@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Walkin;
 use Illuminate\Http\Request;
 use DataTables;
 
@@ -10,7 +11,8 @@ class ClientController extends Controller
 {
     public function index()
     {
-        return view('clients.client'); 
+        $walkin_list = Walkin::where('delete_flag', 0)->get();
+        return view('clients.client', compact('walkin_list')); 
     }
 
     public function data()
@@ -68,15 +70,21 @@ class ClientController extends Controller
                 'middlename' => 'nullable|string|max:255',
                 'email' => 'nullable|email|max:255',
                 'address' => 'required|string|max:500',
+                'walkin_list' => 'required|string|max:255',
                 'status' => 'required|in:0,1'
             ]);
 
+            // Generate auto code: YYYYMMDD-XXX
+            $code = $this->generateClientCode();
+
             $client = Client::create([
+                'code' => $code,
                 'firstname' => $validated['firstname'],
                 'middlename' => $validated['middlename'] ?? '',
                 'lastname' => $validated['lastname'],
                 'email' => $validated['email'] ?? '',
                 'address' => $validated['address'],
+                'markup' => $validated['walkin_list'],
                 'status' => $validated['status'],
                 'date_created' => now(),
                 'delete_flag' => 0
@@ -105,6 +113,7 @@ class ClientController extends Controller
                 'middlename' => 'nullable|string|max:255',
                 'email' => 'nullable|email|max:255',
                 'address' => 'required|string|max:500',
+                'walkin_list' => 'required|string|max:255',
                 'status' => 'required|in:0,1'
             ]);
 
@@ -115,6 +124,7 @@ class ClientController extends Controller
                 'lastname' => $validated['lastname'],
                 'email' => $validated['email'] ?? '',
                 'address' => $validated['address'],
+                'markup' => $validated['walkin_list'],
                 'status' => $validated['status'],
             ]);
             
@@ -149,5 +159,23 @@ class ClientController extends Controller
             ]);
             return response()->json(['error' => 'Failed to delete client.'], 500);
         }
+    }
+
+    /**
+     * Generate auto code: YYYYMMDD-XXX
+     * Example: 20240115-001, 20240115-002, etc.
+     */
+    private function generateClientCode()
+    {
+        $today = now()->format('Ymd'); // Format: 20240115
+        
+        // Count clients created today
+        $todayCount = Client::whereRaw('DATE_FORMAT(date_created, "%Y%m%d") = ?', [$today])
+                            ->count();
+        
+        // Generate sequential number (001, 002, etc.)
+        $sequence = str_pad($todayCount + 1, 3, '0', STR_PAD_LEFT);
+        
+        return $today . '-' . $sequence;
     }
 }
