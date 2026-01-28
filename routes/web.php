@@ -47,8 +47,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/search', [DashboardController::class, 'search'])->name('dashboard.search');
 
-    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
-    Route::get('/clients/data', [ClientController::class, 'data'])->name('clients.data');
+    // Client Routes
+    Route::group(['prefix' => 'clients'], function () {
+        Route::get('/', [ClientController::class, 'index'])->name('clients.index');
+        Route::post('/', [ClientController::class, 'store'])->name('clients.store');
+        Route::get('/data', [ClientController::class, 'data'])->name('clients.data');
+        Route::get('/stats', [ClientController::class, 'stats'])->name('clients.stats');
+        Route::put('/{id}', [ClientController::class, 'update'])->name('clients.update');
+        Route::delete('/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
+    });
 
     Route::get('/insurances', [InsuranceController::class, 'index'])->name('insurances.index');
     Route::get('/insurances/data', [InsuranceController::class, 'data'])->name('insurance.data');

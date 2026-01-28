@@ -10,7 +10,6 @@ class ClientController extends Controller
 {
     public function index()
     {
-        // Return the client list view
         return view('clients.client'); 
     }
 
@@ -18,20 +17,19 @@ class ClientController extends Controller
     {
         try {
             $clients = Client::select([
-                'id', 'date_created', \DB::raw("CONCAT(firstname, ' ', middlename, ' ', lastname) AS registered_name"),
-                'email AS registered_email', 'address', 
-                \DB::raw("CASE WHEN status = 1 THEN 'Active' ELSE 'Inactive' END AS status")
-            ]);
+                'id', 
+                'firstname',
+                'middlename', 
+                'lastname',
+                'date_created', 
+                'email', 
+                'address', 
+                'status'
+            ])->where('delete_flag', 0)->orderBy('id', 'DESC')->get();
             
-            return DataTables::of($clients)
-                ->addColumn('action', function($client) {
-                    return '
-                        <button type="button" class="btn btn-sm btn-primary edit-client" data-id="'.$client->id.'">Edit</button>
-                        <button type="button" class="btn btn-sm btn-danger delete-client" data-id="'.$client->id.'">Delete</button>
-                    ';
-                })
-                ->rawColumns(['action'])
-                ->make(true);
+            return response()->json([
+                'data' => $clients
+            ]);
         } catch (\Exception $e) {
             \Log::error('Error fetching client data', [
                 'message' => $e->getMessage(),
@@ -41,48 +39,115 @@ class ClientController extends Controller
         }
     }
 
-    public function store(Request $request)
+    public function stats()
     {
-        $request->validate([
-            'code' => 'required|unique:client_list,code',
-            'name' => 'required',
-            'contact' => 'required',
-            'email' => 'required|email',
-            'address' => 'required'
-        ]);
-
-        $client = Client::create($request->all());
-        
-        return response()->json(['success' => true, 'message' => 'Client created successfully']);
+        try {
+            $stats = [
+                'total' => Client::where('delete_flag', 0)->count(),
+                'active' => Client::where('status', 1)->where('delete_flag', 0)->count(),
+                'inactive' => Client::where('status', 0)->where('delete_flag', 0)->count(),
+                'email' => Client::whereNotNull('email')->where('email', '!=', '')->where('delete_flag', 0)->count(),
+            ];
+            
+            return response()->json($stats);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching client stats', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Failed to fetch stats.'], 500);
+        }
     }
 
-    public function show($id)
+    public function store(Request $request)
     {
-        $client = Client::findOrFail($id);
-        return response()->json($client);
+        try {
+            $validated = $request->validate([
+                'firstname' => 'required|string|max:255',
+                'lastname' => 'required|string|max:255',
+                'middlename' => 'nullable|string|max:255',
+                'email' => 'nullable|email|max:255',
+                'address' => 'required|string|max:500',
+                'status' => 'required|in:0,1'
+            ]);
+
+            $client = Client::create([
+                'firstname' => $validated['firstname'],
+                'middlename' => $validated['middlename'] ?? '',
+                'lastname' => $validated['lastname'],
+                'email' => $validated['email'] ?? '',
+                'address' => $validated['address'],
+                'status' => $validated['status'],
+                'date_created' => now(),
+                'delete_flag' => 0
+            ]);
+            
+            return response()->json([
+                'success' => true, 
+                'message' => 'Client created successfully', 
+                'data' => $client
+            ], 201);
+        } catch (\Exception $e) {
+            \Log::error('Error creating client', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Failed to create client.'], 500);
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'code' => 'required|unique:client_list,code,'.$id,
-            'name' => 'required',
-            'contact' => 'required',
-            'email' => 'required|email',
-            'address' => 'required'
-        ]);
+        try {
+            $validated = $request->validate([
+                'firstname' => 'required|string|max:255',
+                'lastname' => 'required|string|max:255',
+                'middlename' => 'nullable|string|max:255',
+                'email' => 'nullable|email|max:255',
+                'address' => 'required|string|max:500',
+                'status' => 'required|in:0,1'
+            ]);
 
-        $client = Client::findOrFail($id);
-        $client->update($request->all());
-        
-        return response()->json(['success' => true, 'message' => 'Client updated successfully']);
+            $client = Client::findOrFail($id);
+            $client->update([
+                'firstname' => $validated['firstname'],
+                'middlename' => $validated['middlename'] ?? '',
+                'lastname' => $validated['lastname'],
+                'email' => $validated['email'] ?? '',
+                'address' => $validated['address'],
+                'status' => $validated['status'],
+            ]);
+            
+            return response()->json([
+                'success' => true, 
+                'message' => 'Client updated successfully', 
+                'data' => $client
+            ], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error updating client', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Failed to update client.'], 500);
+        }
     }
 
     public function destroy($id)
     {
-        $client = Client::findOrFail($id);
-        $client->delete();
-        
-        return response()->json(['success' => true, 'message' => 'Client deleted successfully']);
+        try {
+            $client = Client::findOrFail($id);
+            $client->update(['delete_flag' => 1]);
+            
+            return response()->json([
+                'success' => true, 
+                'message' => 'Client deleted successfully'
+            ], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error deleting client', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Failed to delete client.'], 500);
+        }
     }
 }

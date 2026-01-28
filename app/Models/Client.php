@@ -18,11 +18,16 @@ class Client extends Model
     // Allow mass assignment for the following fields
     protected $fillable = [
         'code',
+        'firstname',
+        'middlename',
+        'lastname',
         'name',
         'contact',
         'email',
         'address',
-        'status'
+        'status',
+        'date_created',
+        'delete_flag'
     ];
 
     // Disable timestamps if the table doesn't have `created_at` and `updated_at`
