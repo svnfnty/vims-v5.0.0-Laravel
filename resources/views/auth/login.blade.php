@@ -135,10 +135,5 @@
     <!-- JS Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        // ...existing JS from your advanced login page, including all chat, notification, and animation logic...
-        // For brevity, copy the JS from your provided advanced login page here.
-        // NOTE: The sendMessage() function should POST to the same URL and expects a JSON response with { ai_response: [{ message: "..." }] }
-    </script>
 </body>
 </html>
