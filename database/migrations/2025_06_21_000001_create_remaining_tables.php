@@ -260,6 +260,7 @@ return new class extends Migration
                 $table->integer('status')->default(1);
                 $table->string('description', 5000)->nullable();
                 $table->integer('office_id');
+                $table->integer('delete_flag')->default(0);
             });
         }
     }
