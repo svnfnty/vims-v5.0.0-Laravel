@@ -38,15 +38,6 @@
     <!-- Quick Stats -->
     <div class="dashboard-stats">
         <div class="stat-card">
-            <div class="stat-icon active">
-                <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-info">
-                <span class="stat-value" id="activeCount">0</span>
-                <span class="stat-label">Active Policies</span>
-            </div>
-        </div>
-        <div class="stat-card">
             <div class="stat-icon pending">
                 <i class="fas fa-clock"></i>
             </div>
