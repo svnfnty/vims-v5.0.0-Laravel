@@ -159,17 +159,142 @@
     </div>
 </div>
 
+<!-- Manage Insurance Modal (client-style: full editable form, Save/Update) -->
+<div id="manageInsuranceModal" class="modal insurance-form-modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="manageInsuranceModalTitle">Insurance Form</h2>
+            <button type="button" class="modal-close" onclick="closeInsuranceModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="insuranceForm" method="POST">
+                @csrf
+                <input type="hidden" id="insurance_form_method" name="_method" value="POST">
+                <input type="hidden" id="insurance_id" name="insurance_id" value="">
+                
+                <!-- All your form fields remain unchanged -->
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-mvfile_no" name="mvfile_no" placeholder=" ">
+                    <label for="modal-mvfile_no">MV File No</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-coc_no" name="coc_no" placeholder=" ">
+                    <label for="modal-coc_no">COC No</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-or_no" name="or_no" placeholder=" ">
+                    <label for="modal-or_no">OR No</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-policy_no" name="policy_no" placeholder=" ">
+                    <label for="modal-policy_no">Policy No</label>
+                </div>
+                <div class="floating-label">
+                    <select class="form-control" id="modal-client_id" name="client_id" placeholder=" " required>
+                        <option value="">Select Client</option>
+                        @foreach($clients ?? [] as $client)
+                            <option value="{{ $client->id }}">{{ $client->lastname }}, {{ $client->firstname }}{{ $client->middlename ? ' ' . $client->middlename : '' }}</option>
+                        @endforeach
+                    </select>
+                    <label for="modal-client_id">Client <span style="color: var(--danger);">*</span></label>
+                </div>
+                <div class="floating-label">
+                    <select class="form-control" id="modal-policy_id" name="policy_id" placeholder=" " required>
+                        <option value="">Select Policy</option>
+                        @foreach($policies ?? [] as $policy)
+                            <option value="{{ $policy->id }}">{{ $policy->name }} ({{ $policy->code }})</option>
+                        @endforeach
+                    </select>
+                    <label for="modal-policy_id">Policy <span style="color: var(--danger);">*</span></label>
+                </div>
+                <div class="floating-label">
+                    <select class="form-control" id="modal-category_id" name="category_id" placeholder=" " required>
+                        <option value="">Select Category</option>
+                        @foreach($categories ?? [] as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }} ({{ $category->code }})</option>
+                        @endforeach
+                    </select>
+                    <label for="modal-category_id">Category <span style="color: var(--danger);">*</span></label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-code" name="code" placeholder=" " readonly>
+                    <label for="modal-code">Code (auto-generated)</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-registration_no" name="registration_no" placeholder=" ">
+                    <label for="modal-registration_no">Registration No</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-chassis_no" name="chassis_no" placeholder=" ">
+                    <label for="modal-chassis_no">Chassis No</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-engine_no" name="engine_no" placeholder=" ">
+                    <label for="modal-engine_no">Engine No</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-vehicle_model" name="vehicle_model" placeholder=" ">
+                    <label for="modal-vehicle_model">Vehicle Model</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-vehicle_color" name="vehicle_color" placeholder=" ">
+                    <label for="modal-vehicle_color">Vehicle Color</label>
+                </div>
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="modal-make" name="make" placeholder=" ">
+                    <label for="modal-make">Make</label>
+                </div>
+                <div class="floating-label">
+                    <input type="date" class="form-control" id="modal-registration_date" name="registration_date" placeholder=" ">
+                    <label for="modal-registration_date">Registration Date</label>
+                </div>
+                <div class="floating-label">
+                    <input type="date" class="form-control" id="modal-expiration_date" name="expiration_date" placeholder=" ">
+                    <label for="modal-expiration_date">Expiration Date</label>
+                </div>
+                <div class="floating-label">
+                    <select class="form-control" id="modal-status" name="status" placeholder=" ">
+                        <option value="0">Pending</option>
+                        <option value="1">Active</option>
+                    </select>
+                    <label for="modal-status">Status</label>
+                </div>
+                <div class="floating-label">
+                    <textarea class="form-control" id="modal-remarks" name="remarks" rows="2" placeholder=" "></textarea>
+                    <label for="modal-remarks">Remarks</label>
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button type="submit" class="control-btn primary" id="insuranceSubmitBtn">
+                <i class="fas fa-check-circle"></i> Save Record
+            </button>
+            <button type="button" class="control-btn secondary" onclick="closeInsuranceModal()">
+                <i class="fas fa-times-circle"></i> Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Overlay -->
+<div id="insuranceModalOverlay" class="modal-overlay" style="display: none;" onclick="closeInsuranceModal()"></div>
+
 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-
+ 
 <script>
     const insuranceDataUrl = "{{ route('insurance.data') }}";
     const insuranceValidateCocUrl = "{{ route('insurance.validateCoc') }}";
     const insuranceValidateMvFileUrl = "{{ route('insurance.validateMvFile') }}";
     const manageInsuranceUrl = "{{ route('insurance.manageInsurance') }}";
+    const insuranceStoreUrl = "{{ route('insurance.store') }}";
+    const insuranceUpdateUrl = "{{ url('insurances') }}";
+    const insuranceNextCodeUrl = "{{ route('insurance.nextCode') }}";
 </script>
 
 <script src="{{ asset('js/insurance.blade.js') }}"></script>

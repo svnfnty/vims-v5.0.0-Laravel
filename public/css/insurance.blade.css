@@ -386,7 +386,7 @@
     gap: 10px;
     margin-top: 20px;
 }
-
+ 
 .btn {
     padding: 8px 16px;
     border-radius: 6px;
@@ -417,6 +417,65 @@
 .btn:hover {
     transform: translateY(-1px);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+.control-btn i {
+    font-size: 16px;
+    transition: transform 0.2s ease;
+}
+
+
+.control-btn.primary:hover {
+    background: linear-gradient(135deg, #3a0ca3, #4361ee);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(67, 97, 238, 0.3);
+}
+
+.control-btn.primary:active {
+    transform: translateY(0);
+}
+
+.control-btn.secondary {
+    background: white;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+}
+
+.control-btn.secondary:hover {
+    background: #f8f9fa;
+    color: #495057;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.control-btn.secondary:active {
+    transform: translateY(0);
+}
+
+/* Add animation for icons on hover */
+.control-btn.primary i {
+    color: white;
+}
+
+.control-btn.secondary i {
+    color: #6c757d;
+}
+
+.control-btn:hover i {
+    transform: translateX(2px);
+}
+
+/* Responsive button sizing */
+@media (max-width: 768px) {
+    .control-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    .control-btn i {
+        font-size: 14px;
+    }
 }
 
 @media (max-width: 768px) {
@@ -482,6 +541,23 @@
     margin: auto;
 }
 
+.modal-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #888;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+}
+
+.modal-close:hover {
+    color: #333;
+}
 /* Modern CSS Design System */
 :root {
     --primary: #1877f2;
@@ -1438,4 +1514,172 @@
     .client-name {
         font-size: 16px;
     }
+}
+
+/* Insurance Form Modal (client-style design) */
+.insurance-form-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+
+.insurance-form-modal .modal-content {
+    background: linear-gradient(145deg, #ffffff, #f9f9f9);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    z-index: 2000;
+    width: 100%;
+    max-width: 800px;
+    max-height: 90vh;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: insuranceModalFadeIn 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.insurance-form-modal .modal-content > * {
+    flex-shrink: 0;
+}
+
+.insurance-form-modal .modal-content > .modal-body {
+    flex-shrink: 1;
+}
+
+.insurance-form-modal .modal-header {
+    padding: 20px 24px;
+    background: linear-gradient(145deg, #ffffff, #f9f9f9);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.insurance-form-modal .modal-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+    max-height: calc(90vh - 180px); /* Adjust based on header and footer height */
+}
+
+.insurance-form-modal .modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.insurance-form-modal .modal-body::-webkit-scrollbar-track {
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.insurance-form-modal .modal-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+    border: 2px solid #f9f9f9;
+}
+
+.insurance-form-modal .modal-actions {
+    display: flex;
+    gap: 12px;
+    padding: 20px 24px;
+    background: linear-gradient(145deg, #ffffff, #f9f9f9);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    justify-content: flex-end;
+    margin: 0;
+}
+
+/* Floating label (client-style) in insurance modal */
+.insurance-form-modal .floating-label {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.insurance-form-modal .floating-label input,
+.insurance-form-modal .floating-label select,
+.insurance-form-modal .floating-label textarea {
+    padding: 0.75rem 0.75rem;
+    font-size: 15px;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    width: 100%;
+    transition: all 0.2s ease;
+    resize: none;
+    background: white;
+    font-family: inherit;
+    box-sizing: border-box;
+}
+
+.insurance-form-modal .floating-label input,
+.insurance-form-modal .floating-label select {
+    height: 50px;
+}
+
+.insurance-form-modal .floating-label textarea {
+    min-height: 80px;
+    line-height: 1.5;
+}
+
+.insurance-form-modal .floating-label input:focus,
+.insurance-form-modal .floating-label select:focus,
+.insurance-form-modal .floating-label textarea:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: 0;
+}
+
+.insurance-form-modal .floating-label label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #6c757d;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    background: white;
+    padding: 0 5px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.insurance-form-modal .floating-label textarea ~ label {
+    top: 1.5rem;
+    transform: translateY(-50%);
+}
+
+.insurance-form-modal .floating-label input:focus ~ label,
+.insurance-form-modal .floating-label input:not(:placeholder-shown) ~ label,
+.insurance-form-modal .floating-label select:valid ~ label,
+.insurance-form-modal .floating-label select:not([value=""]) ~ label,
+.insurance-form-modal .floating-label textarea:focus ~ label,
+.insurance-form-modal .floating-label textarea:not(:placeholder-shown) ~ label {
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
+    color: #007bff;
+    font-weight: 600;
+}
+
+/* Overlay for insurance modal (sibling of .modal) */
+#insuranceModalOverlay.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1999;
+}
+
+@keyframes insuranceModalFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }

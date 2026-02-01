@@ -57,32 +57,37 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
     });
 
-    Route::get('/insurances', [InsuranceController::class, 'index'])->name('insurances.index');
-    Route::get('/insurances/data', [InsuranceController::class, 'data'])->name('insurance.data');
+    // Insurance Routes
+    Route::group(['prefix' => 'insurances'], function () {
+        Route::get('/', [InsuranceController::class, 'index'])->name('insurances.index');
+        Route::get('/data', [InsuranceController::class, 'data'])->name('insurance.data');
+        Route::get('/manage_insurance', [InsuranceController::class, 'manageInsurance'])->name('insurance.manageInsurance');
+        Route::get('/next-code', [InsuranceController::class, 'getNextCode'])->name('insurance.nextCode');
+        Route::post('/', [InsuranceController::class, 'store'])->name('insurance.store');
+        Route::put('/{id}', [InsuranceController::class, 'update'])->name('insurance.update');
+        Route::delete('/{id}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
+    });
 
+    // Insurance Validation Routes (keep these as standalone since they're POST)
+    Route::post('/insurance/validate-coc', [InsuranceController::class, 'validateCoc'])->name('insurance.validateCoc');
+    Route::post('/insurance/validate-mvfile', [InsuranceController::class, 'validateMvFile'])->name('insurance.validateMvFile');
+
+    // Other Routes
     Route::get('/application', [ApplicationController::class, 'form'])->name('application.form');
-
     Route::get('/policy-series', [PolicySeriesController::class, 'index'])->name('policy.series');
     Route::get('/series/api/getseries', [PolicySeriesController::class, 'getSeries'])->name('series.api.getseries');
-
     Route::get('/usage-history', [UsageHistoryController::class, 'index'])->name('usage.history');
     Route::get('/lto-transactions', [LTOTransactionController::class, 'index'])->name('lto.transactions');
-    
     Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
     Route::get('/category/data', [CategoryController::class, 'data'])->name('category.data');
-
+    Route::get('/categories', [CategoryController::class, 'getAll'])->name('categories.all');
     Route::get('/policies', [PolicyController::class, 'index'])->name('policies.index');
-    Route::get('/policies/data',[PolicyController::class, 'data'])->name('policies.data'); 
-
+    Route::get('/policies/data',[PolicyController::class, 'data'])->name('policies.data');
     Route::get('/walkin', [WalkinController::class, 'index'])->name('walkin.index');
     Route::get('/walkin/data', [WalkinController::class, 'data'])->name('walkin.data');
-    
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::get('/activity', [ActivityController::class, 'index'])->name('activity');
-    Route::post('/insurance/validate-coc', [InsuranceController::class, 'validateCoc'])->name('insurance.validateCoc');
-    Route::post('/insurance/validate-mvfile', [InsuranceController::class, 'validateMvFile'])->name('insurance.validateMvFile');
-    Route::get('/insurances/manage_insurance', [InsuranceController::class, 'manageInsurance'])->name('insurance.manageInsurance');
 });
 
 Route::get('/', function () {

@@ -14,8 +14,8 @@ class Policy extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'code',
         'name',
+        'code',
         'description',
         'status',
         'date_created',
@@ -25,7 +25,7 @@ class Policy extends Model
 
     public function insurances()
     {
-        return $this->hasMany(Insurance::class);
+        return $this->hasMany(Insurance::class, 'policy_id', 'id');
     }
 
     public function category()

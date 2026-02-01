@@ -3,27 +3,31 @@
 namespace App\Http\Controllers;
 
 use App\Models\Insurance;
+use App\Models\Client;
+use App\Models\Policy;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use DataTables;
 
 class InsuranceController extends Controller
 {
-    public function index()
-    {
-        // Return the insurance list view
-        return view('insurances.insurance'); // Fixed the view path
+    public function index() {
+        $clients = Client::select('id', 'lastname', 'firstname', 'middlename')->get();
+        $policies = Policy::select('id', 'name', 'code')->get();
+        $categories = Category::select('id', 'name', 'code')->get();
+        return view('insurances.insurance', compact('clients', 'policies', 'categories'));
     }
 
-    public function data()
-    {
+    public function data() {
         try {
             $insurances = \DB::table('insurance_list')
                 ->join('client_list', 'insurance_list.client_id', '=', 'client_list.id')
                 ->join('policy_list', 'insurance_list.policy_id', '=', 'policy_list.id')
+                ->leftJoin('category_list', 'insurance_list.auth_no', '=', 'category_list.id') // Join with category_list
                 ->select(
                     'insurance_list.id',
                     \DB::raw("CONCAT(client_list.firstname, ' ', client_list.middlename, ' ', client_list.lastname) AS client_name"),
-                    'policy_list.name AS policy_name', // Fetch the name of the policy
+                    'policy_list.name AS policy_name',
                     'insurance_list.code',
                     'insurance_list.registration_no',
                     'insurance_list.chassis_no',
@@ -42,10 +46,10 @@ class InsuranceController extends Controller
                     'insurance_list.auth_no',
                     'insurance_list.auth_renewal',
                     'insurance_list.status',
-                    'insurance_list.remarks'
+                    'insurance_list.remarks',
+                    'category_list.name AS category_name' // Add category name to the result
                 )
                 ->get();
-
             return response()->json(['data' => $insurances]);
         } catch (\Exception $e) {
             \Log::error('Error fetching insurance data', [
@@ -86,6 +90,8 @@ class InsuranceController extends Controller
             ->join('policy_list', 'insurance_list.policy_id', '=', 'policy_list.id')
             ->select(
                 'insurance_list.id AS insurance_id',
+                'insurance_list.client_id',
+                'insurance_list.policy_id',
                 'policy_list.name AS policy_name',
                 'insurance_list.code AS insurance_code',
                 'insurance_list.document_path',
@@ -145,119 +151,156 @@ class InsuranceController extends Controller
 
     public function manageInsurance(Request $request)
     {
-        try {
-            $insuranceId = $request->query('id');
-            $identifier = $request->query('identifier');
-
-            if ($insuranceId === 'new') {
-                // Prepare a blank insurance object for new records
-                $insurance = (object) [
-                    'mvfile_no' => '',
-                    'make' => '',
-                    'chassis_no' => '',
-                    'engine_no' => '',
-                    'coc_no' => '',
-                    'policy_no' => '',
-                    'or_no' => '',
-                    'vehicle_model' => '',
-                    'vehicle_color' => '',
-                    'registration_date' => ''
-                ];
-
-                return view('insurances.manage_insurance', [
-                    'insurance' => $insurance,
-                    'identifier' => $identifier
-                ]);
-            }
-
-            if (!$insuranceId || !is_numeric($insuranceId)) {
-                \Log::error('Invalid Insurance ID provided', ['insuranceId' => $insuranceId]);
-                return response()->json(['error' => 'Invalid or missing Insurance ID'], 400);
-            }
-
-            $insurance = \DB::table('insurance_list')
-                ->join('client_list', 'insurance_list.client_id', '=', 'client_list.id')
-                ->join('policy_list', 'insurance_list.policy_id', '=', 'policy_list.id')
-                ->select(
-                    'insurance_list.*',
-                    \DB::raw("CONCAT(client_list.firstname, ' ', client_list.lastname) AS client_name"),
-                    'policy_list.name AS policy_name'
-                )
-                ->where('insurance_list.id', $insuranceId)
-                ->first();
-
-            if (!$insurance) {
-                \Log::error('Insurance record not found', ['insuranceId' => $insuranceId]);
-                return response()->json(['error' => 'Insurance record not found'], 404);
-            }
-
-            return view('insurances.manage_insurance', [
+        $id = $request->input('id');
+        if ($id) {
+            $insurance = Insurance::with('client', 'policy')->findOrFail($id);
+            // Return the insurance data with category info
+            return response()->json([
                 'insurance' => $insurance,
-                'identifier' => $identifier
+                'categories' => Category::select('id', 'name', 'code')->get() // Fixed variable name
             ]);
-        } catch (\Exception $e) {
-            \Log::error('Error in manageInsurance', [
-                'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
-                'insuranceId' => $request->query('id'),
-                'identifier' => $request->query('identifier')
-            ]);
-            return response()->json(['error' => 'An unexpected error occurred.'], 500);
         }
+        return response()->json(['error' => 'Insurance not found'], 404);
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
+            'mvfile_no' => 'required',
+            'coc_no' => 'required',
             'client_id' => 'required|exists:client_list,id',
             'policy_id' => 'required|exists:policy_list,id',
+            'category_id' => 'required|exists:category_list,id',
             'code' => 'required|unique:insurance_list,code',
             'registration_no' => 'required',
             'chassis_no' => 'required',
             'engine_no' => 'required',
             'vehicle_model' => 'required',
             'vehicle_color' => 'required',
+            'make' => 'required',
             'registration_date' => 'required|date',
-            'expiration_date' => 'required|date|after:registration_date'
+            'expiration_date' => 'required|date|after:registration_date',
+            'status' => 'required|in:0,1',
         ]);
 
-        $insurance = Insurance::create($request->all());
+        // Get the office_id from the authenticated user
+        $officeId = auth()->user()->office_id ?? null;
+        // Get the policy cost from policy_list table
+        $policy = Policy::select('cost')->findOrFail($request->policy_id);
+        $policyCost = $policy->cost;
         
-        return response()->json(['success' => true, 'message' => 'Insurance created successfully']);
+        $insurance = Insurance::create([
+            'client_id' => $request->client_id,
+            'policy_id' => $request->policy_id,
+            'code' => $request->code,
+            'registration_no' => $request->registration_no,
+            'chassis_no' => $request->chassis_no,
+            'engine_no' => $request->engine_no,
+            'vehicle_model' => $request->vehicle_model,
+            'vehicle_color' => $request->vehicle_color,
+            'registration_date' => $request->registration_date,
+            'expiration_date' => $request->expiration_date,
+            'cost' => $policyCost,
+            'make' => $request->make,
+            'or_no' => $request->or_no,
+            'coc_no' => $request->coc_no,
+            'policy_no' => $request->policy_no,
+            'mvfile_no' => $request->mvfile_no,
+            'auth_no' => $request->category_id,
+            'status' => $request->status,
+            'remarks' => $request->remarks,
+            'office_id' => $officeId, // Insert the current user's office_id
+            'date_created' => now(),
+            'date_updated' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Insurance created successfully',
+            'insurance' => $insurance
+        ]);
     }
 
-    public function show($id)
-    {
-        $insurance = Insurance::with('client')->findOrFail($id);
-        return response()->json($insurance);
-    }
-
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id) {
+        $insurance = Insurance::findOrFail($id);
         $request->validate([
+            'mvfile_no' => 'required',
+            'coc_no' => 'required',
             'client_id' => 'required|exists:client_list,id',
             'policy_id' => 'required|exists:policy_list,id',
-            'code' => 'required|unique:insurance_list,code,'.$id,
+            'category_id' => 'required|exists:category_list,id',
+            'code' => 'required|unique:insurance_list,code,' . $id . ',id', // Fixed: Use 'id' as the column name for exclusion
             'registration_no' => 'required',
             'chassis_no' => 'required',
             'engine_no' => 'required',
             'vehicle_model' => 'required',
             'vehicle_color' => 'required',
+            'make' => 'required',
             'registration_date' => 'required|date',
-            'expiration_date' => 'required|date|after:registration_date'
+            'expiration_date' => 'required|date|after:registration_date',
+            'status' => 'required|in:0,1',
         ]);
 
-        $insurance = Insurance::findOrFail($id);
-        $insurance->update($request->all());
-        
-        return response()->json(['success' => true, 'message' => 'Insurance updated successfully']);
+        // Get the office_id from the authenticated user
+        $officeId = auth()->user()->office_id ?? null;
+
+        // Get the policy cost from policy_list table
+        $policy = Policy::select('cost')->findOrFail($request->policy_id);
+        $policyCost = $policy->cost;
+
+        $insurance->update([
+            'client_id' => $request->client_id,
+            'policy_id' => $request->policy_id,
+            'code' => $request->code,
+            'registration_no' => $request->registration_no,
+            'chassis_no' => $request->chassis_no,
+            'engine_no' => $request->engine_no,
+            'vehicle_model' => $request->vehicle_model,
+            'vehicle_color' => $request->vehicle_color,
+            'registration_date' => $request->registration_date,
+            'expiration_date' => $request->expiration_date,
+            'cost' => $policyCost,
+            'make' => $request->make,
+            'or_no' => $request->or_no,
+            'coc_no' => $request->coc_no,
+            'policy_no' => $request->policy_no,
+            'mvfile_no' => $request->mvfile_no, 
+            'auth_no' => $request->category_id,
+            'status' => $request->status,
+            'remarks' => $request->remarks,
+            'office_id' => $officeId, // Update with the current user's office_id
+            'date_updated' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Insurance updated successfully',
+            'insurance' => $insurance
+        ]);
     }
 
-    public function destroy($id)
-    {
+    public function getNextCode() {
+        $currentYearMonth = date('Ym');
+        $lastInsurance = Insurance::where('code', 'LIKE', $currentYearMonth . '-%')
+            ->orderBy('code', 'desc')
+            ->first();
+        if ($lastInsurance) {
+            $lastCode = $lastInsurance->code;
+            $sequence = (int)substr($lastCode, -4) + 1;
+        } else {
+            $sequence = 1;
+        }
+        $newCode = $currentYearMonth . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+        return response()->json(['code' => $newCode]);
+    }
+
+    public function destroy($id) {
         $insurance = Insurance::findOrFail($id);
         $insurance->delete();
         
-        return response()->json(['success' => true, 'message' => 'Insurance deleted successfully']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Insurance record deleted successfully'
+        ]);
     }
+    
 }

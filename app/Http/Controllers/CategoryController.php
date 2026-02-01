@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use DataTables;
+use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
@@ -117,5 +118,9 @@ class CategoryController extends Controller
         ]);
     }
 
- 
+    public function getAll(): JsonResponse
+    {
+        $categories = Category::select('id', 'name')->get();
+        return response()->json($categories);
+    }
 }

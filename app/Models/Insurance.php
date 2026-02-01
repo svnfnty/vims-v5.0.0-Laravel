@@ -35,9 +35,10 @@ class Insurance extends Model
         return $this->belongsTo(Client::class, 'client_id', 'id'); // Ensure correct foreign key and local key
     }
 
-    public function policies()
+    // Define the relationship with the Policy model
+    public function policy()
     {
-        return $this->hasMany(Policy::class);
+        return $this->belongsTo(Policy::class, 'policy_id', 'id');
     }
 
     public function applications()

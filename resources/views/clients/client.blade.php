@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Client List')
-
+ 
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -211,18 +211,19 @@
                     <div class="form-control" style="background: #f8f9fa; border: 1px solid var(--border);" id="createdDateDisplay"></div>
                 </div>
 
-                <div class="modal-actions">
-                    <button type="submit" class="control-btn primary" id="submitBtn">
-                        <i class="fas fa-save"></i>
-                        Save Client
-                    </button>
-                    <button type="button" class="control-btn secondary" onclick="closeClientModal()">
-                        <i class="fas fa-times"></i>
-                        Cancel
-                    </button>
-                </div>
+                
             </form>
         </div>
+        <div class="modal-actions">
+                <button type="submit" class="control-btn primary" id="submitBtn">
+                    <i class="fas fa-save"></i>
+                    Save Client
+                </button>
+                <button type="button" class="control-btn secondary" onclick="closeClientModal()">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+         </div>
     </div>
 </div>
 

@@ -84,39 +84,61 @@
     gap: 12px;
 }
 
-.control-btn {
-    padding: 12px 24px;
-    border-radius: 10px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    border: none;
-    font-size: 14px;
-    text-decoration: none;
+.control-btn i {
+    font-size: 16px;
+    transition: transform 0.2s ease;
 }
 
-.control-btn.primary {
-    background: #1877f2;
-    color: white;
-    box-shadow: var(--shadow);
-}
 
 .control-btn.primary:hover {
+    background: linear-gradient(135deg, #3a0ca3, #4361ee);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 6px 16px rgba(67, 97, 238, 0.3);
+}
+
+
+.control-btn.primary:active {
+    transform: translateY(0);
 }
 
 .control-btn.secondary {
     background: white;
-    color: var(--primary);
-    border: 2px solid var(--primary);
+    color: #6c757d;
+    border: 1px solid #dee2e6;
 }
 
 .control-btn.secondary:hover {
-    background: #f8f9ff;
+    background: #f8f9fa;
+    color: #495057;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+.control-btn.secondary:active {
+    transform: translateY(0);
+}
+
+.control-btn.primary i {
+    color: white;
+}
+
+.control-btn.secondary i {
+    color: #6c757d;
+}
+
+.control-btn:hover i {
+    transform: translateX(2px);
+}
+
+@media (max-width: 768px) {
+    .control-btn {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+    
+    .control-btn i {
+        font-size: 14px;
+    }
 }
 
 .timer-display {
@@ -392,6 +414,7 @@
     overflow: hidden;
     transition: all 0.3s ease;
     border: 1px solid var(--border);
+    animation: fadeIn 0.3s ease;
 }
 
 .client-card:hover {
@@ -707,10 +730,6 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-.client-card {
-    animation: fadeIn 0.3s ease;
-}
-    
 .hidden {
     display: none !important;
 }
@@ -719,7 +738,7 @@
     display: flex;
     gap: 12px;
 }
-
+ 
 .modal {
     position: fixed;
     top: 0;
@@ -844,9 +863,12 @@
 .modal-actions {
     display: flex;
     gap: 12px;
-    margin-top: 24px;
-    padding-top: 20px;
+    padding: 20px 24px;
+    background: linear-gradient(145deg, #ffffff, #f9f9f9);
     border-top: 1px solid rgba(0, 0, 0, 0.1);
+    flex-shrink: 0;
+    justify-content: flex-end;
+    margin: 0;
 }
 
 /* Floating Label Styles */

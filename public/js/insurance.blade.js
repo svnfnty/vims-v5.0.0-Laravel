@@ -57,6 +57,27 @@ function initializeEventListeners() {
             filterPoliciesByStatus(this.value);
         });
     }
+
+    // Insurance form submit (Save / Update)
+    const insuranceForm = document.getElementById('insuranceForm');
+    if (insuranceForm) {
+        insuranceForm.addEventListener('submit', handleInsuranceFormSubmit);
+    }
+
+    // Registration date: auto-fill expiration_date = registration_date + 1 year
+    const regDateEl = document.getElementById('modal-registration_date');
+    if (regDateEl) {
+        regDateEl.addEventListener('change', function() {
+            const val = this.value;
+            if (!val) return;
+            const d = new Date(val);
+            d.setFullYear(d.getFullYear() + 1);
+            const expEl = document.getElementById('modal-expiration_date');
+            if (expEl) {
+                expEl.value = d.toISOString().slice(0, 10);
+            }
+        });
+    }
 }
 
 // Load insurance data from API
@@ -129,7 +150,8 @@ function createPolicyCard(insurance, status) {
     const statusBadge = getStatusBadgeHTML(status);
     const policyColor = getPolicyColor(insurance.code);
     const clientName = `${insurance.client_name || 'N/A'}`;
-
+    const categoryName = insurance.category_name || 'Unknown Category';
+    
     card.innerHTML = `
         <div class="card-header">
             <div class="policy-meta">
@@ -145,6 +167,10 @@ function createPolicyCard(insurance, status) {
             <div class="client-info">
                 <h3 class="client-name">${clientName}</h3>
                 <div class="client-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Category:</span>
+                        <span class="detail-value">${categoryName}</span>
+                    </div>
                     <div class="detail-row">
                         <span class="detail-label">Plate No:</span>
                         <span class="detail-value">${insurance.registration_no || 'N/A'}</span>
@@ -358,8 +384,13 @@ async function handleNewInsurance() {
 
     updateProgressStep(3);
 
-    // Navigate to manage insurance
-    window.location.href = `${manageInsuranceUrl}?mvfile_no=${mvfileResult.mvfile_no}&coc_no=${encodeURIComponent(cocNumber)}&or_no=${encodeURIComponent(orNumber || cocNumber)}&policy_no=${encodeURIComponent(policyNumber || cocNumber)}`;
+    // Show manage insurance modal filled with data (and previous record if mvfile found)
+    showManageInsuranceModal({
+        mvfile_no: mvfileResult.mvfile_no,
+        coc_no: cocNumber,
+        or_no: orNumber || cocNumber,
+        policy_no: policyNumber || cocNumber
+    }, mvfileResult.existingRecord || null);
 }
 
 // Show COC Input Dialog
@@ -497,8 +528,10 @@ async function showCocInputDialog() {
     });
 }
 
-// Show MV File Input Dialog
+// Show MV File Input Dialog (returns { mvfile_no, existingRecord } when mvfile found)
 async function showMvFileInputDialog() {
+    let lastMvFileRecord = null;
+
     return new Promise((resolve) => {
         const container = document.createElement('div');
         container.className = 'modern-input-container';
@@ -540,6 +573,7 @@ async function showMvFileInputDialog() {
                         statusIndicator.className = 'status-indicator';
                         statusMessage.textContent = '';
                         recordDetails.style.display = 'none';
+                        lastMvFileRecord = null;
                         return;
                     }
 
@@ -547,6 +581,7 @@ async function showMvFileInputDialog() {
                     statusMessage.textContent = 'Checking MV File availability...';
                     statusMessage.className = 'status-message checking';
                     recordDetails.style.display = 'none';
+                    lastMvFileRecord = null;
 
                     try {
                         const response = await fetch(insuranceValidateMvFileUrl, {
@@ -565,6 +600,7 @@ async function showMvFileInputDialog() {
                             statusMessage.textContent = 'MV File found in records';
                             statusMessage.className = 'status-message valid';
 
+                            lastMvFileRecord = data.record;
                             recordDetails.innerHTML = createRecordDetailsHTML(data.record);
                             recordDetails.style.display = 'block';
                         } else {
@@ -590,7 +626,7 @@ async function showMvFileInputDialog() {
                     return false;
                 }
 
-                return { mvfile_no: value };
+                return { mvfile_no: value, existingRecord: lastMvFileRecord };
             }
         }).then(result => {
             if (result.isConfirmed) {
@@ -627,6 +663,164 @@ function createRecordDetailsHTML(record) {
             </div>
         </div>
     `;
+}
+
+// Show manage insurance modal: form open and filled with input data; if mvfile found, fill all fields for edit
+async function showManageInsuranceModal(formData, existingRecord) {
+    const modal = document.getElementById('manageInsuranceModal');
+    const overlay = document.getElementById('insuranceModalOverlay');
+    const form = document.getElementById('insuranceForm');
+    const submitBtn = document.getElementById('insuranceSubmitBtn');
+    const modalTitle = document.getElementById('manageInsuranceModalTitle');
+    if (!modal || !form) return;
+
+    // Reset and fill entry data from wizard
+    document.getElementById('insurance_id').value = '';
+    document.getElementById('insurance_form_method').value = 'POST';
+    setModalValue('modal-mvfile_no', formData.mvfile_no || '');
+    setModalValue('modal-coc_no', formData.coc_no || '');
+    setModalValue('modal-or_no', formData.or_no || '');
+    setModalValue('modal-policy_no', formData.policy_no || '');
+
+    if (existingRecord) {
+        document.getElementById('insurance_id').value = existingRecord.insurance_id || '';
+        document.getElementById('insurance_form_method').value = 'PUT';
+        setModalValue('modal-client_id', existingRecord.client_id || '');
+        setModalValue('modal-policy_id', existingRecord.policy_id || '');
+        setModalValue('modal-category_id', existingRecord.auth_no || '');
+        setModalValue('modal-code', existingRecord.insurance_code || existingRecord.code || '');
+        setModalValue('modal-registration_no', existingRecord.registration_no || '');
+        setModalValue('modal-chassis_no', existingRecord.chassis_no || '');
+        setModalValue('modal-engine_no', existingRecord.engine_no || '');
+        setModalValue('modal-vehicle_model', existingRecord.vehicle_model || '');
+        setModalValue('modal-vehicle_color', existingRecord.vehicle_color || '');
+        setModalValue('modal-make', existingRecord.make || '');
+        setModalValue('modal-registration_date', existingRecord.registration_date || '');
+        setModalValue('modal-expiration_date', existingRecord.expiration_date || '');
+        setModalValue('modal-cost', existingRecord.cost ?? '');
+        setModalValue('modal-status', String(existingRecord.insurance_status ?? existingRecord.status ?? '0'));
+        setModalValue('modal-remarks', existingRecord.insurance_remarks || existingRecord.remarks || '');
+        modalTitle.textContent = 'Edit Insurance';
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
+    } else {
+        setModalValue('modal-client_id', '');
+        setModalValue('modal-policy_id', '');
+        setModalValue('modal-category_id', '');
+        setModalValue('modal-registration_no', '');
+        setModalValue('modal-chassis_no', '');
+        setModalValue('modal-engine_no', '');
+        setModalValue('modal-vehicle_model', '');
+        setModalValue('modal-vehicle_color', '');
+        setModalValue('modal-make', '');
+        setModalValue('modal-registration_date', '');
+        setModalValue('modal-expiration_date', '');
+        setModalValue('modal-cost', '');
+        setModalValue('modal-status', '0');
+        setModalValue('modal-remarks', '');
+        modalTitle.textContent = 'New Insurance';
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+        // Fetch auto-generated code from database
+        try {
+            const res = await fetch(typeof insuranceNextCodeUrl !== 'undefined' ? insuranceNextCodeUrl : '');
+            if (res && res.ok) {
+                const data = await res.json();
+                if (data && data.code) setModalValue('modal-code', data.code);
+            }
+        } catch (err) {
+            console.warn('Could not fetch next code:', err);
+        }
+    }
+
+    modal.style.display = 'flex';
+    if (overlay) overlay.style.display = 'block';
+}
+
+function setModalValue(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const v = value == null ? '' : String(value);
+    if (el.tagName === 'SELECT') {
+        el.value = v;
+    } else {
+        el.value = v;
+    }
+}
+
+function closeInsuranceModal() {
+    const modal = document.getElementById('manageInsuranceModal');
+    const overlay = document.getElementById('insuranceModalOverlay');
+    if (modal) modal.style.display = 'none';
+    if (overlay) overlay.style.display = 'none';
+}
+
+async function handleInsuranceFormSubmit(e) {
+    e.preventDefault();
+    const form = document.getElementById('insuranceForm');
+    const submitBtn = document.getElementById('insuranceSubmitBtn');
+    if (!form) return;
+    const insuranceId = document.getElementById('insurance_id').value;
+    const isUpdate = Boolean(insuranceId);
+
+    const formData = new FormData(form);
+    const payload = {};
+    formData.forEach((value, key) => {
+        if (key === '_token' || key === '_method' || key === 'insurance_id') return;
+        payload[key] = value;
+    });
+
+    const url = isUpdate ? `${insuranceUpdateUrl}/${insuranceId}` : insuranceStoreUrl;
+    const method = isUpdate ? 'PUT' : 'POST';
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ' + (isUpdate ? 'Updating...' : 'Saving...');
+    }
+
+    try {
+        const options = {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(payload)
+        };
+        if (method === 'PUT') {
+            options.headers['X-HTTP-Method-Override'] = 'PUT';
+        }
+        const response = await fetch(url, options);
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            const errMsg = (data && typeof data === 'object' && data.errors && typeof data.errors === 'object')
+                ? Object.values(data.errors).flat().filter(Boolean).join(' ')
+                : (data && typeof data === 'object' && data.message) || 'Request failed';
+            throw new Error(errMsg);
+        }
+
+        closeInsuranceModal();
+        loadInsuranceData();
+        loadStatistics();
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon: 'success', title: isUpdate ? 'Updated' : 'Saved', text: data.message || (isUpdate ? 'Insurance updated successfully.' : 'Insurance created successfully.') });
+        } else {
+            alert(data.message || (isUpdate ? 'Insurance updated successfully.' : 'Insurance created successfully.'));
+        }
+    } catch (err) {
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({ icon: 'error', title: 'Error', text: err.message || 'Something went wrong.' });
+        } else {
+            alert(err.message || 'Something went wrong.');
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = isUpdate ? '<i class="fas fa-save"></i> Update' : '<i class="fas fa-save"></i> Save';
+        }
+    }
 }
 
 // View insurance details
@@ -789,5 +983,299 @@ function showAlert(title, message, icon) {
             popup: 'modern-swal-popup',
             confirmButton: 'modern-confirm-btn'
         }
+    });
+}
+
+// Open View Insurance Modal
+window.viewInsuranceDetails = function(id) {
+    openViewInsuranceModal(id);
+};
+
+// Open Edit Insurance Modal
+window.editInsuranceDetails = function(id) {
+    openEditInsuranceModal(id);
+};
+
+// Open View Insurance Modal
+function openViewInsuranceModal(id) {
+    currentMode = 'view';
+    const modal = document.getElementById('manageInsuranceModal');
+    const overlay = document.getElementById('insuranceModalOverlay');
+    const form = document.getElementById('insuranceForm');
+    const submitBtn = document.getElementById('insuranceSubmitBtn');
+    const modalTitle = document.getElementById('manageInsuranceModalTitle');
+    
+    if (!modal || !form) return;
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    
+    fetch(`${manageInsuranceUrl}?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.insurance) {
+                throw new Error('Insurance not found');
+            }
+            
+            // Populate form fields
+            document.getElementById('insurance_id').value = data.insurance.id;
+            document.getElementById('insurance_form_method').value = 'GET';
+            setModalValue('modal-mvfile_no', data.insurance.mvfile_no || '');
+            setModalValue('modal-coc_no', data.insurance.coc_no || '');
+            setModalValue('modal-or_no', data.insurance.or_no || '');
+            setModalValue('modal-policy_no', data.insurance.policy_no || '');
+            setModalValue('modal-client_id', data.insurance.client_id || '');
+            setModalValue('modal-policy_id', data.insurance.policy_id || '');
+            setModalValue('modal-category_id', data.insurance.auth_no || '');
+            setModalValue('modal-code', data.insurance.code || '');
+            setModalValue('modal-registration_no', data.insurance.registration_no || '');
+            setModalValue('modal-chassis_no', data.insurance.chassis_no || '');
+            setModalValue('modal-engine_no', data.insurance.engine_no || '');
+            setModalValue('modal-vehicle_model', data.insurance.vehicle_model || '');
+            setModalValue('modal-vehicle_color', data.insurance.vehicle_color || '');
+            setModalValue('modal-make', data.insurance.make || '');
+            setModalValue('modal-registration_date', data.insurance.registration_date || '');
+            setModalValue('modal-expiration_date', data.insurance.expiration_date || '');
+            setModalValue('modal-cost', data.insurance.cost || '');
+            setModalValue('modal-status', String(data.insurance.status || '0'));
+            setModalValue('modal-remarks', data.insurance.remarks || '');
+            
+            // Set modal title
+            modalTitle.textContent = 'View Insurance Details';
+            submitBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+            submitBtn.disabled = false;
+            submitBtn.onclick = function() {
+                openEditInsuranceModal(data.insurance.id);
+            };
+            
+            // Make all fields readonly
+            const formControls = form.querySelectorAll('.form-control');
+            formControls.forEach(control => {
+                control.setAttribute('readonly', true);
+                control.setAttribute('disabled', true);
+            });
+            
+            // Show modal
+            modal.style.display = 'flex';
+            if (overlay) overlay.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error loading insurance:', error);
+            showAlert('Error', 'Failed to load insurance details', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+        });
+}
+
+// Open Edit Insurance Modal
+function openEditInsuranceModal(id) {
+    currentMode = 'edit';
+    const modal = document.getElementById('manageInsuranceModal');
+    const overlay = document.getElementById('insuranceModalOverlay');
+    const form = document.getElementById('insuranceForm');
+    const submitBtn = document.getElementById('insuranceSubmitBtn');
+    const modalTitle = document.getElementById('manageInsuranceModalTitle');
+    
+    if (!modal || !form) return;
+    
+    // Show loading state
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    
+    fetch(`${manageInsuranceUrl}?id=${id}`)
+        .then(response => response.json())
+        .then(data => {
+            if (!data.insurance) {
+                throw new Error('Insurance not found');
+            }
+            
+            // Populate form fields
+            document.getElementById('insurance_id').value = data.insurance.id;
+            document.getElementById('insurance_form_method').value = 'PUT';
+            setModalValue('modal-mvfile_no', data.insurance.mvfile_no || '');
+            setModalValue('modal-coc_no', data.insurance.coc_no || '');
+            setModalValue('modal-or_no', data.insurance.or_no || '');
+            setModalValue('modal-policy_no', data.insurance.policy_no || '');
+            setModalValue('modal-client_id', data.insurance.client_id || '');
+            setModalValue('modal-policy_id', data.insurance.policy_id || '');
+            setModalValue('modal-category_id', data.insurance.auth_no || '');
+            setModalValue('modal-code', data.insurance.code || '');
+            setModalValue('modal-registration_no', data.insurance.registration_no || '');
+            setModalValue('modal-chassis_no', data.insurance.chassis_no || '');
+            setModalValue('modal-engine_no', data.insurance.engine_no || '');
+            setModalValue('modal-vehicle_model', data.insurance.vehicle_model || '');
+            setModalValue('modal-vehicle_color', data.insurance.vehicle_color || '');
+            setModalValue('modal-make', data.insurance.make || '');
+            setModalValue('modal-registration_date', data.insurance.registration_date || '');
+            setModalValue('modal-expiration_date', data.insurance.expiration_date || '');
+            setModalValue('modal-cost', data.insurance.cost || '');
+            setModalValue('modal-status', String(data.insurance.status || '0'));
+            setModalValue('modal-remarks', data.insurance.remarks || '');
+            
+            // Set modal title
+            modalTitle.textContent = 'Edit Insurance';
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
+            submitBtn.disabled = false;
+            submitBtn.onclick = null; // Reset click handler
+            
+            // Make all fields editable
+            const formControls = form.querySelectorAll('.form-control');
+            formControls.forEach(control => {
+                control.removeAttribute('readonly');
+                control.removeAttribute('disabled');
+            });
+            
+            // Show modal
+            modal.style.display = 'flex';
+            if (overlay) overlay.style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error loading insurance:', error);
+            showAlert('Error', 'Failed to load insurance details', 'error');
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+        });
+}
+
+// Delete Insurance
+function deleteInsurance(id) {
+    if (!confirm('Are you sure you want to delete this insurance record? This action cannot be undone.')) {
+        return;
+    }
+    
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    const url = `${insuranceUpdateUrl}/${id}`;
+    
+    fetch(url, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadInsuranceData();
+            loadStatistics();
+            showAlert('Success', 'Insurance record deleted successfully', 'success');
+        } else {
+            throw new Error(data.message || 'Failed to delete insurance record');
+        }
+    })
+    .catch(error => {
+        console.error('Error deleting insurance:', error);
+        showAlert('Error', error.message || 'Failed to delete insurance record', 'error');
+    });
+}
+
+// Update the createPolicyCard function to include view, edit, delete buttons
+function createPolicyCard(insurance, status) {
+    const card = document.createElement('div');
+    card.className = `policy-card`;
+    card.setAttribute('data-status', status);
+    card.setAttribute('data-id', insurance.id);
+    const statusBadge = getStatusBadgeHTML(status);
+    const policyColor = getPolicyColor(insurance.code);
+    const clientName = `${insurance.client_name || 'N/A'}`;
+    const categoryName = insurance.category_name || 'Unknown Category';
+    
+    card.innerHTML = ` 
+        <div class="card-header">
+            <div class="policy-meta">
+                <span class="policy-id">${insurance.mvfile_no || insurance.code || 'N/A'}</span>
+                <span class="policy-date">${formatDate(insurance.registration_date)}</span>
+            </div>
+            <div class="status-badge ${status}">
+                ${getStatusText(status)}
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="client-info">
+                <h3 class="client-name">${clientName}</h3>
+                <div class="client-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Category:</span>
+                        <span class="detail-value">${categoryName}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Plate No:</span>
+                        <span class="detail-value">${insurance.registration_no || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">COC No:</span>
+                        <span class="detail-value">${insurance.coc_no || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Engine No:</span>
+                        <span class="detail-value">${insurance.engine_no || 'N/A'}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="policy-type-indicator" style="--policy-color: ${policyColor}">
+                <span class="policy-type">${insurance.policy_name || 'Standard'}</span>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="action-buttons">
+                <button class="action-btn view" onclick="viewInsuranceDetails(${insurance.id})">
+                    <i class="fas fa-eye"></i> View
+                </button>
+                <button class="action-btn edit" onclick="editInsuranceDetails(${insurance.id})">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="action-btn delete" onclick="deleteInsurance(${insurance.id})">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        </div>
+    `;
+    return card;
+}
+
+// Update the renderPolicies function to handle the new buttons
+function renderPolicies(insurances) {
+    const grid = document.getElementById('policiesGrid');
+    if (!grid) return;
+    
+    // Clear existing cards but keep other content
+    const existingCards = grid.querySelectorAll('.policy-card');
+    existingCards.forEach(card => card.remove());
+    
+    if (!insurances || insurances.length === 0) {
+        if (!grid.querySelector('.empty-state')) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.innerHTML = ` 
+                <div class="empty-icon"> 
+                    <i class="fas fa-file-contract"></i> 
+                </div> 
+                <h3>No Insurance Policies Found</h3> 
+                <p>Get started by adding your first insurance policy</p> 
+                <button class="action-btn view" id="addInsuranceEmptyBtn"> 
+                    <i class="fas fa-plus-circle"></i> Add New Insurance 
+                </button> 
+            `;
+            grid.appendChild(emptyState);
+            const emptyBtn = document.getElementById('addInsuranceEmptyBtn');
+            if (emptyBtn) {
+                emptyBtn.addEventListener('click', handleNewInsurance);
+            }
+        }
+        return;
+    }
+    
+    // Remove empty state if it exists
+    const emptyState = grid.querySelector('.empty-state');
+    if (emptyState) {
+        emptyState.remove();
+    }
+    
+    insurances.forEach(insurance => {
+        const status = getInsuranceStatus(insurance);
+        const card = createPolicyCard(insurance, status);
+        grid.appendChild(card);
     });
 }

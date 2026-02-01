@@ -6,7 +6,7 @@ use App\Models\Client;
 use App\Models\Walkin;
 use Illuminate\Http\Request;
 use DataTables;
-
+ 
 class ClientController extends Controller
 {
     public function index()
@@ -74,9 +74,12 @@ class ClientController extends Controller
                 'status' => 'required|in:0,1'
             ]);
 
+            // Get the office_id from the authenticated user
+            $officeId = auth()->user()->office_id ?? null;
+
             // Generate auto code: YYYYMMDD-XXX
             $code = $this->generateClientCode();
-
+            
             $client = Client::create([
                 'code' => $code,
                 'firstname' => $validated['firstname'],
@@ -87,9 +90,10 @@ class ClientController extends Controller
                 'markup' => $validated['walkin_list'],
                 'status' => $validated['status'],
                 'date_created' => now(),
-                'delete_flag' => 0
+                'delete_flag' => 0,
+                'office_id' => $officeId // Add office_id from authenticated user
             ]);
-            
+
             return response()->json([
                 'success' => true, 
                 'message' => 'Client created successfully', 
