@@ -13,6 +13,30 @@ class WalkinController extends Controller
         return view('walkin.walkin');
     }
 
+    public function stats()
+    {
+        try {
+            $stats = [
+                'total' => Walkin::count(),
+                'active' => Walkin::where('status', 1)->count(),
+                'inactive' => Walkin::where('status', 0)->count(),
+                'completed' => Walkin::where('status', 1)->count(),
+                'pending' => Walkin::where('status', 0)->count(),
+                'cancelled' => Walkin::where('status', 2)->count(),
+                'paid' => Walkin::where('payment_status', 1)->count(),
+                'unpaid' => Walkin::where('payment_status', 0)->count(),
+            ];
+
+            return response()->json($stats);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching walkin stats', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Failed to fetch stats.'], 500);
+        }
+    }
+
     public function data()
     {
         $walkins = Walkin::select([
@@ -61,32 +85,22 @@ class WalkinController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
-            'contact' => 'required',
             'email' => 'required|email',
-            'address' => 'required',
-            'vehicle_type' => 'required',
-            'plate_number' => 'required',
-            'engine_number' => 'required',
-            'chassis_number' => 'required',
-            'make' => 'required',
-            'model' => 'required',
+            'accountID' => 'required',
+            'name' => 'required',
             'color' => 'required',
-            'year' => 'required|numeric',
-            'service_type' => 'required',
-            'amount' => 'required|numeric'
+            'description' => 'required',
+            'office_id' => 'required',
+            'status' => 'required|in:0,1'
         ]);
 
-        $data = $request->all();
-        $data['payment_status'] = $request->has('payment_status') ? 1 : 0;
-        $data['status'] = 0; // Pending
-        $data['date_created'] = now();
+        $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'office_id', 'status']);
 
         $walkin = Walkin::create($data);
-        
+
         return response()->json([
-            'success' => true, 
-            'message' => 'Walk-in client record created successfully',
+            'success' => true,
+            'message' => 'Walkin record created successfully',
             'walkin' => $walkin
         ]);
     }
@@ -100,32 +114,23 @@ class WalkinController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required',
-            'contact' => 'required',
             'email' => 'required|email',
-            'address' => 'required',
-            'vehicle_type' => 'required',
-            'plate_number' => 'required',
-            'engine_number' => 'required',
-            'chassis_number' => 'required',
-            'make' => 'required',
-            'model' => 'required',
+            'accountID' => 'required',
+            'name' => 'required',
             'color' => 'required',
-            'year' => 'required|numeric',
-            'service_type' => 'required',
-            'amount' => 'required|numeric'
+            'description' => 'required',
+            'office_id' => 'required',
+            'status' => 'required|in:0,1'
         ]);
 
         $walkin = Walkin::findOrFail($id);
-        $data = $request->all();
-        $data['payment_status'] = $request->has('payment_status') ? 1 : 0;
-        $data['date_updated'] = now();
-        
+        $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'office_id', 'status']);
+
         $walkin->update($data);
-        
+
         return response()->json([
-            'success' => true, 
-            'message' => 'Walk-in client record updated successfully',
+            'success' => true,
+            'message' => 'Walkin record updated successfully',
             'walkin' => $walkin
         ]);
     }

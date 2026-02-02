@@ -878,10 +878,8 @@
 /* Policies Grid */
 .policies-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     gap: 24px;
-    align-items: stretch;
-    width: 100%;
 }
 
 .policies-grid.grid-view {
@@ -899,11 +897,10 @@
     align-items: center;
     padding: 16px;
     min-height: auto;
-    width: 100%;
 }
 
 .policies-grid.list-view .card-header {
-    flex: 0 0 200px;
+    flex: 0 0 150px;
     border-bottom: none;
     border-right: 1px solid var(--border);
     padding: 0 16px 0 0;
@@ -959,7 +956,7 @@
 }
 
 .policies-grid.list-view .action-btn {
-    min-width: 120px;
+    min-width: 100px;
 }
 
 /* Policy Card */
@@ -1092,41 +1089,51 @@
 
 .action-buttons {
     display: flex;
-    gap: 12px;
+    gap: 8px;
 }
 
-.action-btn {
+.action-btn-small {
     flex: 1;
-    padding: 10px 16px;
-    border-radius: 8px;
+    padding: 8px 12px;
+    border-radius: 6px;
     border: none;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
-    white-space: nowrap;
+    gap: 4px;
 }
 
-.action-btn.view {
+.action-btn-small.view {
     background: var(--primary);
     color: white;
 }
 
-.action-btn.view:hover {
+.action-btn-small.view:hover {
     background: var(--primary-dark);
 }
 
-.action-btn.status {
+.action-btn-small.edit {
     background: #f8f9fa;
     color: var(--gray);
+    border: 1px solid var(--border);
 }
 
-.action-btn.status:hover {
+.action-btn-small.edit:hover {
     background: #e9ecef;
+}
+
+.action-btn-small.delete {
+    background: #fef2f2;
+    color: var(--danger);
+    border: 1px solid #fecaca;
+}
+
+.action-btn-small.delete:hover {
+    background: #fee2e2;
 }
 
 /* Empty State */

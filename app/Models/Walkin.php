@@ -14,25 +14,15 @@ class Walkin extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'name',
-        'contact',
         'email',
-        'address',
-        'vehicle_type',
-        'plate_number',
-        'engine_number',
-        'chassis_number',
-        'make',
-        'model',
+        'accountID',
+        'name',
         'color',
-        'year',
-        'service_type',
-        'amount',
-        'payment_status',
         'status',
-        'remarks',
-        'date_created',
-        'date_updated'
+        'description',
+        'office_id',
+        'payment_status',
+        'delete_flag'
     ];
 
     protected $casts = [

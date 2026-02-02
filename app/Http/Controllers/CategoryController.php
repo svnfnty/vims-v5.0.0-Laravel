@@ -118,6 +118,25 @@ class CategoryController extends Controller
         ]);
     }
 
+    public function stats()
+    {
+        try {
+            $stats = [
+                'total' => Category::count(),
+                'active' => Category::where('status', 1)->count(),
+                'inactive' => Category::where('status', 0)->count(),
+            ];
+
+            return response()->json($stats);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching category stats', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            return response()->json(['error' => 'Failed to fetch stats.'], 500);
+        }
+    }
+
     public function getAll(): JsonResponse
     {
         $categories = Category::select('id', 'name')->get();

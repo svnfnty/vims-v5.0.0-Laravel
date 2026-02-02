@@ -11,8 +11,21 @@ class PolicyController extends Controller
 {
     public function index()
     {
-        $categories = Policy::all();
-        return view('policies.policies');
+        $categories = Category::all();
+        return view('policies.policies', compact('categories'));
+    }
+
+    public function stats()
+    {
+        $total = Policy::count();
+        $active = Policy::where('status', 1)->count();
+        $inactive = Policy::where('status', 0)->count();
+
+        return response()->json([
+            'total' => $total,
+            'active' => $active,
+            'inactive' => $inactive
+        ]);
     }
 
     public function data()

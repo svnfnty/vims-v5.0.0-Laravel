@@ -57,6 +57,16 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
     });
 
+    // Category Routes
+    Route::group(['prefix' => 'category'], function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('category.index');
+        Route::post('/', [CategoryController::class, 'store'])->name('category.store');
+        Route::get('/data', [CategoryController::class, 'data'])->name('category.data');
+        Route::get('/stats', [CategoryController::class, 'stats'])->name('category.stats');
+        Route::put('/{id}', [CategoryController::class, 'update'])->name('category.update');
+        Route::delete('/{id}', [CategoryController::class, 'destroy'])->name('category.destroy');
+    });
+
     // Insurance Routes
     Route::group(['prefix' => 'insurances'], function () {
         Route::get('/', [InsuranceController::class, 'index'])->name('insurances.index');
@@ -78,13 +88,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/series/api/getseries', [PolicySeriesController::class, 'getSeries'])->name('series.api.getseries');
     Route::get('/usage-history', [UsageHistoryController::class, 'index'])->name('usage.history');
     Route::get('/lto-transactions', [LTOTransactionController::class, 'index'])->name('lto.transactions');
-    Route::get('/category', [CategoryController::class, 'index'])->name('category.index');
-    Route::get('/category/data', [CategoryController::class, 'data'])->name('category.data');
     Route::get('/categories', [CategoryController::class, 'getAll'])->name('categories.all');
-    Route::get('/policies', [PolicyController::class, 'index'])->name('policies.index');
-    Route::get('/policies/data',[PolicyController::class, 'data'])->name('policies.data');
-    Route::get('/walkin', [WalkinController::class, 'index'])->name('walkin.index');
-    Route::get('/walkin/data', [WalkinController::class, 'data'])->name('walkin.data');
+    // Policy Routes
+    Route::group(['prefix' => 'policies'], function () {
+        Route::get('/', [PolicyController::class, 'index'])->name('policies.index');
+        Route::post('/', [PolicyController::class, 'store'])->name('policies.store');
+        Route::get('/data', [PolicyController::class, 'data'])->name('policies.data');
+        Route::get('/stats', [PolicyController::class, 'stats'])->name('policies.stats');
+        Route::put('/{id}', [PolicyController::class, 'update'])->name('policies.update');
+        Route::delete('/{id}', [PolicyController::class, 'destroy'])->name('policies.destroy');
+    });
+    // Walkin Routes
+    Route::group(['prefix' => 'walkin'], function () {
+        Route::get('/', [WalkinController::class, 'index'])->name('walkin.index');
+        Route::post('/', [WalkinController::class, 'store'])->name('walkin.store');
+        Route::get('/data', [WalkinController::class, 'data'])->name('walkin.data');
+        Route::get('/stats', [WalkinController::class, 'stats'])->name('walkin.stats');
+        Route::put('/{id}', [WalkinController::class, 'update'])->name('walkin.update');
+        Route::delete('/{id}', [WalkinController::class, 'destroy'])->name('walkin.destroy');
+    });
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::get('/activity', [ActivityController::class, 'index'])->name('activity');

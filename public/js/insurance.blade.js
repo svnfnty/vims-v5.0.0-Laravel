@@ -1264,13 +1264,13 @@ function createPolicyCard(insurance, status) {
         </div>
         <div class="card-footer">
             <div class="action-buttons">
-                <button class="action-btn view" onclick="viewInsuranceDetails(${insurance.id})">
+                <button class="action-btn-small view" onclick="viewInsuranceDetails(${insurance.id})">
                     <i class="fas fa-eye"></i> View
                 </button>
-                <button class="action-btn edit" onclick="editInsuranceDetails(${insurance.id})">
+                <button class="action-btn-small edit" onclick="editInsuranceDetails(${insurance.id})">
                     <i class="fas fa-edit"></i> Edit
                 </button>
-                <button class="action-btn delete" onclick="deleteInsurance(${insurance.id})">
+                <button class="action-btn-small delete" onclick="deleteInsurance(${insurance.id})">
                     <i class="fas fa-trash"></i> Delete
                 </button>
             </div>
@@ -1298,9 +1298,9 @@ function renderPolicies(insurances) {
                 </div> 
                 <h3>No Insurance Policies Found</h3> 
                 <p>Get started by adding your first insurance policy</p> 
-                <button class="action-btn view" id="addInsuranceEmptyBtn"> 
-                    <i class="fas fa-plus-circle"></i> Add New Insurance 
-                </button> 
+                <button class="action-btn-small view" id="addInsuranceEmptyBtn">
+                    <i class="fas fa-plus-circle"></i> Add New Insurance
+                </button>
             `;
             grid.appendChild(emptyState);
             const emptyBtn = document.getElementById('addInsuranceEmptyBtn');
