@@ -217,10 +217,11 @@ class InsuranceController extends Controller
             'coc_no' => $request->coc_no,
             'policy_no' => $request->policy_no,
             'mvfile_no' => $request->mvfile_no,
-            'auth_no' => $request->category_id,
+            'auth_no' => $request->category_id, //intentional mapping
+            'auth_renewal' => 0,
             'status' => $request->status,
             'remarks' => $request->remarks,
-            'office_id' => $officeId, // Insert the current user's office_id
+            'office_id' => $officeId, 
             'date_created' => now(),
             'date_updated' => now(),
         ]);
