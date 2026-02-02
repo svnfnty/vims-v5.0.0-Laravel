@@ -181,29 +181,16 @@ class InsuranceController extends Controller
             'status' => 'required|in:0,1',
         ]);
 
-        // Generate the next code automatically
-        $currentYearMonth = date('Ym');
-        $lastInsurance = Insurance::where('code', 'LIKE', $currentYearMonth . '-%')
-            ->orderBy('code', 'desc')
-            ->first();
-        if ($lastInsurance) {
-            $lastCode = $lastInsurance->code;
-            $sequence = (int)substr($lastCode, -4) + 1;
-        } else {
-            $sequence = 1;
-        }
-        $newCode = $currentYearMonth . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
-
         // Get the office_id from the authenticated user
         $officeId = auth()->user()->office_id ?? null;
         // Get the policy cost from policy_list table
         $policy = Policy::select('cost')->findOrFail($request->policy_id);
         $policyCost = $policy->cost;
-
+        
         $insurance = Insurance::create([
             'client_id' => $request->client_id,
             'policy_id' => $request->policy_id,
-            'code' => $newCode,
+            'code' => $request->code,
             'registration_no' => $request->registration_no,
             'chassis_no' => $request->chassis_no,
             'engine_no' => $request->engine_no,
@@ -261,6 +248,7 @@ class InsuranceController extends Controller
         $insurance->update([
             'client_id' => $request->client_id,
             'policy_id' => $request->policy_id,
+            'code' => $request->code,
             'registration_no' => $request->registration_no,
             'chassis_no' => $request->chassis_no,
             'engine_no' => $request->engine_no,
@@ -273,7 +261,7 @@ class InsuranceController extends Controller
             'or_no' => $request->or_no,
             'coc_no' => $request->coc_no,
             'policy_no' => $request->policy_no,
-            'mvfile_no' => $request->mvfile_no,
+            'mvfile_no' => $request->mvfile_no, 
             'auth_no' => $request->category_id,
             'status' => $request->status,
             'remarks' => $request->remarks,

@@ -169,7 +169,7 @@
                 @csrf
                 <input type="hidden" id="insurance_form_method" name="_method" value="POST">
                 <input type="hidden" id="insurance_id" name="insurance_id" value="">
-
+                
                 <!-- All your form fields remain unchanged -->
                 <div class="floating-label">
                     <input type="text" class="form-control" id="modal-mvfile_no" name="mvfile_no" placeholder=" ">
@@ -214,6 +214,7 @@
                     </select>
                     <label for="modal-category_id">Category <span style="color: var(--danger);">*</span></label>
                 </div>
+                
                 <div class="floating-label">
                     <input type="text" class="form-control" id="modal-registration_no" name="registration_no" placeholder=" ">
                     <label for="modal-registration_no">Registration No</label>

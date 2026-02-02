@@ -688,6 +688,7 @@ async function showManageInsuranceModal(formData, existingRecord) {
         setModalValue('modal-client_id', existingRecord.client_id || '');
         setModalValue('modal-policy_id', existingRecord.policy_id || '');
         setModalValue('modal-category_id', existingRecord.auth_no || '');
+        setModalValue('modal-code', existingRecord.insurance_code || existingRecord.code || '');
         setModalValue('modal-registration_no', existingRecord.registration_no || '');
         setModalValue('modal-chassis_no', existingRecord.chassis_no || '');
         setModalValue('modal-engine_no', existingRecord.engine_no || '');
@@ -718,6 +719,16 @@ async function showManageInsuranceModal(formData, existingRecord) {
         setModalValue('modal-remarks', '');
         modalTitle.textContent = 'New Insurance';
         submitBtn.innerHTML = '<i class="fas fa-save"></i> Save';
+        // Fetch auto-generated code from database
+        try {
+            const res = await fetch(typeof insuranceNextCodeUrl !== 'undefined' ? insuranceNextCodeUrl : '');
+            if (res && res.ok) {
+                const data = await res.json();
+                if (data && data.code) setModalValue('modal-code', data.code);
+            }
+        } catch (err) {
+            console.warn('Could not fetch next code:', err);
+        }
     }
 
     modal.style.display = 'flex';
@@ -1017,6 +1028,7 @@ function openViewInsuranceModal(id) {
             setModalValue('modal-client_id', data.insurance.client_id || '');
             setModalValue('modal-policy_id', data.insurance.policy_id || '');
             setModalValue('modal-category_id', data.insurance.auth_no || '');
+            setModalValue('modal-code', data.insurance.code || '');
             setModalValue('modal-registration_no', data.insurance.registration_no || '');
             setModalValue('modal-chassis_no', data.insurance.chassis_no || '');
             setModalValue('modal-engine_no', data.insurance.engine_no || '');
@@ -1088,6 +1100,7 @@ function openEditInsuranceModal(id) {
             setModalValue('modal-client_id', data.insurance.client_id || '');
             setModalValue('modal-policy_id', data.insurance.policy_id || '');
             setModalValue('modal-category_id', data.insurance.auth_no || '');
+            setModalValue('modal-code', data.insurance.code || '');
             setModalValue('modal-registration_no', data.insurance.registration_no || '');
             setModalValue('modal-chassis_no', data.insurance.chassis_no || '');
             setModalValue('modal-engine_no', data.insurance.engine_no || '');
