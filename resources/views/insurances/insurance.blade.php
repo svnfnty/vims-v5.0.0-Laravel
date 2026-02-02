@@ -214,10 +214,7 @@
                     </select>
                     <label for="modal-category_id">Category <span style="color: var(--danger);">*</span></label>
                 </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-code" name="code" placeholder=" " readonly>
-                    <label for="modal-code">Code (auto-generated)</label>
-                </div>
+                
                 <div class="floating-label">
                     <input type="text" class="form-control" id="modal-registration_no" name="registration_no" placeholder=" ">
                     <label for="modal-registration_no">Registration No</label>
