@@ -52,12 +52,12 @@
             <a class="nav-link {{ request()->routeIs('policy.series') ? 'active' : '' }}" href="{{ route('policy.series') }}">
                 <i class="bi bi-card-list me-1"></i> Policy Series
             </a>
-            <a class="nav-link {{ request()->routeIs('usage.history') ? 'active' : '' }}" href="{{ route('usage.history') }}">
+            <!--<a class="nav-link {{ request()->routeIs('usage.history') ? 'active' : '' }}" href="{{ route('usage.history') }}">
                 <i class="bi bi-clock-history me-1"></i> Usage History
             </a>
             <a class="nav-link {{ request()->routeIs('lto.transactions') ? 'active' : '' }}" href="{{ route('lto.transactions') }}">
                 <i class="bi bi-arrow-left-right me-1"></i> LTO Transactions
-            </a>
+            </a>-->
             <div class="mt-3 mb-1 text-uppercase small text-secondary px-2">Maintenance</div>
             <a class="nav-link {{ request()->routeIs('category.index') ? 'active' : '' }}" href="{{ route('category.index') }}">
                 <i class="bi bi-tags me-1"></i> Category List
@@ -68,7 +68,7 @@
             <a class="nav-link {{ request()->routeIs('walkin.index') ? 'active' : '' }}" href="{{ route('walkin.index') }}">
                 <i class="bi bi-person-lines-fill me-1"></i> Walkin List
             </a>
-            <a class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}" href="{{ route('users.index') }}">
+            <!--<a class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}" href="{{ route('users.index') }}">
                 <i class="bi bi-person-badge me-1"></i> User List
             </a>
             <a class="nav-link {{ request()->routeIs('settings') ? 'active' : '' }}" href="{{ route('settings') }}">
@@ -76,7 +76,7 @@
             </a>
             <a class="nav-link {{ request()->routeIs('activity') ? 'active' : '' }}" href="{{ route('activity') }}">
                 <i class="bi bi-clock me-1"></i> Activity
-            </a>
+            </a>-->
         </nav>
     </div>
     <div class="main-content">
