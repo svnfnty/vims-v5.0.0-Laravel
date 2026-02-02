@@ -150,10 +150,6 @@
                 </div>
                 <h3>No Insurance Policies Found</h3>
                 <p>Get started by adding your first insurance policy</p>
-                <button class="action-btn view" id="addInsuranceEmptyBtn">
-                    <i class="fas fa-plus-circle"></i>
-                    Add New Insurance
-                </button>
             </div>
         </div>
     </div>
@@ -265,7 +261,7 @@
                     <textarea class="form-control" id="modal-remarks" name="remarks" rows="2" placeholder=" "></textarea>
                     <label for="modal-remarks">Remarks</label>
                 </div>
-            </form>
+            
         </div>
         <div class="modal-actions">
             <button type="submit" class="control-btn primary" id="insuranceSubmitBtn">
@@ -275,8 +271,9 @@
                 <i class="fas fa-times-circle"></i> Cancel
             </button>
         </div>
+        </form>
     </div>
-</div>
+</div> 
 
 <!-- Modal Overlay -->
 <div id="insuranceModalOverlay" class="modal-overlay" style="display: none;" onclick="closeInsuranceModal()"></div>

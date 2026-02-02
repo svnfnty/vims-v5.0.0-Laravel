@@ -8,7 +8,7 @@
 <style>
     @import url('{{ asset("css/client.blade.css") }}');
 </style>
-
+ 
 <div class="clients-dashboard">
     <!-- Dashboard Header -->
     <div class="dashboard-header">
@@ -212,7 +212,6 @@
                 </div>
 
                 
-            </form>
         </div>
         <div class="modal-actions">
                 <button type="submit" class="control-btn primary" id="submitBtn">
@@ -224,6 +223,8 @@
                     Cancel
                 </button>
          </div>
+         
+         </form>
     </div>
 </div>
 
@@ -376,18 +377,10 @@
                         </div>
                         <h3>No Clients Found</h3>
                         <p>Get started by adding your first client to the system</p>
-                        <button class="control-btn primary" id="create_new_empty">
-                            <i class="fas fa-plus-circle"></i>
-                            Add New Client
-                        </button>
                     </div>
                 `);
-                $('#create_new_empty').on('click', function() {
-                    openCreateModal();
-                });
                 return;
             }
-
             let html = '';
             data.forEach(function(client, index) {
                 const status = client.status == 1 ? 'active' : 'inactive';
