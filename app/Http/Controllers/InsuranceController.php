@@ -170,7 +170,6 @@ class InsuranceController extends Controller
             'client_id' => 'required|exists:client_list,id',
             'policy_id' => 'required|exists:policy_list,id',
             'category_id' => 'required|exists:category_list,id',
-            'code' => 'required|unique:insurance_list,code',
             'registration_no' => 'required',
             'chassis_no' => 'required',
             'engine_no' => 'required',
@@ -228,7 +227,6 @@ class InsuranceController extends Controller
             'client_id' => 'required|exists:client_list,id',
             'policy_id' => 'required|exists:policy_list,id',
             'category_id' => 'required|exists:category_list,id',
-            'code' => 'required|unique:insurance_list,code,' . $id . ',id', // Fixed: Use 'id' as the column name for exclusion
             'registration_no' => 'required',
             'chassis_no' => 'required',
             'engine_no' => 'required',
