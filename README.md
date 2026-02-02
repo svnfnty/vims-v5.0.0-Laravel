@@ -128,7 +128,7 @@ The legacy system is **fully deployed and operational** in **Northern Mindanao (
 
 ## 🚧 **Development Environment**
 
-- **Repository**: Private (During Development)
+- **Repository**: Public Repo (During Development)
 - **Local Setup**: Laravel Sail / Docker
 - **Testing**: PHPUnit, Laravel Dusk
 - **Version Control**: Git
