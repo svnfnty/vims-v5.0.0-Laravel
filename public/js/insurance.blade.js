@@ -702,6 +702,19 @@ async function showManageInsuranceModal(formData, existingRecord) {
         setModalValue('modal-remarks', existingRecord.insurance_remarks || existingRecord.remarks || '');
         modalTitle.textContent = 'Edit Insurance';
         submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
+        
+        // CRITICAL: Update Select2 values after modal is shown
+        setTimeout(() => {
+            if (existingRecord.client_id) {
+                $('#modal-client_id').val(existingRecord.client_id).trigger('change');
+            }
+            if (existingRecord.policy_id) {
+                $('#modal-policy_id').val(existingRecord.policy_id).trigger('change');
+            }
+            if (existingRecord.auth_no) {
+                $('#modal-category_id').val(existingRecord.auth_no).trigger('change');
+            }
+        }, 100);
     } else {
         setModalValue('modal-client_id', '');
         setModalValue('modal-policy_id', '');
@@ -719,27 +732,36 @@ async function showManageInsuranceModal(formData, existingRecord) {
         setModalValue('modal-remarks', '');
         modalTitle.textContent = 'New Insurance';
         submitBtn.innerHTML = '<i class="fas fa-save"></i> Save';
-        // Fetch auto-generated code from database
-        try {
-            const res = await fetch(typeof insuranceNextCodeUrl !== 'undefined' ? insuranceNextCodeUrl : '');
-            if (res && res.ok) {
-                const data = await res.json();
-                if (data && data.code) setModalValue('modal-code', data.code);
-            }
-        } catch (err) {
-            console.warn('Could not fetch next code:', err);
-        }
+        
+        // Reset Select2 values for new record
+        setTimeout(() => {
+            $('#modal-client_id').val('').trigger('change');
+            $('#modal-policy_id').val('').trigger('change');
+            $('#modal-category_id').val('').trigger('change');
+        }, 100);
     }
-
+    
+    // Show modal first
     modal.style.display = 'flex';
     if (overlay) overlay.style.display = 'block';
+    
+    // Reinitialize Select2 to ensure proper dropdown positioning
+    setTimeout(() => {
+        $('.js-example-basic-single').select2({
+            width: '100%',
+            dropdownParent: $('#manageInsuranceModal')
+        });
+    }, 200);
 }
 
 function setModalValue(id, value) {
     const el = document.getElementById(id);
     if (!el) return;
     const v = value == null ? '' : String(value);
-    if (el.tagName === 'SELECT') {
+    
+    // For Select2 fields, set the value but don't trigger change here
+    // (we'll trigger change after modal is shown)
+    if (el.classList.contains('js-example-basic-single')) {
         el.value = v;
     } else {
         el.value = v;
@@ -1017,7 +1039,7 @@ function openViewInsuranceModal(id) {
             if (!data.insurance) {
                 throw new Error('Insurance not found');
             }
-            
+             
             // Populate form fields
             document.getElementById('insurance_id').value = data.insurance.id;
             document.getElementById('insurance_form_method').value = 'GET';
@@ -1069,6 +1091,7 @@ function openViewInsuranceModal(id) {
 }
 
 // Open Edit Insurance Modal
+// Open Edit Insurance Modal
 function openEditInsuranceModal(id) {
     currentMode = 'edit';
     const modal = document.getElementById('manageInsuranceModal');
@@ -1090,28 +1113,26 @@ function openEditInsuranceModal(id) {
                 throw new Error('Insurance not found');
             }
             
+            const insurance = data.insurance;
+            
             // Populate form fields
-            document.getElementById('insurance_id').value = data.insurance.id;
+            document.getElementById('insurance_id').value = insurance.id;
             document.getElementById('insurance_form_method').value = 'PUT';
-            setModalValue('modal-mvfile_no', data.insurance.mvfile_no || '');
-            setModalValue('modal-coc_no', data.insurance.coc_no || '');
-            setModalValue('modal-or_no', data.insurance.or_no || '');
-            setModalValue('modal-policy_no', data.insurance.policy_no || '');
-            setModalValue('modal-client_id', data.insurance.client_id || '');
-            setModalValue('modal-policy_id', data.insurance.policy_id || '');
-            setModalValue('modal-category_id', data.insurance.auth_no || '');
-            setModalValue('modal-code', data.insurance.code || '');
-            setModalValue('modal-registration_no', data.insurance.registration_no || '');
-            setModalValue('modal-chassis_no', data.insurance.chassis_no || '');
-            setModalValue('modal-engine_no', data.insurance.engine_no || '');
-            setModalValue('modal-vehicle_model', data.insurance.vehicle_model || '');
-            setModalValue('modal-vehicle_color', data.insurance.vehicle_color || '');
-            setModalValue('modal-make', data.insurance.make || '');
-            setModalValue('modal-registration_date', data.insurance.registration_date || '');
-            setModalValue('modal-expiration_date', data.insurance.expiration_date || '');
-            setModalValue('modal-cost', data.insurance.cost || '');
-            setModalValue('modal-status', String(data.insurance.status || '0'));
-            setModalValue('modal-remarks', data.insurance.remarks || '');
+            setModalValue('modal-mvfile_no', insurance.mvfile_no || '');
+            setModalValue('modal-coc_no', insurance.coc_no || '');
+            setModalValue('modal-or_no', insurance.or_no || '');
+            setModalValue('modal-policy_no', insurance.policy_no || '');
+            setModalValue('modal-registration_no', insurance.registration_no || '');
+            setModalValue('modal-chassis_no', insurance.chassis_no || '');
+            setModalValue('modal-engine_no', insurance.engine_no || '');
+            setModalValue('modal-vehicle_model', insurance.vehicle_model || '');
+            setModalValue('modal-vehicle_color', insurance.vehicle_color || '');
+            setModalValue('modal-make', insurance.make || '');
+            setModalValue('modal-registration_date', insurance.registration_date || '');
+            setModalValue('modal-expiration_date', insurance.expiration_date || '');
+            setModalValue('modal-cost', insurance.cost || '');
+            setModalValue('modal-status', String(insurance.status || '0'));
+            setModalValue('modal-remarks', insurance.remarks || '');
             
             // Set modal title
             modalTitle.textContent = 'Edit Insurance';
@@ -1126,9 +1147,28 @@ function openEditInsuranceModal(id) {
                 control.removeAttribute('disabled');
             });
             
-            // Show modal
+            // Show modal first
             modal.style.display = 'flex';
             if (overlay) overlay.style.display = 'block';
+            
+            // CRITICAL: Set Select2 values AFTER modal is shown
+            setTimeout(() => {
+                if (insurance.client_id) {
+                    $('#modal-client_id').val(insurance.client_id).trigger('change');
+                }
+                if (insurance.policy_id) {
+                    $('#modal-policy_id').val(insurance.policy_id).trigger('change');
+                }
+                if (insurance.auth_no) {
+                    $('#modal-category_id').val(insurance.auth_no).trigger('change');
+                }
+                
+                // Reinitialize Select2 with proper dropdown parent
+                $('.js-example-basic-single').select2({
+                    width: '100%',
+                    dropdownParent: $('#manageInsuranceModal')
+                });
+            }, 100);
         })
         .catch(error => {
             console.error('Error loading insurance:', error);
@@ -1196,6 +1236,10 @@ function createPolicyCard(insurance, status) {
             <div class="client-info">
                 <h3 class="client-name">${clientName}</h3>
                 <div class="client-details">
+                    <div class="detail-row">
+                        <span class="detail-label">Document ID:</span>
+                        <span class="detail-value">${insurance.code}</span>
+                    </div>
                     <div class="detail-row">
                         <span class="detail-label">Category:</span>
                         <span class="detail-value">${categoryName}</span>
@@ -1279,3 +1323,23 @@ function renderPolicies(insurances) {
         grid.appendChild(card);
     });
 }
+// Helper function to update floating labels for Select2
+function updateSelect2Labels() {
+    $('.js-example-basic-single').each(function() {
+        var $select = $(this);
+        var $label = $select.siblings('label');
+        
+        if ($select.val()) {
+            $label.addClass('active');
+        } else {
+            $label.removeClass('active');
+        }
+    });
+}
+
+// Add this event listener for Select2 change events
+$(document).ready(function() {
+    $('.js-example-basic-single').on('change', function() {
+        updateSelect2Labels();
+    });
+});

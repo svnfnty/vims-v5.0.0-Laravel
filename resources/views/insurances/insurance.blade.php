@@ -188,7 +188,7 @@
                     <label for="modal-policy_no">Policy No</label>
                 </div>
                 <div class="floating-label">
-                    <select class="form-control" id="modal-client_id" name="client_id" placeholder=" " required>
+                    <select class="js-example-basic-single" id="modal-client_id" name="client_id" placeholder=" " required>
                         <option value="">Select Client</option>
                         @foreach($clients ?? [] as $client)
                             <option value="{{ $client->id }}">{{ $client->lastname }}, {{ $client->firstname }}{{ $client->middlename ? ' ' . $client->middlename : '' }}</option>
@@ -197,7 +197,7 @@
                     <label for="modal-client_id">Client <span style="color: var(--danger);">*</span></label>
                 </div>
                 <div class="floating-label">
-                    <select class="form-control" id="modal-policy_id" name="policy_id" placeholder=" " required>
+                    <select class="js-example-basic-single" id="modal-policy_id" name="policy_id" placeholder=" " required>
                         <option value="">Select Policy</option>
                         @foreach($policies ?? [] as $policy)
                             <option value="{{ $policy->id }}">{{ $policy->name }} ({{ $policy->code }})</option>
@@ -206,7 +206,7 @@
                     <label for="modal-policy_id">Policy <span style="color: var(--danger);">*</span></label>
                 </div>
                 <div class="floating-label">
-                    <select class="form-control" id="modal-category_id" name="category_id" placeholder=" " required>
+                    <select class="js-example-basic-single" id="modal-category_id" name="category_id" placeholder=" " required>
                         <option value="">Select Category</option>
                         @foreach($categories ?? [] as $category)
                             <option value="{{ $category->id }}">{{ $category->name }} ({{ $category->code }})</option>
@@ -214,7 +214,6 @@
                     </select>
                     <label for="modal-category_id">Category <span style="color: var(--danger);">*</span></label>
                 </div>
-                
                 <div class="floating-label">
                     <input type="text" class="form-control" id="modal-registration_no" name="registration_no" placeholder=" ">
                     <label for="modal-registration_no">Registration No</label>
@@ -280,7 +279,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
- 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  
 <script>
     const insuranceDataUrl = "{{ route('insurance.data') }}";
     const insuranceValidateCocUrl = "{{ route('insurance.validateCoc') }}";
@@ -288,9 +289,145 @@
     const manageInsuranceUrl = "{{ route('insurance.manageInsurance') }}";
     const insuranceStoreUrl = "{{ route('insurance.store') }}";
     const insuranceUpdateUrl = "{{ url('insurances') }}";
-    const insuranceNextCodeUrl = "{{ route('insurance.nextCode') }}";
 </script>
 
 <script src="{{ asset('js/insurance.blade.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2({
+            width: '100%',
+            containerCssClass: function() {
+                return $(this).hasClass('form-control') ? 'form-control' : '';
+            }
+        });
+    });
+</script>
+
+<style>
+
+/* Reset all default Select2 styles to match regular input */
+.select2-container .select2-selection--single {
+    height: 45px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+    background-color: #fff !important;
+    font-family: inherit !important;
+    font-size: 16px !important;
+    color: #212529 !important;
+    
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+    line-height: 45px !important;
+    padding-left: 12px !important;
+    padding-right: 30px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+}
+
+/* Arrow styling */
+.select2-container .select2-selection--single .select2-selection__arrow {
+    height: 36px !important;
+    width: 24px !important;
+    right: 1px !important;
+}
+
+.select2-container .select2-selection--single .select2-selection__arrow b {
+    border-color: #6c757d transparent transparent transparent !important;
+    border-width: 5px 4px 0 4px !important;
+    margin-left: -4px !important;
+    margin-top: -2px !important;
+}
+
+/* Focus state - match Bootstrap */
+.select2-container.select2-container--focus .select2-selection--single {
+    border-color: #86b7fe !important;
+    outline: 0 !important;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
+}
+
+/* Open state arrow */
+.select2-container.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    border-color: transparent transparent #6c757d transparent !important;
+    border-width: 0 4px 5px 4px !important;
+    margin-top: -3px !important;
+}
+
+/* Floating label positioning */
+.floating-label {
+    position: relative;
+}
+
+.floating-label label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: #6c757d;
+    font-size: 14px;
+    transition: all 0.15s ease-in-out;
+    pointer-events: none;
+    background: transparent;
+    padding: 0 4px;
+    z-index: 1;
+}
+
+/* Label active state */
+.select2-container--open ~ label,
+.select2-container--focus ~ label,
+.select2-container--filled ~ label,
+.floating-label select:focus ~ label,
+.floating-label select:not(:placeholder-shown) ~ label {
+    top: 0;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #0d6efd;
+    background: white;
+    z-index: 5;
+}
+
+/* Required asterisk */
+.floating-label label span {
+    color: #dc3545;
+}
+
+/* Dropdown styling */
+.select2-dropdown {
+    border: 1px solid #ced4da !important;
+    border-radius: 4px !important;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+    margin-top: 4px !important;
+}
+
+.select2-results__option {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+}
+
+.select2-results__option--highlighted {
+    background-color: #0d6efd !important;
+    color: white !important;
+}
+
+.select2-container--open .select2-dropdown {
+    z-index: 2001 !important;
+}
+
+/* Remove Select2 container padding */
+.select2-container {
+    padding: 0 !important;
+}
+
+/* Ensure it matches other form controls */
+.form-control.select2-container {
+    display: block;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    background-clip: padding-box;
+}
+
+</style>
 @endsection
 

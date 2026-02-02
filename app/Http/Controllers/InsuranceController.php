@@ -187,10 +187,23 @@ class InsuranceController extends Controller
         $policy = Policy::select('cost')->findOrFail($request->policy_id);
         $policyCost = $policy->cost;
         
+        $currentYearMonth = date('Ym');
+        $lastInsurance = Insurance::where('code', 'LIKE', $currentYearMonth . '-%')
+            ->orderBy('code', 'desc')
+            ->first();
+        if ($lastInsurance) {
+            $lastCode = $lastInsurance->code;
+            $sequence = (int)substr($lastCode, -4) + 1;
+        } else {
+            $sequence = 1;
+        }
+        $newCode = $currentYearMonth . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
+      
+
         $insurance = Insurance::create([
             'client_id' => $request->client_id,
             'policy_id' => $request->policy_id,
-            'code' => $request->code,
+            'code' => $newCode,
             'registration_no' => $request->registration_no,
             'chassis_no' => $request->chassis_no,
             'engine_no' => $request->engine_no,
@@ -248,7 +261,6 @@ class InsuranceController extends Controller
         $insurance->update([
             'client_id' => $request->client_id,
             'policy_id' => $request->policy_id,
-            'code' => $request->code,
             'registration_no' => $request->registration_no,
             'chassis_no' => $request->chassis_no,
             'engine_no' => $request->engine_no,
@@ -276,20 +288,6 @@ class InsuranceController extends Controller
         ]);
     }
 
-    public function getNextCode() {
-        $currentYearMonth = date('Ym');
-        $lastInsurance = Insurance::where('code', 'LIKE', $currentYearMonth . '-%')
-            ->orderBy('code', 'desc')
-            ->first();
-        if ($lastInsurance) {
-            $lastCode = $lastInsurance->code;
-            $sequence = (int)substr($lastCode, -4) + 1;
-        } else {
-            $sequence = 1;
-        }
-        $newCode = $currentYearMonth . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
-        return response()->json(['code' => $newCode]);
-    }
 
     public function destroy($id) {
         $insurance = Insurance::findOrFail($id);
