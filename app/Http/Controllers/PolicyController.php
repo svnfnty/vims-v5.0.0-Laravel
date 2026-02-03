@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-    
+
 use App\Models\Policy;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use DataTables;
 
 class PolicyController extends Controller
@@ -17,9 +18,10 @@ class PolicyController extends Controller
 
     public function stats()
     {
-        $total = Policy::count();
-        $active = Policy::where('status', 1)->count();
-        $inactive = Policy::where('status', 0)->count();
+        $officeId = Auth::user()->office_id;
+        $total = Policy::where('office_id', $officeId)->count();
+        $active = Policy::where('office_id', $officeId)->where('status', 1)->count();
+        $inactive = Policy::where('office_id', $officeId)->where('status', 0)->count();
 
         return response()->json([
             'total' => $total,
@@ -30,7 +32,8 @@ class PolicyController extends Controller
 
     public function data()
     {
-        $policies = Policy::with('category')->select([
+        $officeId = Auth::user()->office_id;
+        $policies = Policy::where('office_id', $officeId)->with('category')->select([
             'policy_list.id',
             'policy_list.category_id',
             'policy_list.code',
@@ -98,7 +101,8 @@ class PolicyController extends Controller
 
     public function show($id)
     {
-        $policy = Policy::with('category')->findOrFail($id);
+        $officeId = Auth::user()->office_id;
+        $policy = Policy::where('office_id', $officeId)->with('category')->findOrFail($id);
         return response()->json($policy);
     }
 
@@ -111,15 +115,16 @@ class PolicyController extends Controller
             'description' => 'nullable'
         ]);
 
-        $policy = Policy::findOrFail($id);
+        $officeId = Auth::user()->office_id;
+        $policy = Policy::where('office_id', $officeId)->findOrFail($id);
         $data = $request->all();
         $data['status'] = $request->has('status') ? 1 : 0;
         $data['date_updated'] = now();
-        
+
         $policy->update($data);
-        
+
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'message' => 'Policy updated successfully',
             'policy' => $policy
         ]);
@@ -127,8 +132,9 @@ class PolicyController extends Controller
 
     public function destroy($id)
     {
-        $policy = Policy::findOrFail($id);
-        
+        $officeId = Auth::user()->office_id;
+        $policy = Policy::where('office_id', $officeId)->findOrFail($id);
+
         // Check if policy is being used
         if ($policy->insurances()->count() > 0) {
             return response()->json([
@@ -138,16 +144,17 @@ class PolicyController extends Controller
         }
 
         $policy->delete();
-        
+
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'message' => 'Policy deleted successfully'
         ]);
     }
 
     public function toggleStatus($id)
     {
-        $policy = Policy::findOrFail($id);
+        $officeId = Auth::user()->office_id;
+        $policy = Policy::where('office_id', $officeId)->findOrFail($id);
         $policy->status = !$policy->status;
         $policy->save();
 

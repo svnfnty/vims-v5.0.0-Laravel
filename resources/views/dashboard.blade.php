@@ -4,7 +4,8 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="dashboard-header mb-4">
+<br>
+<div class="dashboard-header mb-4 bg-primary text-white">
     <div class="d-flex justify-content-between align-items-center">
         <div>
             <h2 class="mb-1"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>

@@ -44,13 +44,14 @@ class ClientController extends Controller
     public function stats()
     {
         try {
+            $officeId = auth()->user()->office_id ?? null;
             $stats = [
-                'total' => Client::where('delete_flag', 0)->count(),
-                'active' => Client::where('status', 1)->where('delete_flag', 0)->count(),
-                'inactive' => Client::where('status', 0)->where('delete_flag', 0)->count(),
-                'email' => Client::whereNotNull('email')->where('email', '!=', '')->where('delete_flag', 0)->count(),
+                'total' => Client::where('office_id', $officeId)->where('delete_flag', 0)->count(),
+                'active' => Client::where('office_id', $officeId)->where('status', 1)->where('delete_flag', 0)->count(),
+                'inactive' => Client::where('office_id', $officeId)->where('status', 0)->where('delete_flag', 0)->count(),
+                'email' => Client::where('office_id', $officeId)->whereNotNull('email')->where('email', '!=', '')->where('delete_flag', 0)->count(),
             ];
-            
+
             return response()->json($stats);
         } catch (\Exception $e) {
             \Log::error('Error fetching client stats', [

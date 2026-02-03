@@ -3,6 +3,7 @@
 @section('title', 'Walkin List')
  
 @section('content')
+@php $officeId = auth()->user()->office_id ?? null; @endphp
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -156,6 +157,7 @@
             <form id="walkinForm" method="POST">
                 @csrf
                 <input type="hidden" id="formMethod" name="_method" value="POST">
+                <input type="hidden" id="office_id" name="office_id" value="{{ $officeId }}">
 
                 <div class="floating-label">
                     <input type="email" class="form-control" id="email" name="email" placeholder=" " required>
@@ -176,7 +178,7 @@
                 </div>
 
                 <div class="floating-label">
-                    <input type="text" class="form-control" id="color" name="color" placeholder=" " required>
+                    <input type="color" class="form-control" id="color" name="color" required>
                     <label for="color">Color <span style="color: var(--danger);">*</span></label>
                     <span class="error-message" id="color-error"></span>
                 </div>
@@ -185,12 +187,6 @@
                     <textarea class="form-control" id="description" name="description" rows="3" placeholder=" " required></textarea>
                     <label for="description">Description <span style="color: var(--danger);">*</span></label>
                     <span class="error-message" id="description-error"></span>
-                </div>
-
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="office_id" name="office_id" placeholder=" " required>
-                    <label for="office_id">Office ID <span style="color: var(--danger);">*</span></label>
-                    <span class="error-message" id="office_id-error"></span>
                 </div>
 
                 <div class="floating-label">
@@ -630,7 +626,6 @@
             $('#name').val(walkin.name);
             $('#color').val(walkin.color);
             $('#description').val(walkin.description);
-            $('#office_id').val(walkin.office_id);
             $('#status').val(walkin.status);
 
             $('.error-message').text('');

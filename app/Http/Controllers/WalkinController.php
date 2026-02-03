@@ -16,15 +16,16 @@ class WalkinController extends Controller
     public function stats()
     {
         try {
+            $officeId = auth()->user()->office_id ?? null;
             $stats = [
-                'total' => Walkin::count(),
-                'active' => Walkin::where('status', 1)->count(),
-                'inactive' => Walkin::where('status', 0)->count(),
-                'completed' => Walkin::where('status', 1)->count(),
-                'pending' => Walkin::where('status', 0)->count(),
-                'cancelled' => Walkin::where('status', 2)->count(),
-                'paid' => Walkin::where('payment_status', 1)->count(),
-                'unpaid' => Walkin::where('payment_status', 0)->count(),
+                'total' => Walkin::where('office_id', $officeId)->count(),
+                'active' => Walkin::where('office_id', $officeId)->where('status', 1)->count(),
+                'inactive' => Walkin::where('office_id', $officeId)->where('status', 0)->count(),
+                'completed' => Walkin::where('office_id', $officeId)->where('status', 1)->count(),
+                'pending' => Walkin::where('office_id', $officeId)->where('status', 0)->count(),
+                'cancelled' => Walkin::where('office_id', $officeId)->where('status', 2)->count(),
+                'paid' => Walkin::where('office_id', $officeId)->where('payment_status', 1)->count(),
+                'unpaid' => Walkin::where('office_id', $officeId)->where('payment_status', 0)->count(),
             ];
 
             return response()->json($stats);
@@ -39,7 +40,8 @@ class WalkinController extends Controller
 
     public function data()
     {
-        $walkins = Walkin::select([
+        $officeId = auth()->user()->office_id ?? null;
+        $walkins = Walkin::where('office_id', $officeId)->select([
             'id',
             'email',
             'accountID',
@@ -107,7 +109,8 @@ class WalkinController extends Controller
 
     public function show($id)
     {
-        $walkin = Walkin::findOrFail($id);
+        $officeId = auth()->user()->office_id ?? null;
+        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
         return response()->json($walkin);
     }
 
@@ -122,8 +125,9 @@ class WalkinController extends Controller
             'office_id' => 'required',
             'status' => 'required|in:0,1'
         ]);
+        $officeId = auth()->user()->office_id ?? null;
 
-        $walkin = Walkin::findOrFail($id);
+        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
         $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'office_id', 'status']);
 
         $walkin->update($data);
@@ -137,11 +141,12 @@ class WalkinController extends Controller
 
     public function destroy($id)
     {
-        $walkin = Walkin::findOrFail($id);
+        $officeId = auth()->user()->office_id ?? null;
+        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
         $walkin->delete();
-        
+
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'message' => 'Walk-in client record deleted successfully'
         ]);
     }
@@ -153,7 +158,8 @@ class WalkinController extends Controller
             'remarks' => 'required_if:status,2'
         ]);
 
-        $walkin = Walkin::findOrFail($id);
+        $officeId = auth()->user()->office_id ?? null;
+        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
         $walkin->status = $request->status;
         $walkin->remarks = $request->remarks;
         $walkin->date_updated = now();

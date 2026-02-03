@@ -20,7 +20,7 @@ class Walkin extends Model
         'color',
         'status',
         'description',
-        'office_id',
+        'office_id', 
         'payment_status',
         'delete_flag'
     ];

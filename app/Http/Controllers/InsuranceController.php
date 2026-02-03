@@ -20,10 +20,12 @@ class InsuranceController extends Controller
 
     public function data() {
         try {
+            $officeId = auth()->user()->office_id ?? null;
             $insurances = \DB::table('insurance_list')
                 ->join('client_list', 'insurance_list.client_id', '=', 'client_list.id')
                 ->join('policy_list', 'insurance_list.policy_id', '=', 'policy_list.id')
                 ->leftJoin('category_list', 'insurance_list.auth_no', '=', 'category_list.id') // Join with category_list
+                ->where('insurance_list.office_id', $officeId)
                 ->select(
                     'insurance_list.id',
                     \DB::raw("CONCAT(client_list.firstname, ' ', client_list.middlename, ' ', client_list.lastname) AS client_name"),
@@ -291,9 +293,10 @@ class InsuranceController extends Controller
 
 
     public function destroy($id) {
-        $insurance = Insurance::findOrFail($id);
+        $officeId = auth()->user()->office_id ?? null;
+        $insurance = Insurance::where('office_id', $officeId)->findOrFail($id);
         $insurance->delete();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Insurance record deleted successfully'

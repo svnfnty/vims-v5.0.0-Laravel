@@ -84,7 +84,17 @@ Route::middleware('auth')->group(function () {
 
     // Other Routes
     Route::get('/application', [ApplicationController::class, 'form'])->name('application.form');
-    Route::get('/policy-series', [PolicySeriesController::class, 'index'])->name('policy.series');
+
+    // Series Routes
+    Route::group(['prefix' => 'series'], function () {
+        Route::get('/', [PolicySeriesController::class, 'index'])->name('policy.series');
+        Route::post('/', [PolicySeriesController::class, 'store'])->name('series.store');
+        Route::get('/data', [PolicySeriesController::class, 'data'])->name('series.data');
+        Route::get('/stats', [PolicySeriesController::class, 'stats'])->name('series.stats');
+        Route::put('/{id}', [PolicySeriesController::class, 'update'])->name('series.update');
+        Route::delete('/{id}', [PolicySeriesController::class, 'destroy'])->name('series.destroy');
+    });
+
     Route::get('/series/api/getseries', [PolicySeriesController::class, 'getSeries'])->name('series.api.getseries');
     Route::get('/usage-history', [UsageHistoryController::class, 'index'])->name('usage.history');
     Route::get('/lto-transactions', [LTOTransactionController::class, 'index'])->name('lto.transactions');
