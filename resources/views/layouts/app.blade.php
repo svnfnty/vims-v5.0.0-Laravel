@@ -32,61 +32,43 @@
     <div class="sidebar d-flex flex-column">
         <div class="sidebar-header d-flex align-items-center mb-3">
             <img src="https://img.icons8.com/ios-filled/50/ffffff/car--v2.png" width="32" class="me-2"/>
-            SAAS GINGOOG 2025
+            <span class="d-none d-xl-inline">SAAS GINGOOG 2025</span>
+            <span class="d-xl-none">SAAS 2025</span>
         </div>
         <nav class="nav flex-column px-2">
             <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                <i class="bi bi-speedometer2 me-1"></i> Dashboard
+                <i class="bi bi-speedometer2 me-1"></i> <span class="nav-text">Dashboard</span>
             </a>
             <a class="nav-link {{ request()->routeIs('clients.index') ? 'active' : '' }}" href="{{ route('clients.index') }}">
-                <i class="bi bi-people me-1"></i> Client List
+                <i class="bi bi-people me-1"></i> <span class="nav-text">Client List</span>
             </a>
             <a class="nav-link {{ request()->routeIs('insurances.index') ? 'active' : '' }}" href="{{ route('insurances.index') }}">
-                <i class="bi bi-journal-check me-1"></i> Issue Insurances
+                <i class="bi bi-journal-check me-1"></i> <span class="nav-text">Issue Insurances</span>
             </a>
-            <!--<div class="mt-3 mb-1 text-uppercase small text-secondary px-2">Forms</div>
-            <a class="nav-link {{ request()->routeIs('application.form') ? 'active' : '' }}" href="{{ route('application.form') }}">
-                <i class="bi bi-file-earmark-text me-1"></i> Application
-            </a>-->
-            <div class="mt-3 mb-1 text-uppercase small text-secondary px-2">Report</div>
+            <div class="mt-3 mb-1 text-uppercase small text-secondary px-2 nav-section">Report</div>
             <a class="nav-link {{ request()->routeIs('policy.series') ? 'active' : '' }}" href="{{ route('policy.series') }}">
-                <i class="bi bi-card-list me-1"></i> Policy Series
+                <i class="bi bi-card-list me-1"></i> <span class="nav-text">Policy Series</span>
             </a>
-            <!--<a class="nav-link {{ request()->routeIs('usage.history') ? 'active' : '' }}" href="{{ route('usage.history') }}">
-                <i class="bi bi-clock-history me-1"></i> Usage History
-            </a>
-            <a class="nav-link {{ request()->routeIs('lto.transactions') ? 'active' : '' }}" href="{{ route('lto.transactions') }}">
-                <i class="bi bi-arrow-left-right me-1"></i> LTO Transactions
-            </a>-->
-            <div class="mt-3 mb-1 text-uppercase small text-secondary px-2">Maintenance</div>
+            <div class="mt-3 mb-1 text-uppercase small text-secondary px-2 nav-section">Maintenance</div>
             <a class="nav-link {{ request()->routeIs('category.index') ? 'active' : '' }}" href="{{ route('category.index') }}">
-                <i class="bi bi-tags me-1"></i> Category List
+                <i class="bi bi-tags me-1"></i> <span class="nav-text">Category List</span>
             </a>
             <a class="nav-link {{ request()->routeIs('policies.index') ? 'active' : '' }}" href="{{ route('policies.index') }}">
-                <i class="bi bi-list-check me-1"></i> Policies List
+                <i class="bi bi-list-check me-1"></i> <span class="nav-text">Policies List</span>
             </a>
             <a class="nav-link {{ request()->routeIs('walkin.index') ? 'active' : '' }}" href="{{ route('walkin.index') }}">
-                <i class="bi bi-person-lines-fill me-1"></i> Walkin List
+                <i class="bi bi-person-lines-fill me-1"></i> <span class="nav-text">Walkin List</span>
             </a>
-            <!--<a class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                <i class="bi bi-person-badge me-1"></i> User List
-            </a>
-            <a class="nav-link {{ request()->routeIs('settings') ? 'active' : '' }}" href="{{ route('settings') }}">
-                <i class="bi bi-gear me-1"></i> Settings
-            </a>
-            <a class="nav-link {{ request()->routeIs('activity') ? 'active' : '' }}" href="{{ route('activity') }}">
-                <i class="bi bi-clock me-1"></i> Activity
-            </a>-->
         </nav>
     </div>
     <div class="main-content">
         <div class="top-navbar d-flex justify-content-between align-items-center">
-            <div>
-                <span class="sidebar-toggle" id="sidebarToggle">☰</span>
-                <span class="fw-bold">VIMSYS SAAS APPLICATION GINGOOG BRANCH - Admin</span>
+            <div class="d-flex align-items-center">
+                <span class="sidebar-toggle d-lg-inline d-none me-2" id="sidebarToggle">☰</span>
+                <span class="fw-bold fs-6 fs-md-5 fs-lg-4">VIMSYS SAAS APPLICATION GINGOOG BRANCH - Admin</span>
             </div>
             <div class="d-flex align-items-center">
-                <i class="bi bi-github fs-4 me-2"></i>
+                <i class="bi bi-github fs-5 me-2 d-none d-md-inline"></i>
                 <div class="dropdown">
                     <span class="fw-bold dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;">
                         - Mr. JUNDEL
@@ -102,7 +84,7 @@
                 </div>
             </div>
         </div>
-        <div class="container-fluid">
+        <div class="container-fluid px-2 px-md-3 px-lg-4">
             <header>
                 @yield('content')
             </header>
