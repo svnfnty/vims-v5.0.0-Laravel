@@ -180,7 +180,8 @@ class WalkinController extends Controller
 
     public function updatePayment(Request $request, $id)
     {
-        $walkin = Walkin::findOrFail($id);
+        $officeId = auth()->user()->office_id ?? null;
+        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
         $walkin->payment_status = !$walkin->payment_status;
         $walkin->date_updated = now();
         $walkin->save();

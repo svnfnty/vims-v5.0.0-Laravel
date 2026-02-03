@@ -11,24 +11,26 @@ class ClientController extends Controller
 {
     public function index()
     {
-        $walkin_list = Walkin::where('delete_flag', 0)->get();
-        return view('clients.client', compact('walkin_list')); 
+        $officeId = auth()->user()->office_id ?? null;
+        $walkin_list = Walkin::where('office_id', $officeId)->where('delete_flag', 0)->get();
+        return view('clients.client', compact('walkin_list'));
     }
 
     public function data()
     {
         try {
+            $officeId = auth()->user()->office_id ?? null;
             $clients = Client::select([
-                'id', 
+                'id',
                 'firstname',
-                'middlename', 
+                'middlename',
                 'lastname',
-                'date_created', 
-                'email', 
-                'address', 
+                'date_created',
+                'email',
+                'address',
                 'status'
-            ])->where('delete_flag', 0)->orderBy('id', 'DESC')->get();
-            
+            ])->where('office_id', $officeId)->where('delete_flag', 0)->orderBy('id', 'DESC')->get();
+
             return response()->json([
                 'data' => $clients
             ]);
@@ -122,7 +124,8 @@ class ClientController extends Controller
                 'status' => 'required|in:0,1'
             ]);
 
-            $client = Client::findOrFail($id);
+            $officeId = auth()->user()->office_id ?? null;
+            $client = Client::where('office_id', $officeId)->findOrFail($id);
             $client->update([
                 'firstname' => $validated['firstname'],
                 'middlename' => $validated['middlename'] ?? '',
@@ -132,10 +135,10 @@ class ClientController extends Controller
                 'markup' => $validated['walkin_list'],
                 'status' => $validated['status'],
             ]);
-            
+
             return response()->json([
-                'success' => true, 
-                'message' => 'Client updated successfully', 
+                'success' => true,
+                'message' => 'Client updated successfully',
                 'data' => $client
             ], 200);
         } catch (\Exception $e) {
