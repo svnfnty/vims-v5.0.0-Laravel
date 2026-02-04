@@ -169,7 +169,7 @@
                 @csrf
                 <input type="hidden" id="insurance_form_method" name="_method" value="POST">
                 <input type="hidden" id="insurance_id" name="insurance_id" value="">
-                
+
                 <!-- All your form fields remain unchanged -->
                 <div class="floating-label">
                     <input type="text" class="form-control" id="modal-mvfile_no" name="mvfile_no" placeholder=" ">
@@ -257,7 +257,7 @@
                     <textarea class="form-control" id="modal-remarks" name="remarks" rows="2" placeholder=" "></textarea>
                     <label for="modal-remarks">Remarks</label>
                 </div>
-            
+
         </div>
         <div class="modal-actions">
             <button type="submit" class="control-btn primary" id="insuranceSubmitBtn">
@@ -269,7 +269,7 @@
         </div>
         </form>
     </div>
-</div> 
+</div>
 
 <!-- Modal Overlay -->
 <div id="insuranceModalOverlay" class="modal-overlay" style="display: none;" onclick="closeInsuranceModal()"></div>

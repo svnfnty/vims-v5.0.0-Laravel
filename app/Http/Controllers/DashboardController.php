@@ -24,11 +24,15 @@ class DashboardController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
+        $officeId = auth()->user()->office_id ?? null;
 
-        $results = Insurance::where('coc_no', 'LIKE', "%$query%")
-            ->orWhere('registration_no', 'LIKE', "%$query%")
+        $results = Insurance::where('office_id', $officeId)
+            ->where(function($q) use ($query) {
+                $q->where('coc_no', 'LIKE', "%$query%")
+                  ->orWhere('registration_no', 'LIKE', "%$query%");
+            })
             ->with('client:id,firstname,lastname')
-            ->get(['coc_no', 'registration_no', 'client_id']);
+            ->get(['id', 'coc_no', 'registration_no', 'client_id']);
 
         return response()->json($results);
     }

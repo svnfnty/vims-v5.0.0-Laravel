@@ -826,11 +826,9 @@ async function handleInsuranceFormSubmit(e) {
         closeInsuranceModal();
         loadInsuranceData();
         loadStatistics();
-        if (typeof Swal !== 'undefined') {
-            Swal.fire({ icon: 'success', title: isUpdate ? 'Updated' : 'Saved', text: data.message || (isUpdate ? 'Insurance updated successfully.' : 'Insurance created successfully.') });
-        } else {
-            alert(data.message || (isUpdate ? 'Insurance updated successfully.' : 'Insurance created successfully.'));
-        }
+
+        // Redirect to view page after successful save/update
+        window.location.href = `/insurances/view/${insuranceId}`;
     } catch (err) {
         if (typeof Swal !== 'undefined') {
             Swal.fire({ icon: 'error', title: 'Error', text: err.message || 'Something went wrong.' });
@@ -847,7 +845,7 @@ async function handleInsuranceFormSubmit(e) {
 
 // View insurance details
 function viewInsuranceDetails(id) {
-    window.location.href = `${manageInsuranceUrl}?id=${id}`;
+    window.location.href = `/insurances/view/${id}`;
 }
 
 // Check policy status
@@ -1010,7 +1008,7 @@ function showAlert(title, message, icon) {
 
 // Open View Insurance Modal
 window.viewInsuranceDetails = function(id) {
-    openViewInsuranceModal(id);
+    window.location.href = `/insurances/view/${id}`;
 };
 
 // Open Edit Insurance Modal

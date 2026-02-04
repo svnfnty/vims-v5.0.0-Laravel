@@ -6,6 +6,7 @@ use App\Models\Insurance;
 use App\Models\Client;
 use App\Models\Policy;
 use App\Models\Category;
+use App\Models\Walkin;
 use Illuminate\Http\Request;
 use DataTables;
 
@@ -292,6 +293,25 @@ class InsuranceController extends Controller
     }
 
 
+    public function show($id) {
+        $officeId = auth()->user()->office_id ?? null;
+        $insurance = Insurance::with('client', 'policy')->where('office_id', $officeId)->findOrFail($id);
+
+        // Compare client's markup with walkin_list name column
+        $legendColor = null;
+        if ($insurance->client && $insurance->client->markup) {
+            $walkin = Walkin::where('name', $insurance->client->markup)
+                            ->where('office_id', $officeId)
+                            ->where('delete_flag', 0)
+                            ->first();
+            if ($walkin) {
+                $legendColor = $walkin->color;
+            }
+        }
+
+        return view('insurances.view', compact('insurance', 'legendColor'));
+    }
+
     public function destroy($id) {
         $officeId = auth()->user()->office_id ?? null;
         $insurance = Insurance::where('office_id', $officeId)->findOrFail($id);
@@ -302,5 +322,5 @@ class InsuranceController extends Controller
             'message' => 'Insurance record deleted successfully'
         ]);
     }
-    
+
 }

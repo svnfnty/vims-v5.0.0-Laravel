@@ -83,39 +83,65 @@
         </div>
     </div>
     <div class="col-md-4">
-        <div class="quick-search mb-4">
-            <div class="d-flex align-items-center mb-2">
-                <i class="bi bi-search me-2 text-dark"></i>
-                <span class="notification-title">Quick Search</span>
+        <!-- Quick Search Card -->
+        <div class="quick-search-card mb-4">
+            <h5><i class="fas fa-search me-2"></i> Quick Search</h5>
+            <p class="text-muted">Search by name, registration number, COC number, etc.</p>
+            <form id="searchForm">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control search-input" id="search" name="search" placeholder="Enter search term...">
+                    <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+            <div id="loader" class="text-center" style="display:none;">
+                <div class="d-flex justify-content-center align-items-center py-3">
+                    <div class="spinner-pulse mr-2"></div>
+                    <span class="ms-2">Searching database...</span>
+                </div>
             </div>
-            <hr>
-            <div class="mb-2 text-muted small">
-                Search by name, registration number, COC number, etc.
-            </div>
-            <input type="text" class="form-control search-input" name="query" placeholder="Enter search term...">
-            <div id="search-results" class="mt-3" style="display: none;">
-                <h5>Search Results:</h5>
-                <ul class="list-group" id="results-list"></ul>
-            </div>
+            <div id="searchResults" class="mt-3"></div>
         </div>
 
         <script>
-            document.querySelector('.search-input').addEventListener('input', function(e) {
+            document.getElementById('search').addEventListener('input', function(e) {
                 const query = e.target.value;
-                if (query.length > 2) { // Trigger search after 3 characters
+                if (query.length >= 3) {
+                    document.getElementById('loader').style.display = 'block';
+                    document.getElementById('searchResults').style.display = 'block';
+                    document.getElementById('searchResults').innerHTML = '';
+
                     fetch(`/dashboard/search?query=${query}`)
                         .then(response => response.json())
                         .then(data => {
-                            const resultsList = document.getElementById('results-list');
-                            resultsList.innerHTML = '';
+                            document.getElementById('loader').style.display = 'none';
+                            const resultsDiv = document.getElementById('searchResults');
+                            if (data.length > 0) {
+                            let resultsHtml = '';
                             data.forEach(item => {
                                 const clientName = item.client ? `${item.client.firstname} ${item.client.lastname}` : 'Unknown Client';
-                                resultsList.innerHTML += `<li class='list-group-item'>COC: ${item.coc_no}, Reg No: ${item.registration_no}, Client: ${clientName}</li>`;
+                                resultsHtml += `
+                                    <div class="card mb-2">
+                                        <div class="card-body">
+                                            <h6 class="card-title">COC: ${item.coc_no}</h6>
+                                            <p class="card-text">Reg No: ${item.registration_no}</p>
+                                            <p class="card-text">Client: ${clientName}</p>
+                                            <a href="/insurances/view/${item.id}" class="btn btn-primary btn-sm">View Details</a>
+                                        </div>
+                                    </div>
+                                `;
                             });
-                            document.getElementById('search-results').style.display = 'block';
+                            resultsDiv.innerHTML = resultsHtml;
+                            } else {
+                                resultsDiv.innerHTML = '<div class="alert alert-info">No results found.</div>';
+                            }
+                        })
+                        .catch(error => {
+                            document.getElementById('loader').style.display = 'none';
+                            document.getElementById('searchResults').innerHTML = '<div class="alert alert-danger">Error loading results</div>';
                         });
                 } else {
-                    document.getElementById('search-results').style.display = 'none';
+                    document.getElementById('searchResults').style.display = 'none';
+                    document.getElementById('loader').style.display = 'none';
                 }
             });
         </script>
@@ -123,6 +149,53 @@
 </div>
 
 <style>
+:root {
+    --primary-color: #4361ee;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+}
+
+/* Quick Search Card */
+.quick-search-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    height: 100%;
+}
+
+.search-input {
+    border-radius: 50px;
+    padding: 12px 20px;
+    border: 1px solid #e0e0e0;
+    transition: var(--transition);
+}
+
+.search-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+}
+
+/* Pulse animation for smaller spinners */
+.spinner-pulse {
+    width: 24px;
+    height: 24px;
+    background-color: var(--primary-color);
+    border-radius: 100%;
+    animation: spinner-pulse 1.0s infinite ease-in-out;
+}
+
+@keyframes spinner-pulse {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1.0);
+        opacity: 0;
+    }
+}
+
 /* Added media queries for mobile responsiveness */
 @media (max-width: 768px) {
     .dashboard-header {
@@ -132,13 +205,13 @@
     .dashboard-cards .card {
         margin-bottom: 1rem;
     }
-    .notifications, .quick-search {
+    .notifications, .quick-search-card {
         margin-bottom: 1rem;
     }
-    .quick-search .search-input {
+    .quick-search-card .search-input {
         width: 100%;
     }
-    .quick-search #search-results {
+    .quick-search-card #searchResults {
         margin-top: 1rem;
     }
     .row.dashboard-cards {
