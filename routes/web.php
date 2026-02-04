@@ -133,7 +133,16 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [OfficeController::class, 'update'])->name('office.update');
         Route::delete('/{id}', [OfficeController::class, 'destroy'])->name('office.destroy');
     });
-    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    // User Routes
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('/', [UserController::class, 'index'])->name('users.index');
+        Route::post('/', [UserController::class, 'store'])->name('users.store');
+        Route::get('/data', [UserController::class, 'data'])->name('users.data');
+        Route::get('/stats', [UserController::class, 'stats'])->name('users.stats');
+        Route::get('/{id}', [UserController::class, 'show'])->name('users.show');
+        Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
+        Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    });
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
     Route::get('/activity', [ActivityController::class, 'index'])->name('activity');
 });
