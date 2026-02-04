@@ -3,7 +3,7 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/view.blade.css') }}">
-
+<link rel="stylesheet" href="{{ asset('css/select2search.blade.css') }}">
 <div class="content py-3">
 
     <div class="card card-outline card-primary rounded-0 shadow">
@@ -413,122 +413,6 @@
     const insuranceDestroyUrl = "/insurances/{{ $insurance->id }}";
     const insurancesIndexUrl = "{{ route('insurances.index') }}";
 </script>
-
-<style>
-/* Reset all default Select2 styles to match regular input */
-.select2-container .select2-selection--single {
-    height: 45px !important;
-    border: 1px solid #ced4da !important;
-    border-radius: 4px !important;
-    background-color: #fff !important;
-    font-family: inherit !important;
-    font-size: 16px !important;
-    color: #212529 !important;
-}
-
-.select2-container .select2-selection--single .select2-selection__rendered {
-    line-height: 45px !important;
-    padding-left: 12px !important;
-    padding-right: 30px !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-}
-
-.select2-container .select2-selection--single .select2-selection__arrow {
-    height: 36px !important;
-    width: 24px !important;
-    right: 1px !important;
-}
-
-.select2-container .select2-selection--single .select2-selection__arrow b {
-    border-color: #6c757d transparent transparent transparent !important;
-    border-width: 5px 4px 0 4px !important;
-    margin-left: -4px !important;
-    margin-top: -2px !important;
-}
-
-.select2-container.select2-container--focus .select2-selection--single {
-    border-color: #86b7fe !important;
-    outline: 0 !important;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-}
-
-.select2-container.select2-container--open .select2-selection--single .select2-selection__arrow b {
-    border-color: transparent transparent #6c757d transparent !important;
-    border-width: 0 4px 5px 4px !important;
-    margin-top: -3px !important;
-}
-
-.floating-label {
-    position: relative;
-}
-
-.floating-label label {
-    position: absolute;
-    top: 50%;
-    left: 12px;
-    transform: translateY(-50%);
-    color: #6c757d;
-    font-size: 14px;
-    transition: all 0.15s ease-in-out;
-    pointer-events: none;
-    background: transparent;
-    padding: 0 4px;
-    z-index: 1;
-}
-
-.select2-container--open ~ label,
-.select2-container--focus ~ label,
-.select2-container--filled ~ label,
-.floating-label select:focus ~ label,
-.floating-label select:not(:placeholder-shown) ~ label {
-    top: 0;
-    transform: translateY(-50%);
-    font-size: 12px;
-    color: #0d6efd;
-    background: white;
-    z-index: 5;
-}
-
-.floating-label label span {
-    color: #dc3545;
-}
-
-.select2-dropdown {
-    border: 1px solid #ced4da !important;
-    border-radius: 4px !important;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
-    margin-top: 4px !important;
-}
-
-.select2-results__option {
-    padding: 8px 12px !important;
-    font-size: 14px !important;
-}
-
-.select2-results__option--highlighted {
-    background-color: #0d6efd !important;
-    color: white !important;
-}
-
-.select2-container--open .select2-dropdown {
-    z-index: 2001 !important;
-}
-
-.select2-container {
-    padding: 0 !important;
-}
-
-.form-control.select2-container {
-    display: block;
-    width: 100%;
-    font-size: 1rem;
-    font-weight: 400;
-    line-height: 1.5;
-    background-clip: padding-box;
-}
-</style>
-
 <script>
     $(document).ready(function() {
         $('.js-example-basic-single').select2({
