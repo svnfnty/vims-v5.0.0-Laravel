@@ -13,8 +13,8 @@
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="icon" href="https://ectpl-vimsys.com/vims-v4.0.0/uploads/logo-1738897187.png" type="image/png">
-    <link rel="stylesheet" href="{{ asset('css/login.blade.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/app.blade.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/login.blade.css') }}">
+    <link rel="stylesheet" href="{{ secure_asset('css/app.blade.css') }}">
 </head>
 <body>
     <div class="login-container">
