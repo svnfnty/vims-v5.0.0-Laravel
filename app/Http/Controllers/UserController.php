@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Office;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Hash;
@@ -11,25 +12,36 @@ class UserController extends Controller
 {
     public function index()
     {
-        return view('user.user');
+        $offices = Office::where('delete_flag', 0)->get();
+        return view('user.user', compact('offices'));
     }
 
     public function stats()
     {
         try {
-            $officeId = auth()->user()->office_id ?? null;
-            if (!$officeId) {
-                return response()->json([
-                    'total' => 0,
-                    'active' => 0,
-                    'inactive' => 0,
-                ]);
+            $userId = auth()->user()->id;
+            if ($userId == 1) {
+                // Superadmin sees all users
+                $stats = [
+                    'total' => User::where('id', '!=', 1)->count(),
+                    'active' => User::where('id', '!=', 1)->where('status', 1)->count(),
+                    'inactive' => User::where('id', '!=', 1)->where('status', 0)->count(),
+                ];
+            } else {
+                $officeId = auth()->user()->office_id ?? null;
+                if (!$officeId) {
+                    return response()->json([
+                        'total' => 0,
+                        'active' => 0,
+                        'inactive' => 0,
+                    ]);
+                }
+                $stats = [
+                    'total' => User::where('office_id', $officeId)->where('id', '!=', 1)->count(),
+                    'active' => User::where('office_id', $officeId)->where('id', '!=', 1)->where('status', 1)->count(),
+                    'inactive' => User::where('office_id', $officeId)->where('id', '!=', 1)->where('status', 0)->count(),
+                ];
             }
-            $stats = [
-                'total' => User::where('office_id', $officeId)->count(),
-                'active' => User::where('office_id', $officeId)->where('status', 1)->count(),
-                'inactive' => User::where('office_id', $officeId)->where('status', 0)->count(),
-            ];
 
             return response()->json($stats);
         } catch (\Exception $e) {
@@ -43,24 +55,45 @@ class UserController extends Controller
 
     public function data()
     {
-        $officeId = auth()->user()->office_id ?? null;
-        $users = User::where('office_id', $officeId)
-            ->where('id', '!=', 1) // Exclude superadmin
-            ->select([
-                'id',
-                'firstname',
-                'middlename',
-                'lastname',
-                'username',
-                'email',
-                'avatar',
-                'type',
-                'status',
-                'permissions',
-                'credit',
-                'office_id',
-                'created_at'
-            ]);
+        $userId = auth()->user()->id;
+        if ($userId == 1) {
+            // Superadmin sees all users
+            $users = User::where('id', '!=', 1) // Exclude superadmin
+                ->select([
+                    'id',
+                    'firstname',
+                    'middlename',
+                    'lastname',
+                    'username',
+                    'email',
+                    'avatar',
+                    'type',
+                    'status',
+                    'permissions',
+                    'credit',
+                    'office_id',
+                    'created_at'
+                ]);
+        } else {
+            $officeId = auth()->user()->office_id ?? null;
+            $users = User::where('office_id', $officeId)
+                ->where('id', '!=', 1) // Exclude superadmin
+                ->select([
+                    'id',
+                    'firstname',
+                    'middlename',
+                    'lastname',
+                    'username',
+                    'email',
+                    'avatar',
+                    'type',
+                    'status',
+                    'permissions',
+                    'credit',
+                    'office_id',
+                    'created_at'
+                ]);
+        }
 
         return DataTables::of($users)
             ->addColumn('full_name', function($user) {
@@ -145,11 +178,17 @@ class UserController extends Controller
             'status' => 'required|in:0,1',
             'permissions' => 'required|in:0,1,2',
             'credit' => 'nullable|numeric',
-            'office_id' => 'required|integer',
+            'office_id' => 'nullable|integer',
         ]);
 
-        $officeId = auth()->user()->office_id ?? null;
-        $user = User::where('office_id', $officeId)->findOrFail($id);
+        $userId = auth()->user()->id;
+        if ($userId == 1) {
+            // Superadmin can update any user
+            $user = User::findOrFail($id);
+        } else {
+            $officeId = auth()->user()->office_id ?? null;
+            $user = User::where('office_id', $officeId)->findOrFail($id);
+        }
 
         $data = $request->only([
             'firstname', 'middlename', 'lastname', 'username', 'email', 'avatar',
@@ -171,8 +210,14 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $officeId = auth()->user()->office_id ?? null;
-        $user = User::where('office_id', $officeId)->findOrFail($id);
+        $userId = auth()->user()->id;
+        if ($userId == 1) {
+            // Superadmin can delete any user
+            $user = User::findOrFail($id);
+        } else {
+            $officeId = auth()->user()->office_id ?? null;
+            $user = User::where('office_id', $officeId)->findOrFail($id);
+        }
         $user->delete();
 
         return response()->json([

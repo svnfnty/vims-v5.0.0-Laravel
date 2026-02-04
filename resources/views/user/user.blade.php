@@ -119,7 +119,7 @@
                         <th>Status</th>
                         <th>Permissions</th>
                         <th>Credit</th>
-                        <th>Office ID</th>
+                        <th>Office</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -235,6 +235,17 @@
                     <span class="error-message" id="credit-error"></span>
                 </div>
 
+                <div class="floating-label">
+                    <select class="form-control" id="office" name="office_id" placeholder=" ">
+                        <option value="">Select Office</option>
+                        @foreach($offices as $office)
+                            <option value="{{ $office->id }}">{{ $office->office_name }}</option>
+                        @endforeach
+                    </select>
+                    <label for="office">Office</label>
+                    <span class="error-message" id="office-error"></span>
+                </div>
+
                 <div class="form-group" id="viewOnlyGroup" style="display: none;">
                     <label class="form-label">Created Date</label>
                     <div class="form-control" style="background: #f8f9fa; border: 1px solid var(--border);" id="createdDateDisplay"></div>
@@ -269,6 +280,7 @@
         store: '{{ route("users.store") }}',
         base: '/users/'
     };
+    window.offices = @json($offices);
 </script>
 <script src="{{ asset('js/user.blade.js') }}"></script>
 @endsection

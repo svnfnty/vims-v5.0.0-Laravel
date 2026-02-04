@@ -11,6 +11,13 @@ $(document).ready(function() {
     let currentView = 'cards';
     let currentMode = 'create'; // create, edit, view
 
+    // Function to get office name by ID
+    function getOfficeName(officeId) {
+        if (!officeId) return 'N/A';
+        const office = window.offices.find(o => o.id == officeId);
+        return office ? office.office_name : 'N/A';
+    }
+
     // Load initial data
     loadStats();
     loadUsers();
@@ -148,6 +155,7 @@ $(document).ready(function() {
         data.forEach(function(user, index) {
             const status = user.status == 1 ? 'active' : 'inactive';
             const statusLabel = user.status == 1 ? 'Verified' : 'Not Verified';
+            const statusType = user.type == 1 ? 'Admin' : 'Staff';
             const fullName = user.firstname + ' ' + (user.middlename ? user.middlename + ' ' : '') + user.lastname;
             const email = user.email || '<span style="color: var(--gray);">No email</span>';
             const createdDate = new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -178,7 +186,7 @@ $(document).ready(function() {
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Type:</span>
-                                <span class="detail-value">${user.type}</span>
+                                <span class="detail-value">${statusType}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Permissions:</span>
@@ -189,8 +197,8 @@ $(document).ready(function() {
                                 <span class="detail-value">${user.credit || 0}</span>
                             </div>
                             <div class="detail-row">
-                                <span class="detail-label">Office ID:</span>
-                                <span class="detail-value">${user.office_id}</span>
+                                <span class="detail-label">Office:</span>
+                                <span class="detail-value">${getOfficeName(user.office_id)}</span>
                             </div>
                         </div>
                     </div>
@@ -266,7 +274,7 @@ $(document).ready(function() {
                     </td>
                     <td>${permissionsText}</td>
                     <td>${user.credit || 0}</td>
-                    <td>${user.office_id}</td>
+                    <td>${getOfficeName(user.office_id)}</td>
                     <td>
                         <div class="action-dropdown">
                             <button class="action-btn">
@@ -413,6 +421,7 @@ $(document).ready(function() {
         $('#status').val(user.status);
         $('#permissions').val(user.permissions);
         $('#credit').val(user.credit);
+        $('#office').val(user.office_id);
 
         $('.error-message').text('');
         $('.form-control').removeClass('error');
@@ -560,7 +569,7 @@ $(document).ready(function() {
             status: $('#status').val(),
             permissions: $('#permissions').val(),
             credit: $('#credit').val(),
-            office_id: $('#office_id').val(),
+            office_id: $('#office').val(),
             _token: $('meta[name="csrf-token"]').attr('content')
         };
 

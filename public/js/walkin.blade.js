@@ -182,10 +182,6 @@ $(document).ready(function() {
                                 <span class="detail-label">Description:</span>
                                 <span class="detail-value">${walkin.description}</span>
                             </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Office ID:</span>
-                                <span class="detail-value">${walkin.office_id}</span>
-                            </div>
                         </div>
                     </div>
 
