@@ -17,9 +17,12 @@ use App\Http\Controllers\WalkinController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ActivityController;
+use App\Models\SystemInfo;
 
 Route::get('/login', function () {
-    return view('auth.login');
+    $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VIMS';
+    $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'SAAS';
+    return view('auth.login', compact('systemName', 'systemShortName'));
 })->name('login')->middleware('guest');
 
 Route::post('/login', function (Request $request) {

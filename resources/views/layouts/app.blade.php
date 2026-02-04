@@ -1,9 +1,10 @@
 {{-- filepath: c:\xampp\htdocs\vims-v5.0.0\resources\views\layouts\app.blade.php --}}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'VIMS')</title>
+    <title>@yield('title', $systemName)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,8 +33,8 @@
     <div class="sidebar d-flex flex-column">
         <div class="sidebar-header d-flex align-items-center mb-3">
             <img src="https://img.icons8.com/ios-filled/50/ffffff/car--v2.png" width="32" class="me-2"/>
-            <span class="d-none d-xl-inline">SAAS GINGOOG 2025</span>
-            <span class="d-xl-none">SAAS 2025</span>
+            <span class="d-none d-xl-inline">{{ $systemShortName }}</span>
+            <span class="d-xl-none">{{ $systemShortName }}</span>
         </div>
         <nav class="nav flex-column px-2">
             <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
@@ -65,13 +66,13 @@
         <div class="top-navbar d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <span class="sidebar-toggle d-lg-inline d-none me-2" id="sidebarToggle">☰</span>
-                <span class="fw-bold fs-6 fs-md-5 fs-lg-4">VIMSYS SAAS APPLICATION GINGOOG BRANCH - Admin</span>
+                <span class="fw-bold fs-6 fs-md-5 fs-lg-4">{{ $systemName }} - Admin</span>
             </div>
             <div class="d-flex align-items-center">
                 <i class="bi bi-github fs-5 me-2 d-none d-md-inline"></i>
                 <div class="dropdown">
                     <span class="fw-bold dropdown-toggle" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="cursor:pointer;">
-                        - Mr. JUNDEL
+                        {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}  
                     </span>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                         <li>

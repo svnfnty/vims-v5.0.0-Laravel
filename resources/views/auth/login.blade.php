@@ -24,8 +24,8 @@
                     <div class="version-badge">v5.0.0 (APO Release)</div>
                     <div class="logo-container">
                         <img src="{{ asset('logo.png') }}" alt="Logo" class="logo">
-                        <div class="system-name">VIMSYS SAAS APPLICATION GINGOOG BRANCH</div>
-                        <div class="system-description">Vehicle Insurance Management System</div>
+                        <div class="system-name">{{ $systemName }}</div>
+                        <div class="system-description"><b>{{ $systemShortName }}</b></div>
                     </div>
                     <ul class="features-list">
                         <li><i class="fas fa-check feature-icon"></i> Improved user interface</li>

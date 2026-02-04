@@ -1,7 +1,7 @@
 {{-- filepath: c:\xampp\htdocs\vims-v5.0.0\resources\views\dashboard.blade.php --}}
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@yield('title', '{{ $systemName }}')
 
 @section('content')
 <br>

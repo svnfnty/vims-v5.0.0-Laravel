@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Walkin List')
+@yield('title', '{{ $systemName }}')
  
 @section('content')
 @php $officeId = auth()->user()->office_id ?? null; @endphp
