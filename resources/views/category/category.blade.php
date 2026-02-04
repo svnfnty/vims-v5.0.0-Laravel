@@ -490,9 +490,19 @@
 
             $('.delete_data').on('click', function() {
                 const id = $(this).data('id');
-                if (confirm('Are you sure you want to delete this category?')) {
-                    deleteCategory(id);
-                }
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You won\'t be able to revert this!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        deleteCategory(id);
+                    }
+                });
             });
         }
 
@@ -739,7 +749,13 @@
                     loadStats();
                     loadCategories();
                     closeCategoryModal();
-                    alert(response.message || 'Operation successful');
+                    Swal.fire({
+                        title: 'Success!',
+                        text: response.message || 'Operation successful',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
                 },
                 error: function(xhr) {
                     console.error('Error:', xhr);
@@ -752,16 +768,36 @@
                             $('#' + key + '-error').text(value[0]);
                             $('#' + key).addClass('error');
                         });
-                        alert('Validation Error: Please check the form fields');
+                        Swal.fire({
+                            title: 'Validation Error!',
+                            text: 'Please check the form fields',
+                            icon: 'error'
+                        });
                     } else if (xhr.status === 419) {
-                        alert('Error: Session expired. Please refresh the page and try again.');
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Session expired. Please refresh the page and try again.',
+                            icon: 'error'
+                        });
                         location.reload();
                     } else if (xhr.status === 404) {
-                        alert('Error: Route not found. Please check your routes configuration.');
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Route not found. Please check your routes configuration.',
+                            icon: 'error'
+                        });
                     } else if (xhr.responseJSON && xhr.responseJSON.error) {
-                        alert('Error: ' + xhr.responseJSON.error);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: xhr.responseJSON.error,
+                            icon: 'error'
+                        });
                     } else {
-                        alert('Error: ' + xhr.status + ' - ' + xhr.statusText);
+                        Swal.fire({
+                            title: 'Error!',
+                            text: xhr.status + ' - ' + xhr.statusText,
+                            icon: 'error'
+                        });
                     }
                 }
             });

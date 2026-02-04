@@ -827,8 +827,17 @@ async function handleInsuranceFormSubmit(e) {
         loadInsuranceData();
         loadStatistics();
 
-        // Redirect to view page after successful save/update
-        window.location.href = `/insurances/view/${insuranceId}`;
+        // Show success message before redirect
+        Swal.fire({
+            title: 'Success!',
+            text: isUpdate ? 'Insurance record updated successfully!' : 'Insurance record added successfully!',
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+        }).then(() => {
+            // Redirect to view page after successful save/update
+            window.location.href = `/insurances/view/${insuranceId}`;
+        });
     } catch (err) {
         if (typeof Swal !== 'undefined') {
             Swal.fire({ icon: 'error', title: 'Error', text: err.message || 'Something went wrong.' });
@@ -1178,34 +1187,54 @@ function openEditInsuranceModal(id) {
 
 // Delete Insurance
 function deleteInsurance(id) {
-    if (!confirm('Are you sure you want to delete this insurance record? This action cannot be undone.')) {
-        return;
-    }
-    
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-    const url = `${insuranceUpdateUrl}/${id}`;
-    
-    fetch(url, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': csrfToken,
-            'X-Requested-With': 'XMLHttpRequest'
+    Swal.fire({
+        title: 'Are you sure?',
+        text: 'You won\'t be able to revert this!',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+            const url = `${insuranceUpdateUrl}/${id}`;
+
+            fetch(url, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    loadInsuranceData();
+                    loadStatistics();
+                    Swal.fire(
+                        'Deleted!',
+                        'Insurance record has been deleted.',
+                        'success'
+                    );
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        data.message || 'Failed to delete insurance record.',
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting insurance:', error);
+                Swal.fire(
+                    'Error!',
+                    'An error occurred while deleting the record.',
+                    'error'
+                );
+            });
         }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            loadInsuranceData();
-            loadStatistics();
-            showAlert('Success', 'Insurance record deleted successfully', 'success');
-        } else {
-            throw new Error(data.message || 'Failed to delete insurance record');
-        }
-    })
-    .catch(error => {
-        console.error('Error deleting insurance:', error);
-        showAlert('Error', error.message || 'Failed to delete insurance record', 'error');
     });
 }
 

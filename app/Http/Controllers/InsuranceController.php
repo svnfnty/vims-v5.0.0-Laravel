@@ -277,7 +277,7 @@ class InsuranceController extends Controller
             'or_no' => $request->or_no,
             'coc_no' => $request->coc_no,
             'policy_no' => $request->policy_no,
-            'mvfile_no' => $request->mvfile_no, 
+            'mvfile_no' => $request->mvfile_no,
             'auth_no' => $request->category_id,
             'status' => $request->status,
             'remarks' => $request->remarks,
@@ -285,11 +285,17 @@ class InsuranceController extends Controller
             'date_updated' => now(),
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Insurance updated successfully',
-            'insurance' => $insurance
-        ]);
+        // Check if this is an AJAX request
+        if ($request->ajax() || $request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Insurance updated successfully',
+                'insurance' => $insurance
+            ]);
+        }
+
+        // For regular form submissions, redirect back with success message
+        return redirect()->back()->with('success', 'Insurance updated successfully');
     }
 
 
