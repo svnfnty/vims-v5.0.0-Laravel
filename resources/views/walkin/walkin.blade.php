@@ -1,7 +1,5 @@
 @extends('layouts.app')
 
-@yield('title', '{{ $systemName }}')
- 
 @section('content')
 @php $officeId = auth()->user()->office_id ?? null; @endphp
 <meta name="csrf-token" content="{{ csrf_token() }}">

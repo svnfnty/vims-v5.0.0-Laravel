@@ -1,7 +1,5 @@
 {{-- filepath: c:\xampp\htdocs\vims-v5.0.0\resources\views\insurances\view.blade.php --}}
-@extends('layouts.app')
-
-@yield('title', '{{ $systemName }}')
+@extends('layouts.app') 
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/view.blade.css') }}">
