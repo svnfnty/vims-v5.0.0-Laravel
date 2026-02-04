@@ -17,15 +17,17 @@ class WalkinController extends Controller
     {
         try {
             $officeId = auth()->user()->office_id ?? null;
+            if (!$officeId) {
+                return response()->json([
+                    'total' => 0,
+                    'active' => 0,
+                    'inactive' => 0,
+                ]);
+            }
             $stats = [
-                'total' => Walkin::where('office_id', $officeId)->count(),
-                'active' => Walkin::where('office_id', $officeId)->where('status', 1)->count(),
-                'inactive' => Walkin::where('office_id', $officeId)->where('status', 0)->count(),
-                'completed' => Walkin::where('office_id', $officeId)->where('status', 1)->count(),
-                'pending' => Walkin::where('office_id', $officeId)->where('status', 0)->count(),
-                'cancelled' => Walkin::where('office_id', $officeId)->where('status', 2)->count(),
-                'paid' => Walkin::where('office_id', $officeId)->where('payment_status', 1)->count(),
-                'unpaid' => Walkin::where('office_id', $officeId)->where('payment_status', 0)->count(),
+                'total' => Walkin::where('office_id', $officeId)->where('delete_flag', 0)->count(),
+                'active' => Walkin::where('office_id', $officeId)->where('status', 1)->where('delete_flag', 0)->count(),
+                'inactive' => Walkin::where('office_id', $officeId)->where('status', 0)->where('delete_flag', 0)->count(),
             ];
 
             return response()->json($stats);
@@ -41,7 +43,7 @@ class WalkinController extends Controller
     public function data()
     {
         $officeId = auth()->user()->office_id ?? null;
-        $walkins = Walkin::where('office_id', $officeId)->select([
+        $walkins = Walkin::where('office_id', $officeId)->where('delete_flag', 0)->select([
             'id',
             'email',
             'accountID',

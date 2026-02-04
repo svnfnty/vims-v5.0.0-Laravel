@@ -60,6 +60,11 @@
             <a class="nav-link {{ request()->routeIs('walkin.index') ? 'active' : '' }}" href="{{ route('walkin.index') }}">
                 <i class="bi bi-person-lines-fill me-1"></i> <span class="nav-text">Walkin List</span>
             </a>
+            @if(Auth::user()->id == 1 && Auth::user()->type == 1)
+            <a class="nav-link {{ request()->routeIs('office.index') ? 'active' : '' }}" href="{{ route('office.index') }}">
+                <i class="bi bi-person-lines-fill me-1"></i> <span class="nav-text">Office List</span>
+            </a>
+            @endif
         </nav>
     </div>
     <div class="main-content">

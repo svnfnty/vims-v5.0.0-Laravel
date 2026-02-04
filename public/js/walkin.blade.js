@@ -319,7 +319,7 @@ $(document).ready(function() {
 
         $(document).on('click', function(e) {
             if (!$(e.target).closest('.action-dropdown').length) {
-                $('.dropdown-menu').removeClass('show');
+                $('.action-dropdown .dropdown-menu').removeClass('show');
             }
         });
 

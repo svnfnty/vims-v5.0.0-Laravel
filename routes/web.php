@@ -14,6 +14,7 @@ use App\Http\Controllers\LTOTransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\WalkinController;
+use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ActivityController;
@@ -120,6 +121,17 @@ Route::middleware('auth')->group(function () {
         Route::get('/stats', [WalkinController::class, 'stats'])->name('walkin.stats');
         Route::put('/{id}', [WalkinController::class, 'update'])->name('walkin.update');
         Route::delete('/{id}', [WalkinController::class, 'destroy'])->name('walkin.destroy');
+    });
+
+    // Office Routes
+    Route::group(['prefix' => 'office'], function () {
+        Route::get('/', [OfficeController::class, 'index'])->name('office.index');
+        Route::post('/', [OfficeController::class, 'store'])->name('office.store');
+        Route::get('/data', [OfficeController::class, 'data'])->name('office.data');
+        Route::get('/stats', [OfficeController::class, 'stats'])->name('office.stats');
+        Route::get('/{id}', [OfficeController::class, 'show'])->name('office.show');
+        Route::put('/{id}', [OfficeController::class, 'update'])->name('office.update');
+        Route::delete('/{id}', [OfficeController::class, 'destroy'])->name('office.destroy');
     });
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
