@@ -11,7 +11,6 @@
     <div class="card card-outline card-primary rounded-0 shadow">
         <div class="card-header">
             <h5 class="card-title">
-                <b>Insurance Details - {{ $insurance->code }}</b>
             </h5>
             <div class="card-tools">
                 <button class="btn btn-outline-success btn-sm shadow rounded-pill px-3"
