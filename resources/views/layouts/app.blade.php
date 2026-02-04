@@ -27,7 +27,7 @@
 <body>
     <div class="mobile-nav">
         <span class="menu-toggle">☰</span>
-        <span class="brand">VIMS</span>
+        <span class="brand">VIMSYS</span>
     </div>
     <div class="sidebar d-flex flex-column">
         <div class="sidebar-header d-flex align-items-center mb-3">

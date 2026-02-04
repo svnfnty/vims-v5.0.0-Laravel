@@ -688,11 +688,50 @@
     }
 
     .categories-grid {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .categories-grid.cards-view,
+    .categories-grid.grid-view {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
     }
 
     .categories-grid.list-view .action-buttons {
         flex-direction: row;
+    }
+
+    .category-card .card-header {
+        padding: 16px 16px 12px;
+    }
+
+    .category-card .card-body {
+        padding: 16px;
+    }
+
+    .category-card .card-footer {
+        padding: 0 16px 16px;
+    }
+
+    .detail-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .detail-label {
+        flex: none;
+        width: auto;
+        text-align: left;
+    }
+
+    .detail-value {
+        text-align: left;
+        flex: none;
+        width: auto;
     }
 
     .modern-table-container {

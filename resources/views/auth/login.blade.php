@@ -13,30 +13,8 @@
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="icon" href="https://ectpl-vimsys.com/vims-v4.0.0/uploads/logo-1738897187.png" type="image/png">
-    <link rel="stylesheet" href="{{ secure_asset('css/login.blade.css') }}">
-    <link rel="stylesheet" href="{{ secure_asset('css/app.blade.css') }}">
-    <style>
-        /* Added media queries for mobile responsiveness */
-        @media (max-width: 768px) {
-            .login-container {
-                flex-direction: column;
-                padding: 1rem;
-            }
-            .login-card {
-                flex-direction: column;
-            }
-            .login-left, .login-right {
-                width: 100%;
-                padding: 1rem;
-            }
-            .form-floating {
-                margin-bottom: 1rem;
-            }
-            .btn-login {
-                width: 100%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ asset('css/login.blade.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.blade.css') }}">
 </head>
 <body>
     <div class="login-container">
