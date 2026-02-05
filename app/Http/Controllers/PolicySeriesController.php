@@ -4,14 +4,26 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Series;
+use App\Models\Office;
 use Illuminate\Support\Facades\Auth;
 
 class PolicySeriesController extends Controller
 {
     public function index()
     {
-        // Return the policy series view
-        return view('series.series');
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        
+        // Get offices list for superadmin dropdown
+        $offices = [];
+        if ($isSuperAdmin) {
+            $offices = Office::where('delete_flag', 0)
+                            ->where('status', 1)
+                            ->orderBy('office_name')
+                            ->get();
+        }
+        
+        return view('series.series', compact('offices', 'isSuperAdmin'));
     }
 
     public function store(Request $request)
@@ -73,11 +85,8 @@ class PolicySeriesController extends Controller
                 'range_stop' => $request->range_stop,
                 'status' => $request->status,
                 'type' => $request->type,
+                'office_id' => $isSuperAdmin ? ($request->office_id ?? $officeId) : $officeId
             ];
-            
-            if (!$isSuperAdmin) {
-                $seriesData['office_id'] = $officeId;
-            }
             
             $series = Series::create($seriesData);
 
@@ -181,7 +190,7 @@ class PolicySeriesController extends Controller
         $user = Auth::user();
         $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
         
-        $seriesQuery = Series::query();
+        $seriesQuery = Series::with('office');
         
         if (!$isSuperAdmin) {
             $seriesQuery->where('office_id', $user->office_id);

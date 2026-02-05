@@ -11,4 +11,12 @@ class Series extends Model
 
     protected $table = 'series'; // Ensure this matches the database table name
     protected $fillable = ['name', 'range_start', 'range_stop', 'created_at', 'status', 'type', 'online', 'office_id'];
+
+    /**
+     * Get the office that owns this series.
+     */
+    public function office()
+    {
+        return $this->belongsTo(Office::class);
+    }
 }

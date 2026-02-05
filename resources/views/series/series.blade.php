@@ -110,7 +110,12 @@
                         <select onchange="showSeries(this.value)" id="select-se" class="js-example-basic-single" style="border-radius: 8px; padding: 0.5rem;">
                             <option value="">Select a policy series to view details...</option>
                             <?php
-                            $seriesList = \App\Models\Series::where('status', 1)->where('office_id', auth()->user()->office_id ?? null)->get();
+                            $isSuperAdmin = (auth()->user()->id == 1 && auth()->user()->office_id == 0);
+                            $seriesQuery = \App\Models\Series::where('status', 1);
+                            if (!$isSuperAdmin) {
+                                $seriesQuery->where('office_id', auth()->user()->office_id ?? null);
+                            }
+                            $seriesList = $seriesQuery->get();
                             foreach ($seriesList as $series) {
                                 echo '<option value="' . $series->id . '">' . htmlspecialchars($series->name) . ' (Range: ' . $series->range_start . ' - ' . $series->range_stop . ')</option>';
                             }
@@ -230,6 +235,19 @@
                     <label for="status">Status <span style="color: var(--danger);">*</span></label>
                     <span class="error-message" id="status-error"></span>
                 </div>
+
+                @if($isSuperAdmin)
+                <div class="floating-label" id="officeSelectGroup">
+                    <select class="form-control" id="office_id" name="office_id" placeholder=" ">
+                        <option value="">Select Office (Optional - defaults to your office)</option>
+                        @foreach($offices as $office)
+                            <option value="{{ $office->id }}">{{ $office->office_name }}</option>
+                        @endforeach
+                    </select>
+                    <label for="office_id">Assign to Office</label>
+                    <span class="error-message" id="office_id-error"></span>
+                </div>
+                @endif
 
                 <div class="form-group" id="viewOnlyGroup" style="display: none;">
                     <label class="form-label">Created Date</label>
