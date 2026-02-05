@@ -382,6 +382,12 @@ $(document).ready(function() {
         $('#viewOnlyGroup').hide();
         $('#clientForm').show();
 
+        // Show office dropdown for superadmin in create mode
+        const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+        if (isSuperAdmin) {
+            $('#officeSelectGroup').show();
+        }
+
         // Show modal with animation
         $('#clientModal, #modalOverlay').show();
 
@@ -432,6 +438,9 @@ $(document).ready(function() {
         $('.form-control').removeClass('error');
         $('#viewOnlyGroup').hide();
         $('#clientForm').show();
+
+        // Hide office dropdown in edit mode - office_id should not be changed
+        $('#officeSelectGroup').hide();
 
         // Show modal with animation
         $('#clientModal, #modalOverlay').show();
@@ -567,6 +576,15 @@ $(document).ready(function() {
             status: $('#status').val(),
             _token: $('meta[name="csrf-token"]').attr('content')
         };
+
+        // Add office_id for superadmin when creating (only in create mode)
+        const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+        if (isSuperAdmin && currentMode === 'create') {
+            const officeId = $('#office_id').val();
+            if (officeId) {
+                formData.office_id = officeId;
+            }
+        }
 
         // Add _method field for PUT requests
         if (method === 'PUT') {

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Walkin;
+use App\Models\Office;
 use Illuminate\Http\Request;
 use DataTables;
  
@@ -22,7 +23,17 @@ class ClientController extends Controller
         }
         
         $walkin_list = $walkinQuery->get();
-        return view('clients.client', compact('walkin_list'));
+        
+        // Get offices list for superadmin dropdown
+        $offices = [];
+        if ($isSuperAdmin) {
+            $offices = Office::where('delete_flag', 0)
+                            ->where('status', 1)
+                            ->orderBy('office_name')
+                            ->get();
+        }
+        
+        return view('clients.client', compact('walkin_list', 'offices', 'isSuperAdmin'));
     }
 
     public function data()
@@ -116,6 +127,9 @@ class ClientController extends Controller
             // Generate auto code: YYYYMMDD-XXX
             $code = $this->generateClientCode();
             
+            // Determine office_id: superadmin can assign to any office, regular users assign to their own office
+            $clientOfficeId = $isSuperAdmin ? ($request->office_id ?? $officeId) : $officeId;
+            
             $client = Client::create([
                 'code' => $code,
                 'firstname' => $validated['firstname'],
@@ -127,7 +141,7 @@ class ClientController extends Controller
                 'status' => $validated['status'],
                 'date_created' => now(),
                 'delete_flag' => 0,
-                'office_id' => $isSuperAdmin ? ($validated['office_id'] ?? $officeId) : $officeId // Add office_id from authenticated user
+                'office_id' => $clientOfficeId
             ]);
 
             return response()->json([
