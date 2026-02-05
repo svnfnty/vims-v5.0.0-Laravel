@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-@php $officeId = auth()->user()->office_id ?? null; @endphp
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
@@ -157,7 +156,6 @@
             <form id="walkinForm" method="POST">
                 @csrf
                 <input type="hidden" id="formMethod" name="_method" value="POST">
-                <input type="hidden" id="office_id" name="office_id" value="{{ $officeId }}">
 
                 <div class="floating-label">
                     <input type="email" class="form-control" id="email" name="email" placeholder=" " required>
@@ -198,6 +196,21 @@
                     <span class="error-message" id="status-error"></span>
                 </div>
 
+                @if($isSuperAdmin)
+                <div class="floating-label" id="officeSelectGroup">
+                    <select class="form-control" id="office_id" name="office_id" placeholder=" ">
+                        <option value="">Select Office (Optional - defaults to your office)</option>
+                        @foreach($offices as $office)
+                            <option value="{{ $office->id }}">{{ $office->office_name }}</option>
+                        @endforeach
+                    </select>
+                    <label for="office_id">Assign to Office</label>
+                    <span class="error-message" id="office_id-error"></span>
+                </div>
+                @else
+                <input type="hidden" id="office_id" name="office_id" value="{{ $officeId }}">
+                @endif
+
                 <div class="form-group" id="viewOnlyGroup" style="display: none;">
                     <label class="form-label">Created Date</label>
                     <div class="form-control" style="background: #f8f9fa; border: 1px solid var(--border);" id="createdDateDisplay"></div>
@@ -235,6 +248,7 @@
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
     window.userId = {{ auth()->user()->id ?? 0 }};
     window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
+    window.isSuperAdmin = {{ $isSuperAdmin ? 'true' : 'false' }};
 </script>
 <script src="{{ asset('js/walkin.blade.js') }}"></script>
 @endsection

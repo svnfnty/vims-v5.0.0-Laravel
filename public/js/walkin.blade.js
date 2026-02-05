@@ -370,6 +370,11 @@ $(document).ready(function() {
         $('#viewOnlyGroup').hide();
         $('#walkinForm').show();
 
+        // Show office dropdown for superadmin in create mode
+        if (window.isSuperAdmin) {
+            $('#officeSelectGroup').show();
+        }
+
         // Show modal with animation
         $('#walkinModal, #modalOverlay').show();
 
@@ -420,6 +425,9 @@ $(document).ready(function() {
         $('.form-control').removeClass('error');
         $('#viewOnlyGroup').hide();
         $('#walkinForm').show();
+
+        // Hide office dropdown in edit mode - office_id should not be changed
+        $('#officeSelectGroup').hide();
 
         // Show modal with animation
         $('#walkinModal, #modalOverlay').show();
@@ -552,10 +560,20 @@ $(document).ready(function() {
             name: $('#name').val(),
             color: $('#color').val(),
             description: $('#description').val(),
-            office_id: $('#office_id').val(),
             status: $('#status').val(),
             _token: $('meta[name="csrf-token"]').attr('content')
         };
+
+        // Add office_id for superadmin when creating (only in create mode)
+        if (window.isSuperAdmin && currentMode === 'create') {
+            const officeId = $('#office_id').val();
+            if (officeId) {
+                formData.office_id = officeId;
+            }
+        } else if (!window.isSuperAdmin) {
+            // Regular users always use their own office_id from the hidden field
+            formData.office_id = $('#office_id').val();
+        }
 
         // Add _method field for PUT requests
         if (method === 'PUT') {

@@ -10,7 +10,20 @@ class WalkinController extends Controller
 {
     public function index()
     {
-        return view('walkin.walkin');
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        // Get offices list for superadmin dropdown
+        $offices = [];
+        if ($isSuperAdmin) {
+            $offices = \App\Models\Office::where('delete_flag', 0)
+                            ->where('status', 1)
+                            ->orderBy('office_name')
+                            ->get();
+        }
+        
+        return view('walkin.walkin', compact('isSuperAdmin', 'offices', 'officeId'));
     }
 
     public function stats()
@@ -109,17 +122,24 @@ class WalkinController extends Controller
 
     public function store(Request $request)
     {
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+
         $request->validate([
             'email' => 'required|email',
             'accountID' => 'required',
             'name' => 'required',
             'color' => 'required',
             'description' => 'required',
-            'office_id' => 'required',
             'status' => 'required|in:0,1'
         ]);
 
-        $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'office_id', 'status']);
+        // Determine office_id: superadmin can assign to any office, regular users assign to their own office
+        $walkinOfficeId = $isSuperAdmin ? ($request->office_id ?? $officeId) : $officeId;
+
+        $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'status']);
+        $data['office_id'] = $walkinOfficeId;
 
         $walkin = Walkin::create($data);
 
@@ -154,7 +174,6 @@ class WalkinController extends Controller
             'name' => 'required',
             'color' => 'required',
             'description' => 'required',
-            'office_id' => 'required',
             'status' => 'required|in:0,1'
         ]);
         
@@ -169,7 +188,9 @@ class WalkinController extends Controller
         }
         
         $walkin = $walkinQuery->firstOrFail();
-        $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'office_id', 'status']);
+        
+        // Do NOT update office_id - it should remain unchanged
+        $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'status']);
 
         $walkin->update($data);
 
