@@ -40,8 +40,10 @@ class InsuranceController extends Controller
                 ->join('client_list', 'insurance_list.client_id', '=', 'client_list.id')
                 ->join('policy_list', 'insurance_list.policy_id', '=', 'policy_list.id')
                 ->leftJoin('category_list', 'insurance_list.auth_no', '=', 'category_list.id') // Join with category_list
+                ->leftJoin('office_list', 'insurance_list.office_id', '=', 'office_list.id') // Join with office_list
                 ->select(
                     'insurance_list.id',
+                    'insurance_list.office_id',
                     \DB::raw("CONCAT(client_list.firstname, ' ', client_list.middlename, ' ', client_list.lastname) AS client_name"),
                     'policy_list.name AS policy_name',
                     'insurance_list.code',
@@ -63,7 +65,8 @@ class InsuranceController extends Controller
                     'insurance_list.auth_renewal',
                     'insurance_list.status',
                     'insurance_list.remarks',
-                    'category_list.name AS category_name' // Add category name to the result
+                    'category_list.name AS category_name', // Add category name to the result
+                    'office_list.office_name AS office_name' // Add office name to the result
                 );
                 
             if (!$isSuperAdmin) {

@@ -152,6 +152,16 @@ function createPolicyCard(insurance, status) {
     const clientName = `${insurance.client_name || 'N/A'}`;
     const categoryName = insurance.category_name || 'Unknown Category';
     
+    // Only show office name for super admin (id=1 and office_id=0)
+    const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+    const officeName = insurance.office_name || 'N/A';
+    const officeDisplay = isSuperAdmin ? `
+        <div class="detail-row">
+            <span class="detail-label">Office:</span>
+            <span class="detail-value">${officeName}</span>
+        </div>
+    ` : '';
+
     card.innerHTML = `
         <div class="card-header">
             <div class="policy-meta">
@@ -183,6 +193,7 @@ function createPolicyCard(insurance, status) {
                         <span class="detail-label">Engine No:</span>
                         <span class="detail-value">${insurance.engine_no || 'N/A'}</span>
                     </div>
+                    ${officeDisplay}
                 </div>
             </div>
             
@@ -1265,6 +1276,16 @@ function createPolicyCard(insurance, status) {
     const clientName = `${insurance.client_name || 'N/A'}`;
     const categoryName = insurance.category_name || 'Unknown Category';
     
+    // Only show office name for super admin (id=1 and office_id=0)
+    const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+    const officeName = insurance.office_name || 'N/A';
+    const officeDisplay = isSuperAdmin ? `
+        <div class="detail-row">
+            <span class="detail-label">Office:</span>
+            <span class="detail-value">${officeName}</span>
+        </div>
+    ` : '';
+    
     card.innerHTML = ` 
         <div class="card-header">
             <div class="policy-meta">
@@ -1299,6 +1320,7 @@ function createPolicyCard(insurance, status) {
                         <span class="detail-label">Engine No:</span>
                         <span class="detail-value">${insurance.engine_no || 'N/A'}</span>
                     </div>
+                    ${officeDisplay}
                 </div>
             </div>
             <div class="policy-type-indicator" style="--policy-color: ${policyColor}">

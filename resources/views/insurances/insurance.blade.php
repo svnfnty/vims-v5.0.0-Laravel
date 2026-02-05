@@ -288,6 +288,8 @@
     const insuranceStoreUrl = "{{ route('insurance.store') }}";
     const insuranceUpdateUrl = "{{ url('insurances') }}";
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
+    window.userId = {{ auth()->user()->id ?? 0 }};
+    window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
 </script>
 
 <script src="{{ asset('js/insurance.blade.js') }}"></script>
@@ -304,4 +306,3 @@
 </script>
 
 @endsection
-
