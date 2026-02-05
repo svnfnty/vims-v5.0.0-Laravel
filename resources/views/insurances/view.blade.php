@@ -281,8 +281,6 @@
     </div>
 </div>
 
-<script src="{{ asset('js/view.blade.js') }}"></script>
-
 <!-- Manage Insurance Modal (for edit) -->
 <div id="manageInsuranceModal" class="modal insurance-form-modal" style="display: none;">
     <div class="modal-content">
@@ -414,6 +412,7 @@
     const insurancesIndexUrl = "{{ route('insurances.index') }}";
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
+<script src="{{ asset('js/view.blade.js') }}"></script>
 <script>
     $(document).ready(function() {
         $('.js-example-basic-single').select2({
