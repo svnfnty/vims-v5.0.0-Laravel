@@ -52,7 +52,8 @@ class ClientController extends Controller
                 'email',
                 'address',
                 'status',
-                'office_id'
+                'office_id',
+                'markup'
             ])->with('office')->where('delete_flag', 0);
             
             if (!$isSuperAdmin) {

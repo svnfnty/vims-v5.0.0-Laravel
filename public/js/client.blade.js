@@ -432,6 +432,7 @@ $(document).ready(function() {
         $('#lastname').val(client.lastname);
         $('#email').val(client.email);
         $('#address').val(client.address);
+        $('#walkin_list').val(client.markup);
         $('#status').val(client.status);
 
         $('.error-message').text('');
