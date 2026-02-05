@@ -827,16 +827,24 @@ async function handleInsuranceFormSubmit(e) {
         loadInsuranceData();
         loadStatistics();
 
+        // Get the insurance ID for redirect (use response data for new records)
+        let redirectId = insuranceId;
+        if (!redirectId && data && data.insurance && data.insurance.id) {
+            redirectId = data.insurance.id;
+        }
+
         // Show success message before redirect
         Swal.fire({
             title: 'Success!',
             text: isUpdate ? 'Insurance record updated successfully!' : 'Insurance record added successfully!',
             icon: 'success',
-            timer: 2000,
+            timer: 200,
             showConfirmButton: false
         }).then(() => {
             // Redirect to view page after successful save/update
-            window.location.href = `/insurances/view/${id}`;
+            if (redirectId) {
+                window.location.href = `/insurances/${redirectId}`;
+            }
         });
     } catch (err) {
         if (typeof Swal !== 'undefined') {
@@ -854,7 +862,7 @@ async function handleInsuranceFormSubmit(e) {
 
 // View insurance details
 function viewInsuranceDetails(id) {
-    window.location.href = `/insurances/view/${id}`;
+    window.location.href = `/insurances/${id}`;
 }
 
 // Check policy status
@@ -1017,7 +1025,7 @@ function showAlert(title, message, icon) {
 
 // Open View Insurance Modal
 window.viewInsuranceDetails = function(id) {
-    window.location.href = `/insurances/view/${id}`;
+    window.location.href = `/insurances/${id}`;
 };
 
 // Open Edit Insurance Modal

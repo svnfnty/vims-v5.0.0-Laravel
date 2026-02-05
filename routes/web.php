@@ -77,7 +77,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/data', [InsuranceController::class, 'data'])->name('insurance.data');
         Route::get('/manage_insurance', [InsuranceController::class, 'manageInsurance'])->name('insurance.manageInsurance');
         Route::get('/next-code', [InsuranceController::class, 'getNextCode'])->name('insurance.nextCode');
-        Route::get('/view/{id}', [InsuranceController::class, 'show'])->name('insurance.show');
+        Route::get('/{id}', [InsuranceController::class, 'show'])->name('insurance.show');
         Route::post('/', [InsuranceController::class, 'store'])->name('insurance.store');
         Route::put('/{id}', [InsuranceController::class, 'update'])->name('insurance.update');
         Route::delete('/{id}', [InsuranceController::class, 'destroy'])->name('insurance.destroy');
