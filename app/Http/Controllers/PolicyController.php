@@ -13,7 +13,10 @@ class PolicyController extends Controller
     public function index()
     {
         $categories = Category::all();
-        return view('policies.policies', compact('categories'));
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $offices = \App\Models\Office::where('status', 1)->get();
+        return view('policies.policies', compact('categories', 'isSuperAdmin', 'offices'));
     }
 
     public function stats()
@@ -45,7 +48,7 @@ class PolicyController extends Controller
         $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
         $officeId = $user->office_id;
         
-        $policiesQuery = Policy::with('category');
+        $policiesQuery = Policy::with(['category', 'office']);
         
         if (!$isSuperAdmin) {
             $policiesQuery->where('office_id', $officeId);
@@ -104,10 +107,20 @@ class PolicyController extends Controller
             'description' => 'nullable'
         ]);
 
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        
         $data = $request->all();
         $data['status'] = $request->has('status') ? 1 : 0;
         $data['date_created'] = now();
-        $data['office_id'] = Auth::user()->office_id;
+        
+        // For superadmin, use selected office_id or default to 0
+        // For regular users, use their office_id
+        if ($isSuperAdmin) {
+            $data['office_id'] = $request->input('office_id', 0);
+        } else {
+            $data['office_id'] = $user->office_id;
+        }
 
         $policy = Policy::create($data);
         
