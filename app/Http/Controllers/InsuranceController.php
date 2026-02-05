@@ -13,7 +13,11 @@ use DataTables;
 class InsuranceController extends Controller
 {
     public function index() {
-        $clients = Client::select('id', 'lastname', 'firstname', 'middlename')->get();
+        $userOfficeId = auth()->user()->office_id ?? null;
+        $clients = Client::select('id', 'lastname', 'firstname', 'middlename')
+            ->where('office_id', $userOfficeId)
+            ->where('delete_flag', '!=', 1)
+            ->get();
         $policies = Policy::select('id', 'name', 'code')->get();
         $categories = Category::select('id', 'name', 'code')->get();
         return view('insurances.insurance', compact('clients', 'policies', 'categories'));
@@ -183,6 +187,22 @@ class InsuranceController extends Controller
             'expiration_date' => 'required|date|after:registration_date',
             'status' => 'required|in:0,1',
         ]);
+
+        // Check if mvfile_no already exists
+        if (Insurance::where('mvfile_no', $request->mvfile_no)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'MVR already found on records cannot issued duplicate not allowed'
+            ], 422);
+        }
+
+        // Check if coc_no already exists
+        if (Insurance::where('coc_no', $request->coc_no)->exists()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Duplicate COC Number. Cannot issued twice'
+            ], 422);
+        }
 
         // Get the office_id from the authenticated user
         $officeId = auth()->user()->office_id ?? null;

@@ -816,14 +816,22 @@ async function handleInsuranceFormSubmit(e) {
         const response = await fetch(url, options);
         const data = await response.json().catch(() => ({}));
 
+        
+
         if (!response.ok) {
+            if (response.status === 422 && data && data.message) {
+                
+                closeInsuranceModal();
+                
+                // Handle duplicate mvfile_no error
+                throw new Error(data.message);
+            }
             const errMsg = (data && typeof data === 'object' && data.errors && typeof data.errors === 'object')
                 ? Object.values(data.errors).flat().filter(Boolean).join(' ')
                 : (data && typeof data === 'object' && data.message) || 'Request failed';
             throw new Error(errMsg);
         }
 
-        closeInsuranceModal();
         loadInsuranceData();
         loadStatistics();
 

@@ -123,7 +123,7 @@
                                             <h6 class="card-title">COC: ${item.coc_no}</h6>
                                             <p class="card-text">Reg No: ${item.registration_no}</p>
                                             <p class="card-text">Client: ${clientName}</p>
-                                            <a href="/insurances/view/${item.id}" class="btn btn-primary btn-sm">View Details</a>
+                                            <a href="/insurances/${item.id}" class="btn btn-primary btn-sm">View Details</a>
                                         </div>
                                     </div>
                                 `;

@@ -10,10 +10,12 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $activeClients = Client::count();
-        $insuredVehicles = Insurance::where('status', 1)->count();
-        $expiredVehicles = Insurance::where('status', 0)->count(); 
-    
+        $officeId = auth()->user()->office_id ?? null;
+
+        $activeClients = Client::where('office_id', $officeId)->count();
+        $insuredVehicles = Insurance::where('office_id', $officeId)->where('status', 1)->count();
+        $expiredVehicles = Insurance::where('office_id', $officeId)->where('status', 0)->count();
+
         return view('dashboard', [
             'activeClients' => $activeClients,
             'insuredVehicles' => $insuredVehicles,

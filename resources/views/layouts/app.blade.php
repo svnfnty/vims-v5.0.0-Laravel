@@ -74,7 +74,7 @@
         <div class="top-navbar d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
                 <span class="sidebar-toggle d-lg-inline d-none me-2" id="sidebarToggle">☰</span>
-                <span class="fw-bold fs-6 fs-md-5 fs-lg-4">{{ $systemName }} - Admin</span>
+                <span class="fw-bold fs-6 fs-md-5 fs-lg-4">{{ $officeName }} - Admin</span>
             </div>
             <div class="d-flex align-items-center">
                 <i class="bi bi-github fs-5 me-2 d-none d-md-inline"></i>
