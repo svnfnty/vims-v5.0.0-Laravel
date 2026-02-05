@@ -401,7 +401,7 @@ async function handleNewInsurance() {
         coc_no: cocNumber,
         or_no: orNumber || cocNumber,
         policy_no: policyNumber || cocNumber
-    }, mvfileResult.existingRecord || null);
+    }, mvfileResult.existingRecord || null, mvfileResult.isCopy || false);
 }
 
 // Show COC Input Dialog
@@ -539,9 +539,11 @@ async function showCocInputDialog() {
     });
 }
 
-// Show MV File Input Dialog (returns { mvfile_no, existingRecord } when mvfile found)
+// Show MV File Input Dialog (returns { mvfile_no, existingRecord, isCopy } when mvfile found)
 async function showMvFileInputDialog() {
     let lastMvFileRecord = null;
+    let isCopyFromOtherOffice = false;
+    let validationComplete = false;
 
     return new Promise((resolve) => {
         const container = document.createElement('div');
@@ -585,6 +587,8 @@ async function showMvFileInputDialog() {
                         statusMessage.textContent = '';
                         recordDetails.style.display = 'none';
                         lastMvFileRecord = null;
+                        isCopyFromOtherOffice = false;
+                        validationComplete = true;
                         return;
                     }
 
@@ -593,7 +597,77 @@ async function showMvFileInputDialog() {
                     statusMessage.className = 'status-message checking';
                     recordDetails.style.display = 'none';
                     lastMvFileRecord = null;
+                    isCopyFromOtherOffice = false;
+                    validationComplete = false;
 
+                    try {
+                        const response = await fetch(insuranceValidateMvFileUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                            },
+                            body: JSON.stringify({ mvfile_no: value })
+                        });
+
+                        const data = await response.json();
+                        validationComplete = true;
+
+                        if (data.exists) {
+                            if (data.sameOffice) {
+                                // Record exists in user's own office - allow editing
+                                statusIndicator.className = 'status-indicator valid';
+                                statusMessage.textContent = 'MV File found in your office records - you can edit this record';
+                                statusMessage.className = 'status-message valid';
+
+                                lastMvFileRecord = data.record;
+                                isCopyFromOtherOffice = false;
+                                recordDetails.innerHTML = createRecordDetailsHTML(data.record, false);
+                                recordDetails.style.display = 'block';
+                            } else {
+                                // Record exists in another office - allow copying
+                                statusIndicator.className = 'status-indicator valid';
+                                statusMessage.textContent = `MV File found in ${data.record?.source_office_name || 'another office'} - you can copy this data to your office`;
+                                statusMessage.className = 'status-message valid';
+
+                                lastMvFileRecord = data.record;
+                                isCopyFromOtherOffice = true;
+                                recordDetails.innerHTML = createRecordDetailsHTML(data.record, true);
+                                recordDetails.style.display = 'block';
+                            }
+                        } else {
+                            // Not found - will create new record
+                            statusIndicator.className = 'status-indicator invalid';
+                            statusMessage.textContent = 'MV File not found - will create new record';
+                            statusMessage.className = 'status-message warning';
+                            recordDetails.style.display = 'none';
+                            lastMvFileRecord = null;
+                            isCopyFromOtherOffice = false;
+                        }
+
+                    } catch (error) {
+                        validationComplete = true;
+                        statusIndicator.className = 'status-indicator error';
+                        statusMessage.textContent = 'Error checking MV File';
+                        statusMessage.className = 'status-message error';
+                        console.error(error);
+                    }
+                });
+            },
+            preConfirm: async () => {
+                const input = document.getElementById('mvfile-input');
+                const value = input.value.trim();
+
+                if (!value) {
+                    Swal.showValidationMessage('MV File number is required!');
+                    return false;
+                }
+
+                // If validation hasn't completed yet, run it now synchronously
+                if (!validationComplete) {
+                    statusIndicator.className = 'status-indicator checking';
+                    statusMessage.textContent = 'Validating...';
+                    
                     try {
                         const response = await fetch(insuranceValidateMvFileUrl, {
                             method: 'POST',
@@ -607,51 +681,18 @@ async function showMvFileInputDialog() {
                         const data = await response.json();
 
                         if (data.exists) {
-                            // Check if the found record belongs to the same office
-                            const recordOfficeId = data.record?.insurance_office_id;
-                            const userOfficeId = window.userOfficeId;
-                            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
-                            
-                            // For non-superadmin, only allow if same office
-                            if (!isSuperAdmin && recordOfficeId != userOfficeId) {
-                                statusIndicator.className = 'status-indicator invalid';
-                                statusMessage.textContent = 'MV File exists in another office - creating new record for your office';
-                                statusMessage.className = 'status-message warning';
-                                lastMvFileRecord = null; // Don't use existing record
-                                recordDetails.style.display = 'none';
-                            } else {
-                                statusIndicator.className = 'status-indicator valid';
-                                statusMessage.textContent = 'MV File found in your office records';
-                                statusMessage.className = 'status-message valid';
-
-                                lastMvFileRecord = data.record;
-                                recordDetails.innerHTML = createRecordDetailsHTML(data.record);
-                                recordDetails.style.display = 'block';
-                            }
+                            lastMvFileRecord = data.record;
+                            isCopyFromOtherOffice = !data.sameOffice;
                         } else {
-                            statusIndicator.className = 'status-indicator invalid';
-                            statusMessage.textContent = 'MV File not found in your office - will create new record';
-                            statusMessage.className = 'status-message warning';
-                            recordDetails.style.display = 'none';
+                            lastMvFileRecord = null;
+                            isCopyFromOtherOffice = false;
                         }
                     } catch (error) {
-                        statusIndicator.className = 'status-indicator error';
-                        statusMessage.textContent = 'Error checking MV File';
-                        statusMessage.className = 'status-message error';
-                        console.error(error);
+                        console.error('Validation error:', error);
                     }
-                });
-            },
-            preConfirm: () => {
-                const input = document.getElementById('mvfile-input');
-                const value = input.value.trim();
-
-                if (!value) {
-                    Swal.showValidationMessage('MV File number is required!');
-                    return false;
                 }
 
-                return { mvfile_no: value, existingRecord: lastMvFileRecord };
+                return { mvfile_no: value, existingRecord: lastMvFileRecord, isCopy: isCopyFromOtherOffice };
             }
         }).then(result => {
             if (result.isConfirmed) {
@@ -691,7 +732,7 @@ function createRecordDetailsHTML(record) {
 }
 
 // Show manage insurance modal: form open and filled with input data; if mvfile found, fill all fields for edit
-async function showManageInsuranceModal(formData, existingRecord) {
+async function showManageInsuranceModal(formData, existingRecord, isCopy = false) {
     const modal = document.getElementById('manageInsuranceModal');
     const overlay = document.getElementById('insuranceModalOverlay');
     const form = document.getElementById('insuranceForm');
@@ -709,42 +750,88 @@ async function showManageInsuranceModal(formData, existingRecord) {
     setModalValue('modal-policy_no', formData.policy_no || '');
 
     if (existingRecord) {
-        document.getElementById('insurance_id').value = existingRecord.insurance_id || '';
-        document.getElementById('insurance_form_method').value = 'PUT';
-        setModalValue('modal-client_id', existingRecord.client_id || '');
-        setModalValue('modal-policy_id', existingRecord.policy_id || '');
-        setModalValue('modal-category_id', existingRecord.auth_no || '');
-        setModalValue('modal-code', existingRecord.insurance_code || existingRecord.code || '');
-        setModalValue('modal-registration_no', existingRecord.registration_no || '');
-        setModalValue('modal-chassis_no', existingRecord.chassis_no || '');
-        setModalValue('modal-engine_no', existingRecord.engine_no || '');
-        setModalValue('modal-vehicle_model', existingRecord.vehicle_model || '');
-        setModalValue('modal-vehicle_color', existingRecord.vehicle_color || '');
-        setModalValue('modal-make', existingRecord.make || '');
-        setModalValue('modal-registration_date', existingRecord.registration_date || '');
-        setModalValue('modal-expiration_date', existingRecord.expiration_date || '');
-        setModalValue('modal-cost', existingRecord.cost ?? '');
-        setModalValue('modal-status', String(existingRecord.insurance_status ?? existingRecord.status ?? '0'));
-        setModalValue('modal-remarks', existingRecord.insurance_remarks || existingRecord.remarks || '');
-        modalTitle.textContent = 'Edit Insurance';
-        submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
-        
-        // CRITICAL: Update Select2 values after modal is shown
-        setTimeout(() => {
-            if (existingRecord.client_id) {
-                $('#modal-client_id').val(existingRecord.client_id).trigger('change');
+        if (isCopy) {
+            // Copy mode: Use data from other office as template but create NEW record
+            document.getElementById('insurance_id').value = '';
+            document.getElementById('insurance_form_method').value = 'POST';
+            modalTitle.textContent = 'Copy Insurance Record to Your Office';
+            submitBtn.innerHTML = '<i class="fas fa-copy"></i> Create Copy in Your Office';
+            
+            // Fill form with copied data but allow editing
+            setModalValue('modal-client_id', '');
+            setModalValue('modal-policy_id', existingRecord.policy_id || '');
+            setModalValue('modal-category_id', existingRecord.auth_no || '');
+            setModalValue('modal-code', '');
+            setModalValue('modal-registration_no', existingRecord.registration_no || '');
+            setModalValue('modal-chassis_no', existingRecord.chassis_no || '');
+            setModalValue('modal-engine_no', existingRecord.engine_no || '');
+            setModalValue('modal-vehicle_model', existingRecord.vehicle_model || '');
+            setModalValue('modal-vehicle_color', existingRecord.vehicle_color || '');
+            setModalValue('modal-make', existingRecord.make || '');
+            setModalValue('modal-registration_date', '');
+            setModalValue('modal-expiration_date', '');
+            setModalValue('modal-cost', '');
+            setModalValue('modal-status', '0');
+            setModalValue('modal-remarks', existingRecord.insurance_remarks || existingRecord.remarks || '');
+            
+            // Reset Select2 values for new record (client must be selected from user's office)
+            setTimeout(() => {
+                $('#modal-client_id').val('').trigger('change');
+                if (existingRecord.policy_id) {
+                    $('#modal-policy_id').val(existingRecord.policy_id).trigger('change');
+                }
+                if (existingRecord.auth_no) {
+                    $('#modal-category_id').val(existingRecord.auth_no).trigger('change');
+                }
+            }, 100);
+            
+            // Show office dropdown for superadmin in copy mode
+            if (officeSelectGroup && window.isSuperAdmin) {
+                officeSelectGroup.style.display = 'block';
+                const officeSelect = document.getElementById('modal-office_id');
+                if (officeSelect) officeSelect.value = '';
+            } else if (officeSelectGroup) {
+                officeSelectGroup.style.display = 'none';
             }
-            if (existingRecord.policy_id) {
-                $('#modal-policy_id').val(existingRecord.policy_id).trigger('change');
+        } else {
+            // Edit mode: Existing record in user's office
+            document.getElementById('insurance_id').value = existingRecord.insurance_id || '';
+            document.getElementById('insurance_form_method').value = 'PUT';
+            setModalValue('modal-client_id', existingRecord.client_id || '');
+            setModalValue('modal-policy_id', existingRecord.policy_id || '');
+            setModalValue('modal-category_id', existingRecord.auth_no || '');
+            setModalValue('modal-code', existingRecord.insurance_code || existingRecord.code || '');
+            setModalValue('modal-registration_no', existingRecord.registration_no || '');
+            setModalValue('modal-chassis_no', existingRecord.chassis_no || '');
+            setModalValue('modal-engine_no', existingRecord.engine_no || '');
+            setModalValue('modal-vehicle_model', existingRecord.vehicle_model || '');
+            setModalValue('modal-vehicle_color', existingRecord.vehicle_color || '');
+            setModalValue('modal-make', existingRecord.make || '');
+            setModalValue('modal-registration_date', existingRecord.registration_date || '');
+            setModalValue('modal-expiration_date', existingRecord.expiration_date || '');
+            setModalValue('modal-cost', existingRecord.cost ?? '');
+            setModalValue('modal-status', String(existingRecord.insurance_status ?? existingRecord.status ?? '0'));
+            setModalValue('modal-remarks', existingRecord.insurance_remarks || existingRecord.remarks || '');
+            modalTitle.textContent = 'Edit Insurance';
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update';
+            
+            // CRITICAL: Update Select2 values after modal is shown
+            setTimeout(() => {
+                if (existingRecord.client_id) {
+                    $('#modal-client_id').val(existingRecord.client_id).trigger('change');
+                }
+                if (existingRecord.policy_id) {
+                    $('#modal-policy_id').val(existingRecord.policy_id).trigger('change');
+                }
+                if (existingRecord.auth_no) {
+                    $('#modal-category_id').val(existingRecord.auth_no).trigger('change');
+                }
+            }, 100);
+            
+            // Hide office dropdown in edit mode - office_id should remain unchanged
+            if (officeSelectGroup) {
+                officeSelectGroup.style.display = 'none';
             }
-            if (existingRecord.auth_no) {
-                $('#modal-category_id').val(existingRecord.auth_no).trigger('change');
-            }
-        }, 100);
-        
-        // Hide office dropdown in edit mode - office_id should remain unchanged
-        if (officeSelectGroup) {
-            officeSelectGroup.style.display = 'none';
         }
     } else {
         setModalValue('modal-client_id', '');

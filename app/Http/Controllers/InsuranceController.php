@@ -127,8 +127,8 @@ class InsuranceController extends Controller
         $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
         $userOfficeId = $user->office_id ?? null;
 
-        // Check if the MV File Number exists in the insurance table for user's office
-        $query = \DB::table('insurance_list')
+        // First, check if the MV File exists in the user's own office
+        $ownOfficeQuery = \DB::table('insurance_list')
             ->join('client_list', 'insurance_list.client_id', '=', 'client_list.id')
             ->join('policy_list', 'insurance_list.policy_id', '=', 'policy_list.id')
             ->select(
@@ -182,20 +182,98 @@ class InsuranceController extends Controller
                 'client_list.date_updated AS client_date_updated',
                 'client_list.office_id AS client_office_id'
             )
-            ->where('insurance_list.mvfile_no', $mvFileNo);
+            ->where('insurance_list.mvfile_no', $mvFileNo)
+            ->where('insurance_list.office_id', $userOfficeId);
 
-        // Filter by office_id for non-superadmin users
+        $ownRecord = $ownOfficeQuery->first();
+
+        if ($ownRecord) {
+            // Record exists in user's own office - allow editing
+            return response()->json([
+                'exists' => true, 
+                'record' => $ownRecord,
+                'sameOffice' => true,
+                'message' => 'MV File found in your office records'
+            ]);
+        }
+
+        // If not in user's office, check if it exists in other offices (for copying)
         if (!$isSuperAdmin) {
-            $query->where('insurance_list.office_id', $userOfficeId);
+            $otherOfficeQuery = \DB::table('insurance_list')
+                ->join('client_list', 'insurance_list.client_id', '=', 'client_list.id')
+                ->join('policy_list', 'insurance_list.policy_id', '=', 'policy_list.id')
+                ->leftJoin('office_list', 'insurance_list.office_id', '=', 'office_list.id')
+                ->select(
+                    'insurance_list.id AS insurance_id',
+                    'insurance_list.client_id',
+                    'insurance_list.policy_id',
+                    'policy_list.name AS policy_name',
+                    'insurance_list.code AS insurance_code',
+                    'insurance_list.document_path',
+                    'insurance_list.registration_no',
+                    'insurance_list.chassis_no',
+                    'insurance_list.engine_no',
+                    'insurance_list.vehicle_model',
+                    'insurance_list.vehicle_color',
+                    'insurance_list.registration_date',
+                    'insurance_list.expiration_date',
+                    'insurance_list.cost',
+                    'insurance_list.new',
+                    'insurance_list.make',
+                    'insurance_list.or_no',
+                    'insurance_list.coc_no',
+                    'insurance_list.policy_no',
+                    'insurance_list.mvfile_no',
+                    'insurance_list.auth_no',
+                    'insurance_list.auth_renewal',
+                    'insurance_list.status AS insurance_status',
+                    'insurance_list.date_created AS insurance_date_created',
+                    'insurance_list.date_updated AS insurance_date_updated',
+                    'insurance_list.image AS insurance_image',
+                    'insurance_list.policy_status',
+                    'insurance_list.policy_daterelease',
+                    'insurance_list.official_datereleased',
+                    'insurance_list.payment',
+                    'insurance_list.rsu',
+                    'insurance_list.remarks AS insurance_remarks',
+                    'insurance_list.office_id AS insurance_office_id',
+                    'office_list.office_name AS source_office_name',
+                    'client_list.id AS client_id',
+                    'client_list.code AS client_code',
+                    'client_list.firstname',
+                    'client_list.middlename',
+                    'client_list.lastname',
+                    'client_list.markup',
+                    'client_list.dob',
+                    'client_list.contact',
+                    'client_list.email',
+                    'client_list.address',
+                    'client_list.image_path',
+                    'client_list.status AS client_status',
+                    'client_list.delete_flag',
+                    'client_list.date_created AS client_date_created',
+                    'client_list.date_updated AS client_date_updated',
+                    'client_list.office_id AS client_office_id'
+                )
+                ->where('insurance_list.mvfile_no', $mvFileNo)
+                ->where('insurance_list.office_id', '!=', $userOfficeId)
+                ->first();
+
+            if ($otherOfficeQuery) {
+                // Record exists in another office - allow copying to user's office
+                return response()->json([
+                    'exists' => true,
+                    'record' => $otherOfficeQuery,
+                    'sameOffice' => false,
+                    'message' => 'MV File found in another office. You can copy this data to create a new record in your office.'
+                ]);
+            }
         }
 
-        $record = $query->first();
-
-        if ($record) {
-            return response()->json(['exists' => true, 'record' => $record]);
-        }
-
-        return response()->json(['exists' => false, 'message' => 'MV File Number does not exist in your office.']);
+        return response()->json([
+            'exists' => false, 
+            'message' => 'MV File Number not found. Will create a new record.'
+        ]);
     }
 
     public function manageInsurance(Request $request)
