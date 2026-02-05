@@ -44,4 +44,9 @@ class Policy extends Model
     {
         return $this->belongsTo(Category::class, 'category_id', 'id'); // Explicitly defining the relationship
     }
+
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'office_id', 'id');
+    }
 }

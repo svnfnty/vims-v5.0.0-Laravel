@@ -29,4 +29,12 @@ class Walkin extends Model
         'date_created' => 'datetime',
         'date_updated' => 'datetime'
     ];
+
+    /**
+     * Get the office that owns the walkin.
+     */
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'office_id');
+    }
 }

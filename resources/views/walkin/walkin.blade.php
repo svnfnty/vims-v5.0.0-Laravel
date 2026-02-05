@@ -117,7 +117,9 @@
                         <th>Color</th>
                         <th>Status</th>
                         <th>Description</th>
-                        <th>Office ID</th>
+                        @if(auth()->user()->id == 1 && auth()->user()->office_id == 0)
+                            <th>Office</th>
+                        @endif
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -231,6 +233,8 @@
         base: '/walkin/'
     };
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
+    window.userId = {{ auth()->user()->id ?? 0 }};
+    window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
 </script>
 <script src="{{ asset('js/walkin.blade.js') }}"></script>
 @endsection

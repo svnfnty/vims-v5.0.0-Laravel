@@ -150,9 +150,19 @@ $(document).ready(function() {
             const statusLabel = walkin.status == 1 ? 'Active' : 'Inactive';
             const email = walkin.email || '<span style="color: var(--gray);">No email</span>';
             const createdDate = new Date(walkin.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            // Only show office name for super admin (id=1 and office_id=0)
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            const officeName = walkin.office ? walkin.office.office_name : 'N/A';
+            const officeDisplay = isSuperAdmin ? `
+                <div class="detail-row">
+                    <span class="detail-label">Office:</span>
+                    <span class="detail-value">${officeName}</span>
+                </div>
+            ` : '';
 
             html += `
-                <div class="walkin-card" data-status="${status}" data-id="${walkin.id}">
+                <div class="walkin-card" data-status="${status}" data-office="${officeName}" data-id="${walkin.id}">
                     <div class="card-header">
                         <div class="walkin-meta">
                             <span class="walkin-id">Walkin #${walkin.id}</span>
@@ -182,6 +192,7 @@ $(document).ready(function() {
                                 <span class="detail-label">Description:</span>
                                 <span class="detail-value">${walkin.description}</span>
                             </div>
+                            ${officeDisplay}
                         </div>
                     </div>
 
@@ -209,12 +220,15 @@ $(document).ready(function() {
         attachCardEventListeners();
     }
 
+
     // Render Table View
     function renderTable(data) {
         if (data.length === 0) {
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            const colspan = isSuperAdmin ? 9 : 8;
             $('#tableBody').html(`
                 <tr>
-                    <td colspan="9">
+                    <td colspan="${colspan}">
                         <div class="empty-state">
                             <div class="empty-icon">
                                 <i class="fas fa-users"></i>
@@ -241,9 +255,14 @@ $(document).ready(function() {
             const statusLabel = walkin.status == 1 ? 'Active' : 'Inactive';
             const email = walkin.email || '<span style="color: var(--gray);">No email</span>';
             const createdDate = new Date(walkin.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            // Only show office name for super admin (id=1 and office_id=0)
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            const officeName = walkin.office ? walkin.office.office_name : 'N/A';
+            const officeDisplay = isSuperAdmin ? `<td>${officeName}</td>` : '';
 
             html += `
-                <tr data-status="${status}" data-id="${walkin.id}">
+                <tr data-status="${status}" data-office="${officeName}" data-id="${walkin.id}">
                     <td class="text-center">${walkin.id}</td>
                     <td>${email}</td>
                     <td>${walkin.accountID}</td>
@@ -253,8 +272,9 @@ $(document).ready(function() {
                         <span class="status-badge ${status}">${statusLabel}</span>
                     </td>
                     <td>${walkin.description}</td>
-                    <td>${walkin.office_id}</td>
+                    ${officeDisplay}
                     <td>
+
                         <div class="action-dropdown">
                             <button class="action-btn">
                                 <i class="fas fa-ellipsis-v"></i>

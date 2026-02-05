@@ -136,10 +136,14 @@
                         <th>Name</th>
                         <th>Range Start</th>
                         <th>Range Stop</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th>Created At</th>
-                        <th>Action</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Created At</th>
+                    @if(auth()->user()->id == 1 && auth()->user()->office_id == 0)
+                        <th>Office</th>
+                    @endif
+                    <th>Action</th>
+
                     </tr>
                 </thead>
                 <tbody id="tableBody">
@@ -263,6 +267,8 @@
         store: '{{ route("series.store") }}'
     };
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
+    window.userId = {{ auth()->user()->id ?? 0 }};
+    window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
 </script>
 
 <script src="{{ asset('js/series.blade.js') }}"></script>

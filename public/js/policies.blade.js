@@ -151,9 +151,19 @@ $(document).ready(function() {
             const categoryName = policy.category ? policy.category.name : 'N/A';
             const cost = policy.cost ? '₱' + parseFloat(policy.cost).toLocaleString() : 'N/A';
             const createdDate = new Date(policy.date_created).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            // Only show office name for super admin (id=1 and office_id=0)
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            const officeName = policy.office ? policy.office.office_name : 'N/A';
+            const officeDisplay = isSuperAdmin ? `
+                <div class="detail-row">
+                    <span class="detail-label">Office:</span>
+                    <span class="detail-value">${officeName}</span>
+                </div>
+            ` : '';
 
             html += `
-                <div class="policy-card" data-status="${status}" data-id="${policy.id}">
+                <div class="policy-card" data-status="${status}" data-office="${officeName}" data-id="${policy.id}">
                     <div class="card-header">
                         <div class="policy-meta">
                             <span class="policy-id">Policy #${policy.id}</span>
@@ -179,6 +189,7 @@ $(document).ready(function() {
                                 <span class="detail-label">Cost:</span>
                                 <span class="detail-value">${cost}</span>
                             </div>
+                            ${officeDisplay}
                         </div>
                     </div>
 
@@ -209,9 +220,11 @@ $(document).ready(function() {
     // Render Table View
     function renderTable(data) {
         if (data.length === 0) {
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            const colspan = isSuperAdmin ? 9 : 8;
             $('#tableBody').html(`
                 <tr>
-                    <td colspan="8">
+                    <td colspan="${colspan}">
                         <div class="empty-state">
                             <div class="empty-icon">
                                 <i class="fas fa-file-contract"></i>
@@ -239,15 +252,21 @@ $(document).ready(function() {
             const categoryName = policy.category ? policy.category.name : 'N/A';
             const cost = policy.cost ? '₱' + parseFloat(policy.cost).toLocaleString() : 'N/A';
             const createdDate = new Date(policy.date_created).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            // Only show office name for super admin (id=1 and office_id=0)
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            const officeName = policy.office ? policy.office.office_name : 'N/A';
+            const officeDisplay = isSuperAdmin ? `<td>${officeName}</td>` : '';
 
             html += `
-                <tr data-status="${status}" data-id="${policy.id}">
+                <tr data-status="${status}" data-office="${officeName}" data-id="${policy.id}">
                     <td class="text-center">${index + 1}</td>
                     <td>${createdDate}</td>
                     <td><strong>${policy.code || 'N/A'}</strong></td>
                     <td>${policy.name || 'N/A'}</td>
                     <td>${categoryName}</td>
                     <td>${cost}</td>
+                    ${officeDisplay}
                     <td class="text-center">
                         <span class="status-badge ${status}">${statusLabel}</span>
                     </td>

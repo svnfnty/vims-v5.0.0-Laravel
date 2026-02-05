@@ -158,9 +158,19 @@ if (typeof $ === 'undefined') {
                 const statusLabel = series.status == 1 ? 'Active' : 'Inactive';
                 const typeLabel = series.type == 0 ? 'Pacific' : (series.type == 1 ? 'Liberty' : 'Stronghold');
                 const createdDate = new Date(series.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                
+                // Only show office name for super admin (id=1 and office_id=0)
+                const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+                const officeName = series.office ? series.office.office_name : 'N/A';
+                const officeDisplay = isSuperAdmin ? `
+                    <div class="detail-row">
+                        <span class="detail-label">Office:</span>
+                        <span class="detail-value">${officeName}</span>
+                    </div>
+                ` : '';
 
                 html += `
-                    <div class="series-card" data-status="${status}" data-id="${series.id}">
+                    <div class="series-card" data-status="${status}" data-office="${officeName}" data-id="${series.id}">
                         <div class="card-header">
                             <div class="series-meta">
                                 <span class="series-id">Series #${series.id}</span>
@@ -182,6 +192,7 @@ if (typeof $ === 'undefined') {
                                     <span class="detail-label">Type:</span>
                                     <span class="detail-value">${typeLabel}</span>
                                 </div>
+                                ${officeDisplay}
                             </div>
                         </div>
 
@@ -211,10 +222,14 @@ if (typeof $ === 'undefined') {
 
         // Render Table View
         function renderTable(data) {
+            // Only show office name for super admin (id=1 and office_id=0)
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            
             if (data.length === 0) {
+                const colspan = isSuperAdmin ? 9 : 8;
                 $('#tableBody').html(`
                     <tr>
-                        <td colspan="8">
+                        <td colspan="${colspan}">
                             <div class="empty-state">
                                 <div class="empty-icon">
                                     <i class="fas fa-list-ol"></i>
@@ -241,9 +256,12 @@ if (typeof $ === 'undefined') {
                 const statusLabel = series.status == 1 ? 'Active' : 'Inactive';
                 const typeLabel = series.type == 0 ? 'Pacific' : (series.type == 1 ? 'Liberty' : 'Stronghold');
                 const createdDate = new Date(series.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+                
+                const officeName = series.office ? series.office.office_name : 'N/A';
+                const officeDisplay = isSuperAdmin ? `<td>${officeName}</td>` : '';
 
                 html += `
-                    <tr data-status="${status}" data-id="${series.id}">
+                    <tr data-status="${status}" data-office="${officeName}" data-id="${series.id}">
                         <td class="text-center">${index + 1}</td>
                         <td><strong>${series.name}</strong></td>
                         <td>${series.range_start}</td>
@@ -253,6 +271,7 @@ if (typeof $ === 'undefined') {
                             <span class="status-badge ${status}">${statusLabel}</span>
                         </td>
                         <td>${createdDate}</td>
+                        ${officeDisplay}
                         <td>
                             <div class="action-dropdown">
                                 <button class="action-btn">

@@ -73,7 +73,7 @@ class WalkinController extends Controller
             'status',
             'description',
             'office_id'
-        ]);
+        ])->with('office');
 
         return DataTables::of($walkins)
             ->addColumn('payment_badge', function($walkin) {
