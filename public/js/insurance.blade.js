@@ -851,16 +851,17 @@ async function handleInsuranceFormSubmit(e) {
         if (!redirectId && data && data.insurance && data.insurance.id) {
             redirectId = data.insurance.id;
         }
-
+        closeInsuranceModal();
         // Show success message before redirect
         Swal.fire({
             title: 'Success!',
             text: isUpdate ? 'Insurance record updated successfully!' : 'Insurance record added successfully!',
             icon: 'success',
-            timer: 200,
+            timer: 2000,
             showConfirmButton: false
         }).then(() => {
             // Redirect to view page after successful save/update
+            
             if (redirectId) {
                 window.location.href = `/insurances/${redirectId}`;
             }
