@@ -256,6 +256,19 @@
                     <label for="modal-remarks">Remarks</label>
                 </div>
 
+                @if($isSuperAdmin)
+                <div class="floating-label" id="officeSelectGroup">
+                    <select class="form-control" id="modal-office_id" name="office_id" placeholder=" ">
+                        <option value="">Select Office (Optional - defaults to your office)</option>
+                        @foreach($offices as $office)
+                            <option value="{{ $office->id }}">{{ $office->office_name }}</option>
+                        @endforeach
+                    </select>
+                    <label for="modal-office_id">Assign to Office</label>
+                    <span class="error-message" id="office_id-error"></span>
+                </div>
+                @endif
+
         </div>
         <div class="modal-actions">
             <button type="submit" class="control-btn primary" id="insuranceSubmitBtn">
@@ -290,6 +303,7 @@
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
     window.userId = {{ auth()->user()->id ?? 0 }};
     window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
+    window.isSuperAdmin = {{ $isSuperAdmin ? 'true' : 'false' }};
 </script>
 
 <script src="{{ asset('js/insurance.blade.js') }}"></script>

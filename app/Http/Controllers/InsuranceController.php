@@ -27,7 +27,14 @@ class InsuranceController extends Controller
         $clients = $clientsQuery->get();
         $policies = Policy::select('id', 'name', 'code')->get();
         $categories = Category::select('id', 'name', 'code')->get();
-        return view('insurances.insurance', compact('clients', 'policies', 'categories'));
+        
+        // Get offices for superadmin dropdown
+        $offices = [];
+        if ($isSuperAdmin) {
+            $offices = \DB::table('office_list')->select('id', 'office_name')->get();
+        }
+        
+        return view('insurances.insurance', compact('clients', 'policies', 'categories', 'isSuperAdmin', 'offices'));
     }
 
     public function data() {
@@ -221,8 +228,13 @@ class InsuranceController extends Controller
             ], 422);
         }
 
-        // Get the office_id from the authenticated user
-        $officeId = auth()->user()->office_id ?? null;
+        // Get the office_id - for superadmin use request value if provided, otherwise use user's office
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $isSuperAdmin && $request->has('office_id') && $request->office_id 
+            ? $request->office_id 
+            : ($user->office_id ?? null);
+        
         // Get the policy cost from policy_list table
         $policy = Policy::select('cost')->findOrFail($request->policy_id);
         $policyCost = $policy->cost;
@@ -292,9 +304,6 @@ class InsuranceController extends Controller
             'status' => 'required|in:0,1',
         ]);
 
-        // Get the office_id from the authenticated user
-        $officeId = auth()->user()->office_id ?? null;
-
         // Get the policy cost from policy_list table
         $policy = Policy::select('cost')->findOrFail($request->policy_id);
         $policyCost = $policy->cost;
@@ -318,7 +327,7 @@ class InsuranceController extends Controller
             'auth_no' => $request->category_id,
             'status' => $request->status,
             'remarks' => $request->remarks,
-            'office_id' => $officeId, // Update with the current user's office_id
+            // Note: office_id is NOT updated here - it remains unchanged
             'date_updated' => now(),
         ]);
 

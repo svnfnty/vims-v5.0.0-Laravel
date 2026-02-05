@@ -683,6 +683,7 @@ async function showManageInsuranceModal(formData, existingRecord) {
     const form = document.getElementById('insuranceForm');
     const submitBtn = document.getElementById('insuranceSubmitBtn');
     const modalTitle = document.getElementById('manageInsuranceModalTitle');
+    const officeSelectGroup = document.getElementById('officeSelectGroup');
     if (!modal || !form) return;
 
     // Reset and fill entry data from wizard
@@ -726,6 +727,11 @@ async function showManageInsuranceModal(formData, existingRecord) {
                 $('#modal-category_id').val(existingRecord.auth_no).trigger('change');
             }
         }, 100);
+        
+        // Hide office dropdown in edit mode - office_id should remain unchanged
+        if (officeSelectGroup) {
+            officeSelectGroup.style.display = 'none';
+        }
     } else {
         setModalValue('modal-client_id', '');
         setModalValue('modal-policy_id', '');
@@ -750,6 +756,16 @@ async function showManageInsuranceModal(formData, existingRecord) {
             $('#modal-policy_id').val('').trigger('change');
             $('#modal-category_id').val('').trigger('change');
         }, 100);
+        
+        // Show office dropdown for superadmin in create mode
+        if (officeSelectGroup && window.isSuperAdmin) {
+            officeSelectGroup.style.display = 'block';
+            // Reset office selection
+            const officeSelect = document.getElementById('modal-office_id');
+            if (officeSelect) officeSelect.value = '';
+        } else if (officeSelectGroup) {
+            officeSelectGroup.style.display = 'none';
+        }
     }
     
     // Show modal first
@@ -800,6 +816,17 @@ async function handleInsuranceFormSubmit(e) {
         if (key === '_token' || key === '_method' || key === 'insurance_id') return;
         payload[key] = value;
     });
+
+    // Handle office_id for superadmin
+    // In create mode: include office_id if superadmin selected one
+    // In edit mode: do NOT include office_id (it should remain unchanged)
+    if (!isUpdate && window.isSuperAdmin) {
+        const officeId = document.getElementById('modal-office_id')?.value;
+        if (officeId) {
+            payload.office_id = officeId;
+        }
+    }
+    // If editing, office_id is NOT included in payload - it remains unchanged
 
     const url = isUpdate ? `${insuranceUpdateUrl}/${insuranceId}` : insuranceStoreUrl;
     const method = isUpdate ? 'PUT' : 'POST';
@@ -1126,7 +1153,6 @@ function openViewInsuranceModal(id) {
 }
 
 // Open Edit Insurance Modal
-// Open Edit Insurance Modal
 function openEditInsuranceModal(id) {
     currentMode = 'edit';
     const modal = document.getElementById('manageInsuranceModal');
@@ -1134,6 +1160,7 @@ function openEditInsuranceModal(id) {
     const form = document.getElementById('insuranceForm');
     const submitBtn = document.getElementById('insuranceSubmitBtn');
     const modalTitle = document.getElementById('manageInsuranceModalTitle');
+    const officeSelectGroup = document.getElementById('officeSelectGroup');
     
     if (!modal || !form) return;
     
@@ -1181,6 +1208,11 @@ function openEditInsuranceModal(id) {
                 control.removeAttribute('readonly');
                 control.removeAttribute('disabled');
             });
+            
+            // Hide office dropdown in edit mode - office_id should remain unchanged
+            if (officeSelectGroup) {
+                officeSelectGroup.style.display = 'none';
+            }
             
             // Show modal first
             modal.style.display = 'flex';
