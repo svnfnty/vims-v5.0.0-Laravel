@@ -749,17 +749,29 @@ async function showManageInsuranceModal(formData, existingRecord, isCopy = false
     setModalValue('modal-or_no', formData.or_no || '');
     setModalValue('modal-policy_no', formData.policy_no || '');
 
-    if (existingRecord) {
-        if (isCopy) {
-            // Copy mode: Use data from other office as template but create NEW record
-            document.getElementById('insurance_id').value = '';
-            document.getElementById('insurance_form_method').value = 'POST';
-            modalTitle.textContent = 'Copy Insurance Record to Your Office';
-            submitBtn.innerHTML = '<i class="fas fa-copy"></i> Create Copy in Your Office';
-            
-            // Fill form with copied data but allow editing
-            setModalValue('modal-client_id', '');
-            setModalValue('modal-policy_id', existingRecord.policy_id || '');
+        if (existingRecord) {
+            if (isCopy) {
+                // Copy mode: Use data from other office as template but create NEW record
+                document.getElementById('insurance_id').value = '';
+                document.getElementById('insurance_form_method').value = 'POST';
+                modalTitle.textContent = 'Copy Insurance Record to Your Office';
+                submitBtn.innerHTML = '<i class="fas fa-copy"></i> Create Copy in Your Office';
+                
+                // Fill form with copied data but allow editing
+                // Store original client_id with 'clone_' prefix to indicate it needs cloning
+                setModalValue('modal-client_id', 'clone_' + existingRecord.client_id);
+                setModalValue('modal-policy_id', existingRecord.policy_id || '');
+                
+                // Add hidden field to store clone info if not exists
+                let cloneInfoField = document.getElementById('modal-clone_client_id');
+                if (!cloneInfoField) {
+                    cloneInfoField = document.createElement('input');
+                    cloneInfoField.type = 'hidden';
+                    cloneInfoField.id = 'modal-clone_client_id';
+                    form.appendChild(cloneInfoField);
+                }
+                cloneInfoField.value = existingRecord.client_id;
+
             setModalValue('modal-category_id', existingRecord.auth_no || '');
             setModalValue('modal-code', '');
             setModalValue('modal-registration_no', existingRecord.registration_no || '');
@@ -774,16 +786,31 @@ async function showManageInsuranceModal(formData, existingRecord, isCopy = false
             setModalValue('modal-status', '0');
             setModalValue('modal-remarks', existingRecord.insurance_remarks || existingRecord.remarks || '');
             
-            // Reset Select2 values for new record (client must be selected from user's office)
-            setTimeout(() => {
-                $('#modal-client_id').val('').trigger('change');
-                if (existingRecord.policy_id) {
-                    $('#modal-policy_id').val(existingRecord.policy_id).trigger('change');
-                }
-                if (existingRecord.auth_no) {
-                    $('#modal-category_id').val(existingRecord.auth_no).trigger('change');
-                }
-            }, 100);
+                // Set Select2 values - client will be cloned, policy and category are preserved
+                setTimeout(() => {
+                    // Add the cloned client as a temporary option in the dropdown
+                    const clientName = existingRecord.firstname + ' ' + 
+                        (existingRecord.middlename ? existingRecord.middlename + ' ' : '') + 
+                        existingRecord.lastname;
+                    const clientSelect = $('#modal-client_id');
+                    
+                    // Create a new option for the cloned client
+                    const newOption = new Option(
+                        clientName + ' (Will be cloned to your office)', 
+                        'clone_' + existingRecord.client_id, 
+                        true, 
+                        true
+                    );
+                    clientSelect.append(newOption).trigger('change');
+                    
+                    if (existingRecord.policy_id) {
+                        $('#modal-policy_id').val(existingRecord.policy_id).trigger('change');
+                    }
+                    if (existingRecord.auth_no) {
+                        $('#modal-category_id').val(existingRecord.auth_no).trigger('change');
+                    }
+                }, 100);
+
             
             // Show office dropdown for superadmin in copy mode
             if (officeSelectGroup && window.isSuperAdmin) {

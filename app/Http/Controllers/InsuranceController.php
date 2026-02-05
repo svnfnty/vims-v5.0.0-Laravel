@@ -294,7 +294,7 @@ class InsuranceController extends Controller
         $request->validate([
             'mvfile_no' => 'required',
             'coc_no' => 'required',
-            'client_id' => 'required|exists:client_list,id',
+            'client_id' => 'required',
             'policy_id' => 'required|exists:policy_list,id',
             'category_id' => 'required|exists:category_list,id',
             'registration_no' => 'required',
@@ -339,8 +339,40 @@ class InsuranceController extends Controller
             ], 422);
         }
 
-        // officeId already set above during duplicate checks
+        // Handle client cloning if needed
+        $clientId = $request->client_id;
         
+        // If client_id starts with 'clone_' it means we need to clone this client
+        if (strpos($clientId, 'clone_') === 0) {
+            $originalClientId = substr($clientId, 6); // Remove 'clone_' prefix
+            
+            // Get the original client data
+            $originalClient = Client::find($originalClientId);
+            
+            if ($originalClient) {
+                // Create a new client record for this office
+                $newClient = Client::create([
+                    'code' => $this->generateClientCode(),
+                    'lastname' => $originalClient->lastname,
+                    'firstname' => $originalClient->firstname,
+                    'middlename' => $originalClient->middlename,
+                    'markup' => $originalClient->markup,
+                    'dob' => $originalClient->dob,
+                    'contact' => $originalClient->contact,
+                    'email' => $originalClient->email,
+                    'address' => $originalClient->address,
+                    'image_path' => $originalClient->image_path,
+                    'status' => $originalClient->status,
+                    'delete_flag' => 0,
+                    'office_id' => $userOfficeId,
+                    'date_created' => now(),
+                    'date_updated' => now(),
+                ]);
+                
+                $clientId = $newClient->id;
+            }
+        }
+
         // Get the policy cost from policy_list table
         $policy = Policy::select('cost')->findOrFail($request->policy_id);
         $policyCost = $policy->cost;
@@ -359,7 +391,7 @@ class InsuranceController extends Controller
       
 
         $insurance = Insurance::create([
-            'client_id' => $request->client_id,
+            'client_id' => $clientId,
             'policy_id' => $request->policy_id,
             'code' => $newCode,
             'registration_no' => $request->registration_no,
@@ -387,8 +419,29 @@ class InsuranceController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Insurance created successfully',
-            'insurance' => $insurance
+            'insurance' => $insurance,
+            'client_cloned' => strpos($request->client_id, 'clone_') === 0
         ]);
+    }
+
+    /**
+     * Generate a new unique client code
+     */
+    private function generateClientCode()
+    {
+        $currentYearMonth = date('Ym');
+        $lastClient = Client::where('code', 'LIKE', $currentYearMonth . '-%')
+            ->orderBy('code', 'desc')
+            ->first();
+            
+        if ($lastClient) {
+            $lastCode = $lastClient->code;
+            $sequence = (int)substr($lastCode, -4) + 1;
+        } else {
+            $sequence = 1;
+        }
+        
+        return $currentYearMonth . '-' . str_pad($sequence, 4, '0', STR_PAD_LEFT);
     }
 
     public function update(Request $request, $id) {
