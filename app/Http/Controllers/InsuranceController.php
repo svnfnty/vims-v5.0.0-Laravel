@@ -346,23 +346,23 @@ class InsuranceController extends Controller
         if (strpos($clientId, 'clone_') === 0) {
             $originalClientId = substr($clientId, 6); // Remove 'clone_' prefix
             
-            // Get the original client data
-            $originalClient = Client::find($originalClientId);
+            // Check if edited client data was provided
+            $editedClientData = $request->edited_client_data;
             
-            if ($originalClient) {
-                // Create a new client record for this office
+            if ($editedClientData && is_array($editedClientData)) {
+                // Use edited client data for cloning
                 $newClient = Client::create([
                     'code' => $this->generateClientCode(),
-                    'lastname' => $originalClient->lastname,
-                    'firstname' => $originalClient->firstname,
-                    'middlename' => $originalClient->middlename,
-                    'markup' => $originalClient->markup,
-                    'dob' => $originalClient->dob,
-                    'contact' => $originalClient->contact,
-                    'email' => $originalClient->email,
-                    'address' => $originalClient->address,
-                    'image_path' => $originalClient->image_path,
-                    'status' => $originalClient->status,
+                    'lastname' => $editedClientData['lastname'] ?? '',
+                    'firstname' => $editedClientData['firstname'] ?? '',
+                    'middlename' => $editedClientData['middlename'] ?? '',
+                    'markup' => $editedClientData['markup'] ?? '',
+                    'dob' => $editedClientData['dob'] ?? null,
+                    'contact' => $editedClientData['contact'] ?? '',
+                    'email' => $editedClientData['email'] ?? '',
+                    'address' => $editedClientData['address'] ?? '',
+                    'image_path' => null,
+                    'status' => 1,
                     'delete_flag' => 0,
                     'office_id' => $userOfficeId,
                     'date_created' => now(),
@@ -370,6 +370,32 @@ class InsuranceController extends Controller
                 ]);
                 
                 $clientId = $newClient->id;
+            } else {
+                // Get the original client data
+                $originalClient = Client::find($originalClientId);
+                
+                if ($originalClient) {
+                    // Create a new client record for this office
+                    $newClient = Client::create([
+                        'code' => $this->generateClientCode(),
+                        'lastname' => $originalClient->lastname,
+                        'firstname' => $originalClient->firstname,
+                        'middlename' => $originalClient->middlename,
+                        'markup' => $originalClient->markup,
+                        'dob' => $originalClient->dob,
+                        'contact' => $originalClient->contact,
+                        'email' => $originalClient->email,
+                        'address' => $originalClient->address,
+                        'image_path' => $originalClient->image_path,
+                        'status' => $originalClient->status,
+                        'delete_flag' => 0,
+                        'office_id' => $userOfficeId,
+                        'date_created' => now(),
+                        'date_updated' => now(),
+                    ]);
+                    
+                    $clientId = $newClient->id;
+                }
             }
         }
 

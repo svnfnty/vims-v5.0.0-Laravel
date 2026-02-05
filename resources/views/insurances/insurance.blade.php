@@ -282,8 +282,81 @@
     </div>
 </div>
 
+<!-- Client Edit Modal (for editing client info before copying) -->
+<div id="clientEditModal" class="modal insurance-form-modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Edit Client Information</h2>
+            <button type="button" class="modal-close" onclick="closeClientEditModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="clientEditForm">
+                <input type="hidden" id="edit-client-original-id" value="">
+                
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="edit-firstname" name="firstname" placeholder=" " required>
+                    <label for="edit-firstname">First Name <span style="color: var(--danger);">*</span></label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="edit-middlename" name="middlename" placeholder=" ">
+                    <label for="edit-middlename">Middle Name</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="edit-lastname" name="lastname" placeholder=" " required>
+                    <label for="edit-lastname">Last Name <span style="color: var(--danger);">*</span></label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="email" class="form-control" id="edit-email" name="email" placeholder=" ">
+                    <label for="edit-email">Email Address</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="edit-contact" name="contact" placeholder=" ">
+                    <label for="edit-contact">Contact Number</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="date" class="form-control" id="edit-dob" name="dob" placeholder=" ">
+                    <label for="edit-dob">Date of Birth</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="edit-markup" name="markup" placeholder=" ">
+                    <label for="edit-markup">Markup</label>
+                </div>
+
+                <div class="floating-label">
+                    <textarea class="form-control" id="edit-address" name="address" rows="2" placeholder=" "></textarea>
+                    <label for="edit-address">Address</label>
+                </div>
+
+                <div class="original-info" id="originalClientInfo" style="margin-top: 16px; padding: 12px; background: #f8fafc; border-radius: 6px; border-left: 3px solid var(--primary);">
+                    <small style="color: var(--gray); font-size: 13px;">
+                        <i class="fas fa-info-circle" style="color: var(--primary); margin-right: 6px;"></i>
+                        <span id="originalClientName">Original: </span>
+                    </small>
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="control-btn primary" id="clientEditContinueBtn" onclick="submitClientEdit()">
+                <i class="fas fa-check-circle"></i> Continue to Insurance Form
+            </button>
+            <button type="button" class="control-btn secondary" onclick="closeClientEditModal()">
+                <i class="fas fa-times-circle"></i> Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Overlay -->
 <div id="insuranceModalOverlay" class="modal-overlay" style="display: none;" onclick="closeInsuranceModal()"></div>
+<div id="clientEditModalOverlay" class="modal-overlay" style="display: none;" onclick="closeClientEditModal()"></div>
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 

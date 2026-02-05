@@ -395,13 +395,23 @@ async function handleNewInsurance() {
 
     updateProgressStep(3);
 
+    // If copying from another office, show client edit modal first
+    if (mvfileResult.isCopy && mvfileResult.existingRecord) {
+        // Open client edit modal and wait for user to continue
+        openClientEditModal(mvfileResult.existingRecord, cocResult, mvfileResult);
+        // The flow will continue from submitClientEdit()
+        return;
+    }
+
+    updateProgressStep(4);
+
     // Show manage insurance modal filled with data (and previous record if mvfile found)
     showManageInsuranceModal({
         mvfile_no: mvfileResult.mvfile_no,
         coc_no: cocNumber,
         or_no: orNumber || cocNumber,
         policy_no: policyNumber || cocNumber
-    }, mvfileResult.existingRecord || null, mvfileResult.isCopy || false);
+    }, mvfileResult.existingRecord || null, mvfileResult.isCopy || false, null);
 }
 
 // Show COC Input Dialog
@@ -731,8 +741,111 @@ function createRecordDetailsHTML(record) {
     `;
 }
 
+// Client Edit Modal Functions
+let clientEditCallback = null;
+let pendingMvfileResult = null;
+let pendingCocResult = null;
+
+function openClientEditModal(existingRecord, cocResult, mvfileResult) {
+    const modal = document.getElementById('clientEditModal');
+    const overlay = document.getElementById('clientEditModalOverlay');
+    const form = document.getElementById('clientEditForm');
+    
+    if (!modal || !form) return;
+    
+    // Store the results for later use
+    pendingCocResult = cocResult;
+    pendingMvfileResult = mvfileResult;
+    
+    // Pre-fill form with existing client data
+    document.getElementById('edit-client-original-id').value = existingRecord.client_id || '';
+    document.getElementById('edit-firstname').value = existingRecord.firstname || '';
+    document.getElementById('edit-middlename').value = existingRecord.middlename || '';
+    document.getElementById('edit-lastname').value = existingRecord.lastname || '';
+    document.getElementById('edit-email').value = existingRecord.email || '';
+    document.getElementById('edit-contact').value = existingRecord.contact || '';
+    document.getElementById('edit-dob').value = existingRecord.dob || '';
+    document.getElementById('edit-markup').value = existingRecord.markup || '';
+    document.getElementById('edit-address').value = existingRecord.address || '';
+    
+    // Update original client name display
+    const originalName = `${existingRecord.firstname || ''} ${existingRecord.middlename ? existingRecord.middlename + ' ' : ''}${existingRecord.lastname || ''}`;
+    document.getElementById('originalClientName').textContent = `Original: ${originalName}`;
+    
+    // Show modal
+    modal.style.display = 'flex';
+    if (overlay) overlay.style.display = 'block';
+}
+
+function closeClientEditModal() {
+    const modal = document.getElementById('clientEditModal');
+    const overlay = document.getElementById('clientEditModalOverlay');
+    if (modal) modal.style.display = 'none';
+    if (overlay) overlay.style.display = 'none';
+    
+    // Reset stored data
+    pendingCocResult = null;
+    pendingMvfileResult = null;
+}
+
+function submitClientEdit() {
+    const form = document.getElementById('clientEditForm');
+    
+    // Validate required fields
+    const firstname = document.getElementById('edit-firstname').value.trim();
+    const lastname = document.getElementById('edit-lastname').value.trim();
+    
+    if (!firstname) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'First name is required!'
+        });
+        return;
+    }
+    
+    if (!lastname) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'Last name is required!'
+        });
+        return;
+    }
+    
+    // Collect edited client data
+    const editedClientData = {
+        firstname: firstname,
+        middlename: document.getElementById('edit-middlename').value.trim(),
+        lastname: lastname,
+        email: document.getElementById('edit-email').value.trim(),
+        contact: document.getElementById('edit-contact').value.trim(),
+        dob: document.getElementById('edit-dob').value,
+        markup: document.getElementById('edit-markup').value.trim(),
+        address: document.getElementById('edit-address').value.trim()
+    };
+    
+    // Store the pending results locally before closing modal (closeClientEditModal clears them)
+    const localMvfileResult = pendingMvfileResult;
+    const localCocResult = pendingCocResult;
+    
+    // Close the client edit modal
+    closeClientEditModal();
+    
+    // Continue to insurance form with edited data
+    if (localMvfileResult && localCocResult) {
+        updateProgressStep(4);
+        showManageInsuranceModal({
+            mvfile_no: localMvfileResult.mvfile_no,
+            coc_no: localCocResult.cocNumber,
+            or_no: localCocResult.orNumber || localCocResult.cocNumber,
+            policy_no: localCocResult.policyNumber || localCocResult.cocNumber
+        }, localMvfileResult.existingRecord || null, localMvfileResult.isCopy || false, editedClientData);
+    }
+}
+
 // Show manage insurance modal: form open and filled with input data; if mvfile found, fill all fields for edit
-async function showManageInsuranceModal(formData, existingRecord, isCopy = false) {
+async function showManageInsuranceModal(formData, existingRecord, isCopy = false, editedClientData = null) {
     const modal = document.getElementById('manageInsuranceModal');
     const overlay = document.getElementById('insuranceModalOverlay');
     const form = document.getElementById('insuranceForm');
@@ -772,31 +885,48 @@ async function showManageInsuranceModal(formData, existingRecord, isCopy = false
                 }
                 cloneInfoField.value = existingRecord.client_id;
 
-            setModalValue('modal-category_id', existingRecord.auth_no || '');
-            setModalValue('modal-code', '');
-            setModalValue('modal-registration_no', existingRecord.registration_no || '');
-            setModalValue('modal-chassis_no', existingRecord.chassis_no || '');
-            setModalValue('modal-engine_no', existingRecord.engine_no || '');
-            setModalValue('modal-vehicle_model', existingRecord.vehicle_model || '');
-            setModalValue('modal-vehicle_color', existingRecord.vehicle_color || '');
-            setModalValue('modal-make', existingRecord.make || '');
-            setModalValue('modal-registration_date', '');
-            setModalValue('modal-expiration_date', '');
-            setModalValue('modal-cost', '');
-            setModalValue('modal-status', '0');
-            setModalValue('modal-remarks', existingRecord.insurance_remarks || existingRecord.remarks || '');
-            
-                // Set Select2 values - client will be cloned, policy and category are preserved
+                // Add hidden fields for edited client data if available
+                if (editedClientData) {
+                    let editedClientField = document.getElementById('modal-edited_client_data');
+                    if (!editedClientField) {
+                        editedClientField = document.createElement('input');
+                        editedClientField.type = 'hidden';
+                        editedClientField.id = 'modal-edited_client_data';
+                        editedClientField.name = 'edited_client_data';
+                        form.appendChild(editedClientField);
+                    }
+                    editedClientField.value = JSON.stringify(editedClientData);
+                }
+
+                setModalValue('modal-category_id', existingRecord.auth_no || '');
+                setModalValue('modal-code', '');
+                setModalValue('modal-registration_no', existingRecord.registration_no || '');
+                setModalValue('modal-chassis_no', existingRecord.chassis_no || '');
+                setModalValue('modal-engine_no', existingRecord.engine_no || '');
+                setModalValue('modal-vehicle_model', existingRecord.vehicle_model || '');
+                setModalValue('modal-vehicle_color', existingRecord.vehicle_color || '');
+                setModalValue('modal-make', existingRecord.make || '');
+                setModalValue('modal-registration_date', '');
+                setModalValue('modal-expiration_date', '');
+                setModalValue('modal-cost', '');
+                setModalValue('modal-status', '0');
+                setModalValue('modal-remarks', existingRecord.insurance_remarks || existingRecord.remarks || '');
+                
+                // Set Select2 values - client will be cloned with edited data, policy and category are preserved
                 setTimeout(() => {
                     // Add the cloned client as a temporary option in the dropdown
-                    const clientName = existingRecord.firstname + ' ' + 
+                    const clientName = editedClientData ? 
+                        editedClientData.firstname + ' ' + 
+                        (editedClientData.middlename ? editedClientData.middlename + ' ' : '') + 
+                        editedClientData.lastname + ' (Edited - Will be cloned to your office)' :
+                        existingRecord.firstname + ' ' + 
                         (existingRecord.middlename ? existingRecord.middlename + ' ' : '') + 
-                        existingRecord.lastname;
+                        existingRecord.lastname + ' (Will be cloned to your office)';
                     const clientSelect = $('#modal-client_id');
                     
                     // Create a new option for the cloned client
                     const newOption = new Option(
-                        clientName + ' (Will be cloned to your office)', 
+                        clientName, 
                         'clone_' + existingRecord.client_id, 
                         true, 
                         true
@@ -812,15 +942,15 @@ async function showManageInsuranceModal(formData, existingRecord, isCopy = false
                 }, 100);
 
             
-            // Show office dropdown for superadmin in copy mode
-            if (officeSelectGroup && window.isSuperAdmin) {
-                officeSelectGroup.style.display = 'block';
-                const officeSelect = document.getElementById('modal-office_id');
-                if (officeSelect) officeSelect.value = '';
-            } else if (officeSelectGroup) {
-                officeSelectGroup.style.display = 'none';
-            }
-        } else {
+                // Show office dropdown for superadmin in copy mode
+                if (officeSelectGroup && window.isSuperAdmin) {
+                    officeSelectGroup.style.display = 'block';
+                    const officeSelect = document.getElementById('modal-office_id');
+                    if (officeSelect) officeSelect.value = '';
+                } else if (officeSelectGroup) {
+                    officeSelectGroup.style.display = 'none';
+                }
+            } else {
             // Edit mode: Existing record in user's office
             document.getElementById('insurance_id').value = existingRecord.insurance_id || '';
             document.getElementById('insurance_form_method').value = 'PUT';
@@ -944,6 +1074,16 @@ async function handleInsuranceFormSubmit(e) {
         if (key === '_token' || key === '_method' || key === 'insurance_id') return;
         payload[key] = value;
     });
+
+    // Handle edited client data for cloning
+    const editedClientDataField = document.getElementById('modal-edited_client_data');
+    if (editedClientDataField && editedClientDataField.value) {
+        try {
+            payload.edited_client_data = JSON.parse(editedClientDataField.value);
+        } catch (e) {
+            console.error('Error parsing edited client data:', e);
+        }
+    }
 
     // Handle office_id for superadmin
     // In create mode: include office_id if superadmin selected one
