@@ -178,14 +178,14 @@ $(document).ready(function() {
                                 <i class="fas fa-eye"></i>
                                 View
                             </button>
-                            <button class="action-btn-small edit edit_data" data-id="${office.id}">
+                            ${window.userPermissions > 0 ? `<button class="action-btn-small edit edit_data" data-id="${office.id}">
                                 <i class="fas fa-edit"></i>
                                 Edit
-                            </button>
-                            <button class="action-btn-small delete delete_data" data-id="${office.id}">
+                            </button>` : ''}
+                            ${window.userPermissions === 1 ? `<button class="action-btn-small delete delete_data" data-id="${office.id}">
                                 <i class="fas fa-trash"></i>
                                 Delete
-                            </button>
+                            </button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -247,16 +247,16 @@ $(document).ready(function() {
                                     <i class="fas fa-eye"></i>
                                     View
                                 </a>
-                                <div class="dropdown-divider"></div>
+                                ${window.userPermissions > 0 ? `<div class="dropdown-divider"></div>
                                 <button class="dropdown-item edit_data" data-id="${office.id}">
                                     <i class="fas fa-edit"></i>
                                     Edit
-                                </button>
-                                <div class="dropdown-divider"></div>
+                                </button>` : ''}
+                                ${window.userPermissions === 1 ? `<div class="dropdown-divider"></div>
                                 <button class="dropdown-item delete_data" data-id="${office.id}">
                                     <i class="fas fa-trash"></i>
                                     Delete
-                                </button>
+                                </button>` : ''}
                             </div>
                         </div>
                     </td>

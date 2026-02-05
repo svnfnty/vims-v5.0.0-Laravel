@@ -191,14 +191,14 @@ if (typeof $ === 'undefined') {
                                     <i class="fas fa-eye"></i>
                                     View
                                 </button>
-                                <button class="action-btn-small edit edit_data" data-id="${series.id}">
+                                ${window.userPermissions > 0 ? `<button class="action-btn-small edit edit_data" data-id="${series.id}">
                                     <i class="fas fa-edit"></i>
                                     Edit
-                                </button>
-                                <button class="action-btn-small delete delete_data" data-id="${series.id}">
+                                </button>` : ''}
+                                ${window.userPermissions === 1 ? `<button class="action-btn-small delete delete_data" data-id="${series.id}">
                                     <i class="fas fa-trash"></i>
                                     Delete
-                                </button>
+                                </button>` : ''}
                             </div>
                         </div>
                     </div>
@@ -259,22 +259,22 @@ if (typeof $ === 'undefined') {
                                     <i class="fas fa-ellipsis-v"></i>
                                     Actions
                                 </button>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item view_data" data-id="${series.id}">
-                                        <i class="fas fa-eye"></i>
-                                        View
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <button class="dropdown-item edit_data" data-id="${series.id}">
-                                        <i class="fas fa-edit"></i>
-                                        Edit
-                                    </button>
-                                    <div class="dropdown-divider"></div>
-                                    <button class="dropdown-item delete_data" data-id="${series.id}">
-                                        <i class="fas fa-trash"></i>
-                                        Delete
-                                    </button>
-                                </div>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item view_data" data-id="${series.id}">
+                                    <i class="fas fa-eye"></i>
+                                    View
+                                </a>
+                                ${window.userPermissions > 0 ? `<div class="dropdown-divider"></div>
+                                <button class="dropdown-item edit_data" data-id="${series.id}">
+                                    <i class="fas fa-edit"></i>
+                                    Edit
+                                </button>` : ''}
+                                ${window.userPermissions === 1 ? `<div class="dropdown-divider"></div>
+                                <button class="dropdown-item delete_data" data-id="${series.id}">
+                                    <i class="fas fa-trash"></i>
+                                    Delete
+                                </button>` : ''}
+                            </div>
                             </div>
                         </td>
                     </tr>

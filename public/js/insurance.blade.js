@@ -1310,12 +1310,12 @@ function createPolicyCard(insurance, status) {
                 <button class="action-btn-small view" onclick="viewInsuranceDetails(${insurance.id})">
                     <i class="fas fa-eye"></i> View
                 </button>
-                <button class="action-btn-small edit" onclick="editInsuranceDetails(${insurance.id})">
+                ${window.userPermissions > 0 ? `<button class="action-btn-small edit" onclick="editInsuranceDetails(${insurance.id})">
                     <i class="fas fa-edit"></i> Edit
-                </button>
-                <button class="action-btn-small delete" onclick="deleteInsurance(${insurance.id})">
+                </button>` : ''}
+                ${window.userPermissions === 1 ? `<button class="action-btn-small delete" onclick="deleteInsurance(${insurance.id})">
                     <i class="fas fa-trash"></i> Delete
-                </button>
+                </button>` : ''}
             </div>
         </div>
     `;

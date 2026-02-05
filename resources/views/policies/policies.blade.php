@@ -284,6 +284,7 @@
         data: '{{ route("policies.data") }}',
         store: '{{ route("policies.store") }}'
     };
+    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 <script src="{{ asset('js/policies.blade.js') }}"></script>
 @endsection

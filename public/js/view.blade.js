@@ -187,15 +187,27 @@ img.addEventListener('click', openProfile);
 // Event listener for the "View Profile" text click
 overlayText.addEventListener('click', openProfile);
 
-// Edit button functionality
-document.getElementById('edit_data').addEventListener('click', function() {
-    openEditModal();
-});
+// Edit button functionality - only show if user has permissions > 0
+if (window.userPermissions > 0) {
+    document.getElementById('edit_data').addEventListener('click', function() {
+        openEditModal();
+    });
+} else {
+    // Hide edit button if no permission
+    const editBtn = document.getElementById('edit_data');
+    if (editBtn) editBtn.style.display = 'none';
+}
 
-// Delete button functionality
-document.getElementById('delete_data').addEventListener('click', function() {
-    deleteInsurance();
-});
+// Delete button functionality - only show if user has permissions === 1
+if (window.userPermissions === 1) {
+    document.getElementById('delete_data').addEventListener('click', function() {
+        deleteInsurance();
+    });
+} else {
+    // Hide delete button if no permission
+    const deleteBtn = document.getElementById('delete_data');
+    if (deleteBtn) deleteBtn.style.display = 'none';
+}
 
 // Function to open edit modal
 function openEditModal() {

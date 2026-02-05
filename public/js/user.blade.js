@@ -159,7 +159,7 @@ $(document).ready(function() {
             const fullName = user.firstname + ' ' + (user.middlename ? user.middlename + ' ' : '') + user.lastname;
             const email = user.email || '<span style="color: var(--gray);">No email</span>';
             const createdDate = new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
-            const permissionsText = user.permissions == 0 ? 'No Access' : (user.permissions == 1 ? 'Can Modify And Delete' : 'Can Modify Only');
+            const permissionsText = user.permissions == 0 ? 'Only View button visible' : (user.permissions == 1 ? 'View, Edit, and Delete buttons visible' : 'View and Edit buttons visible, Delete hidden');
 
             html += `
                 <div class="user-card" data-status="${status}" data-id="${user.id}">
@@ -209,14 +209,14 @@ $(document).ready(function() {
                                 <i class="fas fa-eye"></i>
                                 View
                             </button>
-                            <button class="action-btn-small edit edit_data" data-id="${user.id}">
+                            ${window.userPermissions > 0 ? `<button class="action-btn-small edit edit_data" data-id="${user.id}">
                                 <i class="fas fa-edit"></i>
                                 Edit
-                            </button>
-                            <button class="action-btn-small delete delete_data" data-id="${user.id}">
+                            </button>` : ''}
+                            ${window.userPermissions === 1 ? `<button class="action-btn-small delete delete_data" data-id="${user.id}">
                                 <i class="fas fa-trash"></i>
                                 Delete
-                            </button>
+                            </button>` : ''}
                         </div>
                     </div>
                 </div>
@@ -286,16 +286,16 @@ $(document).ready(function() {
                                     <i class="fas fa-eye"></i>
                                     View
                                 </a>
-                                <div class="dropdown-divider"></div>
+                                ${window.userPermissions > 0 ? `<div class="dropdown-divider"></div>
                                 <button class="dropdown-item edit_data" data-id="${user.id}">
                                     <i class="fas fa-edit"></i>
                                     Edit
-                                </button>
-                                <div class="dropdown-divider"></div>
+                                </button>` : ''}
+                                ${window.userPermissions === 1 ? `<div class="dropdown-divider"></div>
                                 <button class="dropdown-item delete_data" data-id="${user.id}">
                                     <i class="fas fa-trash"></i>
                                     Delete
-                                </button>
+                                </button>` : ''}
                             </div>
                         </div>
                     </td>

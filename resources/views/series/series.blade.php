@@ -262,6 +262,7 @@
         data: '{{ route("series.data") }}',
         store: '{{ route("series.store") }}'
     };
+    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 
 <script src="{{ asset('js/series.blade.js') }}"></script>

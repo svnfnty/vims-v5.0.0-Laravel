@@ -281,6 +281,7 @@
         base: '/users/'
     };
     window.offices = @json($offices);
+    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 <script src="{{ asset('js/user.blade.js') }}"></script>
 @endsection

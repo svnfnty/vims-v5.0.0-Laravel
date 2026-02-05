@@ -287,6 +287,7 @@
     const manageInsuranceUrl = "{{ route('insurance.manageInsurance') }}";
     const insuranceStoreUrl = "{{ route('insurance.store') }}";
     const insuranceUpdateUrl = "{{ url('insurances') }}";
+    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 
 <script src="{{ asset('js/insurance.blade.js') }}"></script>

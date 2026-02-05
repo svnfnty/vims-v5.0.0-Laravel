@@ -206,6 +206,7 @@
         data: '{{ route("category.data") }}',
         store: '{{ route("category.store") }}'
     };
+    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 <script src="{{ asset('js/category.blade.js') }}"></script>
 @endsection

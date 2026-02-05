@@ -207,6 +207,7 @@
         store: '{{ route("office.store") }}',
         base: '/office/'
     };
+    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 <script src="{{ asset('js/office.blade.js') }}"></script>
 @endsection

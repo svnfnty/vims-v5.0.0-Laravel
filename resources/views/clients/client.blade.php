@@ -237,6 +237,7 @@ window.routes = {
     clientsData: '{{ route("clients.data") }}',
     clientsStore: '{{ route("clients.store") }}'
 };
+window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 <script src="{{ asset('js/client.blade.js') }}"></script>
 @endsection

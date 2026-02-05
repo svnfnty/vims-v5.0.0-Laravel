@@ -412,6 +412,7 @@
     const insuranceUpdateUrl = "/insurances/{{ $insurance->id }}";
     const insuranceDestroyUrl = "/insurances/{{ $insurance->id }}";
     const insurancesIndexUrl = "{{ route('insurances.index') }}";
+    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 <script>
     $(document).ready(function() {

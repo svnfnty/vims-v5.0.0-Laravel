@@ -230,6 +230,7 @@
         store: '{{ route("walkin.store") }}',
         base: '/walkin/'
     };
+    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 <script src="{{ asset('js/walkin.blade.js') }}"></script>
 @endsection
