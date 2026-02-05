@@ -9,6 +9,26 @@ use Illuminate\Http\JsonResponse;
 
 class CategoryController extends Controller
 {
+    /**
+     * Generate unique category code in format YYYYMM-XXXX
+     */
+    private function generateCategoryCode(): string
+    {
+        $prefix = now()->format('Ym'); // YearMonth format: 202602
+        $lastCategory = Category::where('code', 'like', $prefix . '-%')
+            ->orderBy('code', 'desc')
+            ->first();
+
+        if ($lastCategory) {
+            $lastNumber = (int) substr($lastCategory->code, -4);
+            $newNumber = $lastNumber + 1;
+        } else {
+            $newNumber = 1;
+        }
+
+        return $prefix . '-' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+    }
+
     public function index()
     {
         return view('category.category');
@@ -49,6 +69,8 @@ class CategoryController extends Controller
 
         $data = $request->all();
         $data['status'] = $request->has('status') ? 1 : 0;
+        $data['code'] = $this->generateCategoryCode();
+        $data['office_id'] = auth()->user()->office_id ?? 1;
 
         $category = Category::create($data);
         

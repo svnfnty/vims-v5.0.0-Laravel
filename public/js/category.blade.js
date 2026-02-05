@@ -338,7 +338,7 @@ $(document).ready(function() {
         $('#modalTitle').text('Create New Category');
         $('#submitBtn').html('<i class="fas fa-save"></i> Save Category');
         $('#formMethod').val('POST');
-        $('#categoryForm').attr('action', '{{ route("category.store") }}');
+        $('#categoryForm').attr('action', window.categoryRoutes.store);
         $('#categoryForm')[0].reset();
         $('.error-message').text('');
         $('.form-control').removeClass('error');

@@ -15,8 +15,10 @@ class Category extends Model
 
     protected $fillable = [
         'name',
+        'code',
         'description',
-        'status'
+        'status',
+        'office_id'
     ];
 
     public function policies()
