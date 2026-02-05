@@ -326,7 +326,12 @@
                 </div>
 
                 <div class="floating-label">
-                    <input type="text" class="form-control" id="edit-markup" name="markup" placeholder=" ">
+                    <select class="form-control" id="edit-markup" name="markup" placeholder=" ">
+                        <option value="">Select Markup</option>
+                        @foreach($walkin_list ?? [] as $walkin)
+                            <option value="{{ $walkin->name }}">{{ $walkin->name }}</option>
+                        @endforeach
+                    </select>
                     <label for="edit-markup">Markup</label>
                 </div>
 
@@ -354,9 +359,85 @@
     </div>
 </div>
 
-<!-- Modal Overlay -->
+<!-- Create Client Modal (for creating new client when MV File not found) -->
+<div id="createClientModal" class="modal insurance-form-modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Create New Client</h2>
+            <button type="button" class="modal-close" onclick="closeCreateClientModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form id="createClientForm">
+                <div class="info-banner" style="margin-bottom: 16px; padding: 12px; background: #e0f2fe; border-radius: 6px; border-left: 3px solid #0ea5e9;">
+                    <small style="color: #0369a1; font-size: 13px;">
+                        <i class="fas fa-info-circle" style="margin-right: 6px;"></i>
+                        MV File not found in records. Please create a new client to continue.
+                    </small>
+                </div>
+                
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="create-firstname" name="firstname" placeholder=" " required>
+                    <label for="create-firstname">First Name <span style="color: var(--danger);">*</span></label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="create-middlename" name="middlename" placeholder=" ">
+                    <label for="create-middlename">Middle Name</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="create-lastname" name="lastname" placeholder=" " required>
+                    <label for="create-lastname">Last Name <span style="color: var(--danger);">*</span></label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="email" class="form-control" id="create-email" name="email" placeholder=" ">
+                    <label for="create-email">Email Address</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="text" class="form-control" id="create-contact" name="contact" placeholder=" ">
+                    <label for="create-contact">Contact Number</label>
+                </div>
+
+                <div class="floating-label">
+                    <input type="date" class="form-control" id="create-dob" name="dob" placeholder=" ">
+                    <label for="create-dob">Date of Birth</label>
+                </div>
+
+                <div class="floating-label">
+                    <select class="form-control" id="create-markup" name="markup" placeholder=" ">
+                        <option value="">Select Markup</option>
+                        @foreach($walkin_list ?? [] as $walkin)
+                            <option value="{{ $walkin->name }}">{{ $walkin->name }}</option>
+                        @endforeach
+                    </select>
+                    <label for="create-markup">Markup</label>
+                </div>
+
+                <div class="floating-label">
+                    <textarea class="form-control" id="create-address" name="address" rows="2" placeholder=" "></textarea>
+                    <label for="create-address">Address</label>
+                </div>
+            </form>
+        </div>
+        <div class="modal-actions">
+            <button type="button" class="control-btn primary" id="createClientContinueBtn" onclick="submitCreateClient()">
+                <i class="fas fa-check-circle"></i> Create Client & Continue
+            </button>
+            <button type="button" class="control-btn secondary" onclick="closeCreateClientModal()">
+                <i class="fas fa-times-circle"></i> Cancel
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Overlays -->
 <div id="insuranceModalOverlay" class="modal-overlay" style="display: none;" onclick="closeInsuranceModal()"></div>
 <div id="clientEditModalOverlay" class="modal-overlay" style="display: none;" onclick="closeClientEditModal()"></div>
+<div id="createClientModalOverlay" class="modal-overlay" style="display: none;" onclick="closeCreateClientModal()"></div>
 
 <meta name="csrf-token" content="{{ csrf_token() }}">
 

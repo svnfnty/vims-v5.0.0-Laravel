@@ -403,6 +403,12 @@ async function handleNewInsurance() {
         return;
     }
 
+    // If MV File not found, show create client modal first
+    if (!mvfileResult.existingRecord) {
+        openCreateClientModal(cocResult, mvfileResult);
+        return;
+    }
+
     updateProgressStep(4);
 
     // Show manage insurance modal filled with data (and previous record if mvfile found)
@@ -844,15 +850,178 @@ function submitClientEdit() {
     }
 }
 
+// Create Client Modal Functions
+let pendingCreateCocResult = null;
+let pendingCreateMvfileResult = null;
+
+function openCreateClientModal(cocResult, mvfileResult) {
+    const modal = document.getElementById('createClientModal');
+    const overlay = document.getElementById('createClientModalOverlay');
+    const form = document.getElementById('createClientForm');
+    
+    if (!modal || !form) return;
+    
+    // Store the results for later use
+    pendingCreateCocResult = cocResult;
+    pendingCreateMvfileResult = mvfileResult;
+    
+    // Reset form fields
+    form.reset();
+    
+    // Show modal
+    modal.style.display = 'flex';
+    if (overlay) overlay.style.display = 'block';
+}
+
+function closeCreateClientModal() {
+    const modal = document.getElementById('createClientModal');
+    const overlay = document.getElementById('createClientModalOverlay');
+    if (modal) modal.style.display = 'none';
+    if (overlay) overlay.style.display = 'none';
+    
+    // Reset stored data
+    pendingCreateCocResult = null;
+    pendingCreateMvfileResult = null;
+}
+
+async function submitCreateClient() {
+    // Validate required fields
+    const firstname = document.getElementById('create-firstname').value.trim();
+    const lastname = document.getElementById('create-lastname').value.trim();
+    
+    if (!firstname) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'First name is required!'
+        });
+        return;
+    }
+    
+    if (!lastname) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Validation Error',
+            text: 'Last name is required!'
+        });
+        return;
+    }
+    
+    // Collect new client data
+    // Note: API expects 'walkin_list' instead of 'markup', and 'status' is required
+    const clientData = {
+        firstname: firstname,
+        middlename: document.getElementById('create-middlename').value.trim(),
+        lastname: lastname,
+        email: document.getElementById('create-email').value.trim(),
+        contact: document.getElementById('create-contact').value.trim(),
+        dob: document.getElementById('create-dob').value,
+        walkin_list: document.getElementById('create-markup').value.trim() || 'Walk-in', // API expects walkin_list
+        address: document.getElementById('create-address').value.trim() || 'N/A', // Required field
+        status: '1' // Required field - 1 = active
+    };
+    
+    // Show loading
+    Swal.fire({
+        title: 'Creating Client...',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+            Swal.showLoading();
+        }
+    });
+    
+    try {
+        // Create client via API
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const response = await fetch('/clients', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(clientData)
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to create client');
+        }
+        
+        // Get the newly created client data
+        const newClient = data.data;
+        const newClientId = newClient.id;
+        const newClientName = `${newClient.lastname}, ${newClient.firstname}${newClient.middlename ? ' ' + newClient.middlename : ''}`;
+        
+        console.log('Client created successfully:', newClientId, newClientName);
+        
+        // Store the pending results BEFORE closing modal (closeCreateClientModal clears them)
+        const localMvfileResult = pendingCreateMvfileResult;
+        const localCocResult = pendingCreateCocResult;
+        
+        console.log('Stored results:', { localMvfileResult, localCocResult });
+        
+        // Close the create client modal
+        closeCreateClientModal();
+        Swal.close();
+        
+        // Small delay to ensure modal is fully closed
+        setTimeout(() => {
+            // Continue to insurance form with new client
+            if (localMvfileResult && localCocResult) {
+                console.log('Opening insurance form with new client:', newClientId);
+                updateProgressStep(4);
+                
+                // First, add the new client to the Select2 dropdown options
+                const clientSelect = $('#modal-client_id');
+                const newOption = new Option(newClientName, newClientId, true, true);
+                clientSelect.append(newOption);
+                
+                showManageInsuranceModal({
+                    mvfile_no: localMvfileResult.mvfile_no,
+                    coc_no: localCocResult.cocNumber,
+                    or_no: localCocResult.orNumber || localCocResult.cocNumber,
+                    policy_no: localCocResult.policyNumber || localCocResult.cocNumber
+                }, null, false, null, newClientId);
+            } else {
+                console.error('Missing required data:', { localMvfileResult, localCocResult });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to open insurance form. Missing required data.'
+                });
+            }
+        }, 300);
+    } catch (error) {
+        console.error('Error creating client:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Failed to create client. Please try again.'
+        });
+    }
+}
+
 // Show manage insurance modal: form open and filled with input data; if mvfile found, fill all fields for edit
-async function showManageInsuranceModal(formData, existingRecord, isCopy = false, editedClientData = null) {
+async function showManageInsuranceModal(formData, existingRecord, isCopy = false, editedClientData = null, newClientId = null) {
+    console.log('showManageInsuranceModal called with:', { formData, existingRecord, isCopy, editedClientData, newClientId });
+    
     const modal = document.getElementById('manageInsuranceModal');
     const overlay = document.getElementById('insuranceModalOverlay');
     const form = document.getElementById('insuranceForm');
     const submitBtn = document.getElementById('insuranceSubmitBtn');
     const modalTitle = document.getElementById('manageInsuranceModalTitle');
     const officeSelectGroup = document.getElementById('officeSelectGroup');
-    if (!modal || !form) return;
+    
+    console.log('Modal elements found:', { modal: !!modal, overlay: !!overlay, form: !!form, submitBtn: !!submitBtn, modalTitle: !!modalTitle });
+    
+    if (!modal || !form) {
+        console.error('Modal or form not found! Cannot open insurance form.');
+        return;
+    }
 
     // Reset and fill entry data from wizard
     document.getElementById('insurance_id').value = '';
@@ -991,7 +1160,12 @@ async function showManageInsuranceModal(formData, existingRecord, isCopy = false
             }
         }
     } else {
-        setModalValue('modal-client_id', '');
+        // New record - if newClientId provided, pre-select it
+        if (newClientId) {
+            setModalValue('modal-client_id', newClientId);
+        } else {
+            setModalValue('modal-client_id', '');
+        }
         setModalValue('modal-policy_id', '');
         setModalValue('modal-category_id', '');
         setModalValue('modal-registration_no', '');
@@ -1008,9 +1182,14 @@ async function showManageInsuranceModal(formData, existingRecord, isCopy = false
         modalTitle.textContent = 'New Insurance';
         submitBtn.innerHTML = '<i class="fas fa-save"></i> Save';
         
-        // Reset Select2 values for new record
+        // Reset Select2 values for new record (or set new client if provided)
         setTimeout(() => {
-            $('#modal-client_id').val('').trigger('change');
+            if (newClientId) {
+                // New client was already added as an option, just select it
+                $('#modal-client_id').val(newClientId).trigger('change');
+            } else {
+                $('#modal-client_id').val('').trigger('change');
+            }
             $('#modal-policy_id').val('').trigger('change');
             $('#modal-category_id').val('').trigger('change');
         }, 100);
@@ -1026,9 +1205,25 @@ async function showManageInsuranceModal(formData, existingRecord, isCopy = false
         }
     }
     
-    // Show modal first
-    modal.style.display = 'flex';
-    if (overlay) overlay.style.display = 'block';
+    // Show modal first - force display with high priority
+    modal.style.setProperty('display', 'flex', 'important');
+    modal.style.setProperty('visibility', 'visible', 'important');
+    modal.style.setProperty('opacity', '1', 'important');
+    modal.style.setProperty('z-index', '9999', 'important');
+    
+    if (overlay) {
+        overlay.style.setProperty('display', 'block', 'important');
+        overlay.style.setProperty('visibility', 'visible', 'important');
+        overlay.style.setProperty('opacity', '1', 'important');
+        overlay.style.setProperty('z-index', '9998', 'important');
+    }
+    
+    console.log('Modal display styles set:', {
+        modalDisplay: modal.style.display,
+        modalVisibility: modal.style.visibility,
+        modalOpacity: modal.style.opacity,
+        modalZIndex: modal.style.zIndex
+    });
     
     // Reinitialize Select2 to ensure proper dropdown positioning
     setTimeout(() => {
@@ -1036,6 +1231,12 @@ async function showManageInsuranceModal(formData, existingRecord, isCopy = false
             width: '100%',
             dropdownParent: $('#manageInsuranceModal')
         });
+        
+        // Verify modal is still visible after Select2 init
+        if (modal.style.display === 'none' || window.getComputedStyle(modal).display === 'none') {
+            console.warn('Modal was hidden after Select2 init, forcing visible again');
+            modal.style.setProperty('display', 'flex', 'important');
+        }
     }, 200);
 }
 

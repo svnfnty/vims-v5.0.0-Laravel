@@ -28,13 +28,25 @@ class InsuranceController extends Controller
         $policies = Policy::select('id', 'name', 'code')->get();
         $categories = Category::select('id', 'name', 'code')->get();
         
+        // Get walkin_list for markup dropdown
+        // Only filter by office_id for non-superadmins - superadmins see all walkin records
+        $walkinQuery = Walkin::select('id', 'name')
+            ->where('delete_flag', 0)
+            ->where('status', 1);
+            
+        if (!$isSuperAdmin) {
+            $walkinQuery->where('office_id', $userOfficeId);
+        }
+        
+        $walkin_list = $walkinQuery->orderBy('name')->get();
+        
         // Get offices for superadmin dropdown
         $offices = [];
         if ($isSuperAdmin) {
             $offices = \DB::table('office_list')->select('id', 'office_name')->get();
         }
         
-        return view('insurances.insurance', compact('clients', 'policies', 'categories', 'isSuperAdmin', 'offices'));
+        return view('insurances.insurance', compact('clients', 'policies', 'categories', 'isSuperAdmin', 'offices', 'walkin_list'));
     }
 
     public function data() {
