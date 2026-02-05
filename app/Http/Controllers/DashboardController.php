@@ -10,11 +10,19 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $officeId = auth()->user()->office_id ?? null;
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
 
-        $activeClients = Client::where('office_id', $officeId)->count();
-        $insuredVehicles = Insurance::where('office_id', $officeId)->where('status', 1)->count();
-        $expiredVehicles = Insurance::where('office_id', $officeId)->where('status', 0)->count();
+        if ($isSuperAdmin) {
+            $activeClients = Client::count();
+            $insuredVehicles = Insurance::where('status', 1)->count();
+            $expiredVehicles = Insurance::where('status', 0)->count();
+        } else {
+            $activeClients = Client::where('office_id', $officeId)->count();
+            $insuredVehicles = Insurance::where('office_id', $officeId)->where('status', 1)->count();
+            $expiredVehicles = Insurance::where('office_id', $officeId)->where('status', 0)->count();
+        }
 
         return view('dashboard', [
             'activeClients' => $activeClients,
@@ -26,17 +34,22 @@ class DashboardController extends Controller
     public function search(Request $request)
     {
         $query = $request->input('query');
-        $officeId = auth()->user()->office_id ?? null;
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
 
-        $results = Insurance::where('office_id', $officeId)
-            ->where(function($q) use ($query) {
-                $q->where('coc_no', 'LIKE', "%$query%")
-                  ->orWhere('registration_no', 'LIKE', "%$query%");
-            })
-            ->with('client:id,firstname,lastname')
+        $resultsQuery = Insurance::where(function($q) use ($query) {
+            $q->where('coc_no', 'LIKE', "%$query%")
+              ->orWhere('registration_no', 'LIKE', "%$query%");
+        });
+
+        if (!$isSuperAdmin) {
+            $resultsQuery->where('office_id', $officeId);
+        }
+
+        $results = $resultsQuery->with('client:id,firstname,lastname')
             ->get(['id', 'coc_no', 'registration_no', 'client_id']);
 
         return response()->json($results);
     }
 }
-

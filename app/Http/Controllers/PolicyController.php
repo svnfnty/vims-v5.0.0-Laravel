@@ -18,10 +18,19 @@ class PolicyController extends Controller
 
     public function stats()
     {
-        $officeId = Auth::user()->office_id;
-        $total = Policy::where('office_id', $officeId)->count();
-        $active = Policy::where('office_id', $officeId)->where('status', 1)->count();
-        $inactive = Policy::where('office_id', $officeId)->where('status', 0)->count();
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
+        
+        if ($isSuperAdmin) {
+            $total = Policy::count();
+            $active = Policy::where('status', 1)->count();
+            $inactive = Policy::where('status', 0)->count();
+        } else {
+            $total = Policy::where('office_id', $officeId)->count();
+            $active = Policy::where('office_id', $officeId)->where('status', 1)->count();
+            $inactive = Policy::where('office_id', $officeId)->where('status', 0)->count();
+        }
 
         return response()->json([
             'total' => $total,
@@ -32,8 +41,17 @@ class PolicyController extends Controller
  
     public function data()
     {
-        $officeId = Auth::user()->office_id;
-        $policies = Policy::where('office_id', $officeId)->with('category')->select([
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
+        
+        $policiesQuery = Policy::with('category');
+        
+        if (!$isSuperAdmin) {
+            $policiesQuery->where('office_id', $officeId);
+        }
+        
+        $policies = $policiesQuery->select([
             'policy_list.id',
             'policy_list.category_id',
             'policy_list.code',
@@ -102,8 +120,17 @@ class PolicyController extends Controller
 
     public function show($id)
     {
-        $officeId = Auth::user()->office_id;
-        $policy = Policy::where('office_id', $officeId)->with('category')->findOrFail($id);
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
+        
+        $policyQuery = Policy::with('category')->where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $policyQuery->where('office_id', $officeId);
+        }
+        
+        $policy = $policyQuery->firstOrFail();
         return response()->json($policy);
     }
 
@@ -116,8 +143,17 @@ class PolicyController extends Controller
             'description' => 'nullable'
         ]);
 
-        $officeId = Auth::user()->office_id;
-        $policy = Policy::where('office_id', $officeId)->findOrFail($id);
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
+        
+        $policyQuery = Policy::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $policyQuery->where('office_id', $officeId);
+        }
+        
+        $policy = $policyQuery->firstOrFail();
         $data = $request->all();
         $data['status'] = $request->has('status') ? 1 : 0;
         $data['date_updated'] = now();
@@ -133,8 +169,17 @@ class PolicyController extends Controller
 
     public function destroy($id)
     {
-        $officeId = Auth::user()->office_id;
-        $policy = Policy::where('office_id', $officeId)->findOrFail($id);
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
+        
+        $policyQuery = Policy::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $policyQuery->where('office_id', $officeId);
+        }
+        
+        $policy = $policyQuery->firstOrFail();
 
         // Check if policy is being used
         if ($policy->insurances()->count() > 0) {
@@ -154,8 +199,17 @@ class PolicyController extends Controller
 
     public function toggleStatus($id)
     {
-        $officeId = Auth::user()->office_id;
-        $policy = Policy::where('office_id', $officeId)->findOrFail($id);
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
+        
+        $policyQuery = Policy::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $policyQuery->where('office_id', $officeId);
+        }
+        
+        $policy = $policyQuery->firstOrFail();
         $policy->status = !$policy->status;
         $policy->save();
 

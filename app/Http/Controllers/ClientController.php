@@ -11,16 +11,28 @@ class ClientController extends Controller
 {
     public function index()
     {
-        $officeId = auth()->user()->office_id ?? null;
-        $walkin_list = Walkin::where('office_id', $officeId)->where('delete_flag', 0)->get();
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        $walkinQuery = Walkin::where('delete_flag', 0);
+        
+        if (!$isSuperAdmin) {
+            $walkinQuery->where('office_id', $officeId);
+        }
+        
+        $walkin_list = $walkinQuery->get();
         return view('clients.client', compact('walkin_list'));
     }
 
     public function data()
     {
         try {
-            $officeId = auth()->user()->office_id ?? null;
-            $clients = Client::select([
+            $user = auth()->user();
+            $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+            $officeId = $user->office_id ?? null;
+            
+            $clientsQuery = Client::select([
                 'id',
                 'firstname',
                 'middlename',
@@ -29,7 +41,13 @@ class ClientController extends Controller
                 'email',
                 'address',
                 'status'
-            ])->where('office_id', $officeId)->where('delete_flag', 0)->orderBy('id', 'DESC')->get();
+            ])->where('delete_flag', 0);
+            
+            if (!$isSuperAdmin) {
+                $clientsQuery->where('office_id', $officeId);
+            }
+            
+            $clients = $clientsQuery->orderBy('id', 'DESC')->get();
 
             return response()->json([
                 'data' => $clients
@@ -46,13 +64,25 @@ class ClientController extends Controller
     public function stats()
     {
         try {
-            $officeId = auth()->user()->office_id ?? null;
-            $stats = [
-                'total' => Client::where('office_id', $officeId)->where('delete_flag', 0)->count(),
-                'active' => Client::where('office_id', $officeId)->where('status', 1)->where('delete_flag', 0)->count(),
-                'inactive' => Client::where('office_id', $officeId)->where('status', 0)->where('delete_flag', 0)->count(),
-                'email' => Client::where('office_id', $officeId)->whereNotNull('email')->where('email', '!=', '')->where('delete_flag', 0)->count(),
-            ];
+            $user = auth()->user();
+            $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+            $officeId = $user->office_id ?? null;
+            
+            if ($isSuperAdmin) {
+                $stats = [
+                    'total' => Client::where('delete_flag', 0)->count(),
+                    'active' => Client::where('status', 1)->where('delete_flag', 0)->count(),
+                    'inactive' => Client::where('status', 0)->where('delete_flag', 0)->count(),
+                    'email' => Client::whereNotNull('email')->where('email', '!=', '')->where('delete_flag', 0)->count(),
+                ];
+            } else {
+                $stats = [
+                    'total' => Client::where('office_id', $officeId)->where('delete_flag', 0)->count(),
+                    'active' => Client::where('office_id', $officeId)->where('status', 1)->where('delete_flag', 0)->count(),
+                    'inactive' => Client::where('office_id', $officeId)->where('status', 0)->where('delete_flag', 0)->count(),
+                    'email' => Client::where('office_id', $officeId)->whereNotNull('email')->where('email', '!=', '')->where('delete_flag', 0)->count(),
+                ];
+            }
 
             return response()->json($stats);
         } catch (\Exception $e) {
@@ -78,7 +108,9 @@ class ClientController extends Controller
             ]);
 
             // Get the office_id from the authenticated user
-            $officeId = auth()->user()->office_id ?? null;
+            $user = auth()->user();
+            $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+            $officeId = $user->office_id ?? null;
 
             // Generate auto code: YYYYMMDD-XXX
             $code = $this->generateClientCode();
@@ -94,7 +126,7 @@ class ClientController extends Controller
                 'status' => $validated['status'],
                 'date_created' => now(),
                 'delete_flag' => 0,
-                'office_id' => $officeId // Add office_id from authenticated user
+                'office_id' => $isSuperAdmin ? ($validated['office_id'] ?? $officeId) : $officeId // Add office_id from authenticated user
             ]);
 
             return response()->json([
@@ -124,8 +156,17 @@ class ClientController extends Controller
                 'status' => 'required|in:0,1'
             ]);
 
-            $officeId = auth()->user()->office_id ?? null;
-            $client = Client::where('office_id', $officeId)->findOrFail($id);
+            $user = auth()->user();
+            $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+            $officeId = $user->office_id ?? null;
+            
+            $clientQuery = Client::where('id', $id);
+            
+            if (!$isSuperAdmin) {
+                $clientQuery->where('office_id', $officeId);
+            }
+            
+            $client = $clientQuery->firstOrFail();
             $client->update([
                 'firstname' => $validated['firstname'],
                 'middlename' => $validated['middlename'] ?? '',

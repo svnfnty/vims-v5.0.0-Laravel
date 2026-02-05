@@ -13,11 +13,18 @@ use DataTables;
 class InsuranceController extends Controller
 {
     public function index() {
-        $userOfficeId = auth()->user()->office_id ?? null;
-        $clients = Client::select('id', 'lastname', 'firstname', 'middlename')
-            ->where('office_id', $userOfficeId)
-            ->where('delete_flag', '!=', 1)
-            ->get();
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $userOfficeId = $user->office_id ?? null;
+        
+        $clientsQuery = Client::select('id', 'lastname', 'firstname', 'middlename')
+            ->where('delete_flag', '!=', 1);
+            
+        if (!$isSuperAdmin) {
+            $clientsQuery->where('office_id', $userOfficeId);
+        }
+        
+        $clients = $clientsQuery->get();
         $policies = Policy::select('id', 'name', 'code')->get();
         $categories = Category::select('id', 'name', 'code')->get();
         return view('insurances.insurance', compact('clients', 'policies', 'categories'));
@@ -25,12 +32,14 @@ class InsuranceController extends Controller
 
     public function data() {
         try {
-            $officeId = auth()->user()->office_id ?? null;
-            $insurances = \DB::table('insurance_list')
+            $user = auth()->user();
+            $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+            $officeId = $user->office_id ?? null;
+            
+            $insurancesQuery = \DB::table('insurance_list')
                 ->join('client_list', 'insurance_list.client_id', '=', 'client_list.id')
                 ->join('policy_list', 'insurance_list.policy_id', '=', 'policy_list.id')
                 ->leftJoin('category_list', 'insurance_list.auth_no', '=', 'category_list.id') // Join with category_list
-                ->where('insurance_list.office_id', $officeId)
                 ->select(
                     'insurance_list.id',
                     \DB::raw("CONCAT(client_list.firstname, ' ', client_list.middlename, ' ', client_list.lastname) AS client_name"),
@@ -55,8 +64,13 @@ class InsuranceController extends Controller
                     'insurance_list.status',
                     'insurance_list.remarks',
                     'category_list.name AS category_name' // Add category name to the result
-                )
-                ->get();
+                );
+                
+            if (!$isSuperAdmin) {
+                $insurancesQuery->where('insurance_list.office_id', $officeId);
+            }
+            
+            $insurances = $insurancesQuery->get();
             return response()->json(['data' => $insurances]);
         } catch (\Exception $e) {
             \Log::error('Error fetching insurance data', [
@@ -320,16 +334,29 @@ class InsuranceController extends Controller
 
 
     public function show($id) {
-        $officeId = auth()->user()->office_id ?? null;
-        $insurance = Insurance::with('client', 'policy')->where('office_id', $officeId)->findOrFail($id);
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        $insuranceQuery = Insurance::with('client', 'policy')->where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $insuranceQuery->where('office_id', $officeId);
+        }
+        
+        $insurance = $insuranceQuery->firstOrFail();
 
         // Compare client's markup with walkin_list name column
         $legendColor = null;
         if ($insurance->client && $insurance->client->markup) {
-            $walkin = Walkin::where('name', $insurance->client->markup)
-                            ->where('office_id', $officeId)
-                            ->where('delete_flag', 0)
-                            ->first();
+            $walkinQuery = Walkin::where('name', $insurance->client->markup)
+                            ->where('delete_flag', 0);
+                            
+            if (!$isSuperAdmin) {
+                $walkinQuery->where('office_id', $officeId);
+            }
+            
+            $walkin = $walkinQuery->first();
             if ($walkin) {
                 $legendColor = $walkin->color;
             }
@@ -339,8 +366,17 @@ class InsuranceController extends Controller
     }
 
     public function destroy($id) {
-        $officeId = auth()->user()->office_id ?? null;
-        $insurance = Insurance::where('office_id', $officeId)->findOrFail($id);
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        $insuranceQuery = Insurance::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $insuranceQuery->where('office_id', $officeId);
+        }
+        
+        $insurance = $insuranceQuery->firstOrFail();
         $insurance->delete();
 
         return response()->json([

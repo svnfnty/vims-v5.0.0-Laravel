@@ -24,21 +24,27 @@ class PolicySeriesController extends Controller
             'type' => 'required|integer|in:0,1,3',
         ]);
 
-        $officeId = Auth::user()->office_id;
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
         $newStart = $request->range_start;
         $newStop = $request->range_stop;
 
         // Check for overlapping or adjacent series
-        $overlapping = Series::where('office_id', $officeId)
-            ->where(function($query) use ($newStart, $newStop) {
-                $query->where('range_start', '<=', $newStop)
-                      ->where('range_stop', '>=', $newStart);
-            })
-            ->orWhere(function($query) use ($newStart, $newStop) {
-                $query->where('range_stop', $newStart - 1)
-                      ->orWhere('range_start', $newStop + 1);
-            })
-            ->get();
+        $overlappingQuery = Series::where(function($query) use ($newStart, $newStop) {
+            $query->where('range_start', '<=', $newStop)
+                  ->where('range_stop', '>=', $newStart);
+        })
+        ->orWhere(function($query) use ($newStart, $newStop) {
+            $query->where('range_stop', $newStart - 1)
+                  ->orWhere('range_start', $newStop + 1);
+        });
+        
+        if (!$isSuperAdmin) {
+            $overlappingQuery->where('office_id', $officeId);
+        }
+        
+        $overlapping = $overlappingQuery->get();
 
         if ($overlapping->isNotEmpty()) {
             // Merge: find min start and max stop
@@ -61,14 +67,19 @@ class PolicySeriesController extends Controller
             return response()->json(['message' => 'Series merged and updated successfully', 'data' => $series], 200);
         } else {
             // No overlap, create new
-            $series = Series::create([
+            $seriesData = [
                 'name' => $request->name,
                 'range_start' => $request->range_start,
                 'range_stop' => $request->range_stop,
                 'status' => $request->status,
                 'type' => $request->type,
-                'office_id' => $officeId,
-            ]);
+            ];
+            
+            if (!$isSuperAdmin) {
+                $seriesData['office_id'] = $officeId;
+            }
+            
+            $series = Series::create($seriesData);
 
             return response()->json(['message' => 'Series created successfully', 'data' => $series], 201);
         }
@@ -84,15 +95,22 @@ class PolicySeriesController extends Controller
             'type' => 'required|integer|in:0,1,3',
         ]);
 
-        $officeId = Auth::user()->office_id;
-        $series = Series::where('office_id', $officeId)->findOrFail($id);
-        $officeId = Auth::user()->office_id;
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
+        
+        $seriesQuery = Series::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $seriesQuery->where('office_id', $officeId);
+        }
+        
+        $series = $seriesQuery->firstOrFail();
         $newStart = $request->range_start;
         $newStop = $request->range_stop;
 
         // Check for overlapping or adjacent series, excluding the current one
-        $overlapping = Series::where('office_id', $officeId)
-            ->where('id', '!=', $id)
+        $overlappingQuery = Series::where('id', '!=', $id)
             ->where(function($query) use ($newStart, $newStop) {
                 $query->where('range_start', '<=', $newStop)
                       ->where('range_stop', '>=', $newStart);
@@ -100,8 +118,13 @@ class PolicySeriesController extends Controller
             ->orWhere(function($query) use ($newStart, $newStop) {
                 $query->where('range_stop', $newStart - 1)
                       ->orWhere('range_start', $newStop + 1);
-            })
-            ->get();
+            });
+            
+        if (!$isSuperAdmin) {
+            $overlappingQuery->where('office_id', $officeId);
+        }
+        
+        $overlapping = $overlappingQuery->get();
 
         if ($overlapping->isNotEmpty()) {
             // Merge: find min start and max stop, including the new range
@@ -137,8 +160,17 @@ class PolicySeriesController extends Controller
 
     public function destroy($id)
     {
-        $officeId = Auth::user()->office_id;
-        $series = Series::where('office_id', $officeId)->findOrFail($id);
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
+        
+        $seriesQuery = Series::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $seriesQuery->where('office_id', $officeId);
+        }
+        
+        $series = $seriesQuery->firstOrFail();
         $series->delete();
 
         return response()->json(['message' => 'Series deleted successfully']);
@@ -146,16 +178,34 @@ class PolicySeriesController extends Controller
 
     public function data()
     {
-        $series = Series::where('office_id', Auth::user()->office_id)->get();
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        
+        $seriesQuery = Series::query();
+        
+        if (!$isSuperAdmin) {
+            $seriesQuery->where('office_id', $user->office_id);
+        }
+        
+        $series = $seriesQuery->get();
         return response()->json(['data' => $series]);
     }
 
     public function stats()
     {
-        $officeId = Auth::user()->office_id;
-        $total = Series::where('office_id', $officeId)->count();
-        $active = Series::where('office_id', $officeId)->where('status', 1)->count();
-        $inactive = Series::where('office_id', $officeId)->where('status', 0)->count();
+        $user = Auth::user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id;
+        
+        if ($isSuperAdmin) {
+            $total = Series::count();
+            $active = Series::where('status', 1)->count();
+            $inactive = Series::where('status', 0)->count();
+        } else {
+            $total = Series::where('office_id', $officeId)->count();
+            $active = Series::where('office_id', $officeId)->where('status', 1)->count();
+            $inactive = Series::where('office_id', $officeId)->where('status', 0)->count();
+        }
 
         return response()->json([
             'total' => $total,
@@ -172,8 +222,17 @@ class PolicySeriesController extends Controller
         }
 
         try {
-            $officeId = Auth::user()->office_id;
-            $seriesData = Series::where('office_id', $officeId)->find($seriesId);
+            $user = Auth::user();
+            $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+            $officeId = $user->office_id;
+            
+            $seriesQuery = Series::where('id', $seriesId);
+            
+            if (!$isSuperAdmin) {
+                $seriesQuery->where('office_id', $officeId);
+            }
+            
+            $seriesData = $seriesQuery->first();
             if (!$seriesData) {
                 return response()->json(['error' => 'Series not found'], 404);
             }

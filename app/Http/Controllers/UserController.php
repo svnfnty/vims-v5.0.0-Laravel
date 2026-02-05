@@ -19,8 +19,10 @@ class UserController extends Controller
     public function stats()
     {
         try {
-            $userId = auth()->user()->id;
-            if ($userId == 1) {
+            $user = auth()->user();
+            $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+            
+            if ($isSuperAdmin) {
                 // Superadmin sees all users
                 $stats = [
                     'total' => User::where('id', '!=', 1)->count(),
@@ -28,7 +30,7 @@ class UserController extends Controller
                     'inactive' => User::where('id', '!=', 1)->where('status', 0)->count(),
                 ];
             } else {
-                $officeId = auth()->user()->office_id ?? null;
+                $officeId = $user->office_id ?? null;
                 if (!$officeId) {
                     return response()->json([
                         'total' => 0,
@@ -55,8 +57,10 @@ class UserController extends Controller
 
     public function data()
     {
-        $userId = auth()->user()->id;
-        if ($userId == 1) {
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        
+        if ($isSuperAdmin) {
             // Superadmin sees all users
             $users = User::where('id', '!=', 1) // Exclude superadmin
                 ->select([
@@ -75,7 +79,7 @@ class UserController extends Controller
                     'created_at'
                 ]);
         } else {
-            $officeId = auth()->user()->office_id ?? null;
+            $officeId = $user->office_id ?? null;
             $users = User::where('office_id', $officeId)
                 ->where('id', '!=', 1) // Exclude superadmin
                 ->select([
@@ -159,8 +163,17 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $officeId = auth()->user()->office_id ?? null;
-        $user = User::where('office_id', $officeId)->findOrFail($id);
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        $userQuery = User::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $userQuery->where('office_id', $officeId);
+        }
+        
+        $user = $userQuery->firstOrFail();
         return response()->json($user);
     }
 
@@ -181,12 +194,14 @@ class UserController extends Controller
             'office_id' => 'nullable|integer',
         ]);
 
-        $userId = auth()->user()->id;
-        if ($userId == 1) {
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        
+        if ($isSuperAdmin) {
             // Superadmin can update any user
             $user = User::findOrFail($id);
         } else {
-            $officeId = auth()->user()->office_id ?? null;
+            $officeId = $user->office_id ?? null;
             $user = User::where('office_id', $officeId)->findOrFail($id);
         }
 
@@ -210,12 +225,14 @@ class UserController extends Controller
 
     public function destroy($id)
     {
-        $userId = auth()->user()->id;
-        if ($userId == 1) {
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        
+        if ($isSuperAdmin) {
             // Superadmin can delete any user
             $user = User::findOrFail($id);
         } else {
-            $officeId = auth()->user()->office_id ?? null;
+            $officeId = $user->office_id ?? null;
             $user = User::where('office_id', $officeId)->findOrFail($id);
         }
         $user->delete();

@@ -16,19 +16,31 @@ class WalkinController extends Controller
     public function stats()
     {
         try {
-            $officeId = auth()->user()->office_id ?? null;
-            if (!$officeId) {
+            $user = auth()->user();
+            $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+            $officeId = $user->office_id ?? null;
+            
+            if (!$isSuperAdmin && !$officeId) {
                 return response()->json([
                     'total' => 0,
                     'active' => 0,
                     'inactive' => 0,
                 ]);
             }
-            $stats = [
-                'total' => Walkin::where('office_id', $officeId)->where('delete_flag', 0)->count(),
-                'active' => Walkin::where('office_id', $officeId)->where('status', 1)->where('delete_flag', 0)->count(),
-                'inactive' => Walkin::where('office_id', $officeId)->where('status', 0)->where('delete_flag', 0)->count(),
-            ];
+            
+            if ($isSuperAdmin) {
+                $stats = [
+                    'total' => Walkin::where('delete_flag', 0)->count(),
+                    'active' => Walkin::where('status', 1)->where('delete_flag', 0)->count(),
+                    'inactive' => Walkin::where('status', 0)->where('delete_flag', 0)->count(),
+                ];
+            } else {
+                $stats = [
+                    'total' => Walkin::where('office_id', $officeId)->where('delete_flag', 0)->count(),
+                    'active' => Walkin::where('office_id', $officeId)->where('status', 1)->where('delete_flag', 0)->count(),
+                    'inactive' => Walkin::where('office_id', $officeId)->where('status', 0)->where('delete_flag', 0)->count(),
+                ];
+            }
 
             return response()->json($stats);
         } catch (\Exception $e) {
@@ -42,8 +54,17 @@ class WalkinController extends Controller
 
     public function data()
     {
-        $officeId = auth()->user()->office_id ?? null;
-        $walkins = Walkin::where('office_id', $officeId)->where('delete_flag', 0)->select([
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        $walkinsQuery = Walkin::where('delete_flag', 0);
+        
+        if (!$isSuperAdmin) {
+            $walkinsQuery->where('office_id', $officeId);
+        }
+        
+        $walkins = $walkinsQuery->select([
             'id',
             'email',
             'accountID',
@@ -111,8 +132,17 @@ class WalkinController extends Controller
 
     public function show($id)
     {
-        $officeId = auth()->user()->office_id ?? null;
-        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        $walkinQuery = Walkin::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $walkinQuery->where('office_id', $officeId);
+        }
+        
+        $walkin = $walkinQuery->firstOrFail();
         return response()->json($walkin);
     }
 
@@ -127,9 +157,18 @@ class WalkinController extends Controller
             'office_id' => 'required',
             'status' => 'required|in:0,1'
         ]);
-        $officeId = auth()->user()->office_id ?? null;
+        
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
 
-        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
+        $walkinQuery = Walkin::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $walkinQuery->where('office_id', $officeId);
+        }
+        
+        $walkin = $walkinQuery->firstOrFail();
         $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'office_id', 'status']);
 
         $walkin->update($data);
@@ -143,8 +182,17 @@ class WalkinController extends Controller
 
     public function destroy($id)
     {
-        $officeId = auth()->user()->office_id ?? null;
-        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        $walkinQuery = Walkin::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $walkinQuery->where('office_id', $officeId);
+        }
+        
+        $walkin = $walkinQuery->firstOrFail();
         $walkin->delete();
 
         return response()->json([
@@ -160,8 +208,17 @@ class WalkinController extends Controller
             'remarks' => 'required_if:status,2'
         ]);
 
-        $officeId = auth()->user()->office_id ?? null;
-        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        $walkinQuery = Walkin::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $walkinQuery->where('office_id', $officeId);
+        }
+        
+        $walkin = $walkinQuery->firstOrFail();
         $walkin->status = $request->status;
         $walkin->remarks = $request->remarks;
         $walkin->date_updated = now();
@@ -182,8 +239,17 @@ class WalkinController extends Controller
 
     public function updatePayment(Request $request, $id)
     {
-        $officeId = auth()->user()->office_id ?? null;
-        $walkin = Walkin::where('office_id', $officeId)->findOrFail($id);
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $officeId = $user->office_id ?? null;
+        
+        $walkinQuery = Walkin::where('id', $id);
+        
+        if (!$isSuperAdmin) {
+            $walkinQuery->where('office_id', $officeId);
+        }
+        
+        $walkin = $walkinQuery->firstOrFail();
         $walkin->payment_status = !$walkin->payment_status;
         $walkin->date_updated = now();
         $walkin->save();
