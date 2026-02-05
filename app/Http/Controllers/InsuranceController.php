@@ -94,9 +94,9 @@ class InsuranceController extends Controller
     public function validateCoc(Request $request)
     {
         $cocNo = $request->input('coc_no');
-
-        // Check if the COC Number exists in the insurance table
-        $exists = Insurance::where('coc_no', $cocNo)->exists();
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $userOfficeId = $user->office_id ?? null;
 
         // Check if the COC Number falls within the range in the series table
         $inRange = \DB::table('series')
@@ -108,15 +108,27 @@ class InsuranceController extends Controller
             return response()->json(['valid' => false, 'message' => 'COC Number is out of range.']);
         }
 
-        return response()->json(['valid' => !$exists, 'message' => $exists ? 'COC Number is already used.' : 'COC Number is available.']);
+        // Check if the COC Number exists in the insurance table for user's office
+        $query = Insurance::where('coc_no', $cocNo);
+        
+        if (!$isSuperAdmin) {
+            $query->where('office_id', $userOfficeId);
+        }
+        
+        $exists = $query->exists();
+
+        return response()->json(['valid' => !$exists, 'message' => $exists ? 'COC Number is already used in your office.' : 'COC Number is available.']);
     }
 
     public function validateMvFile(Request $request)
     {
         $mvFileNo = $request->input('mvfile_no');
+        $user = auth()->user();
+        $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
+        $userOfficeId = $user->office_id ?? null;
 
-        // Check if the MV File Number exists in the insurance table
-        $record = \DB::table('insurance_list')
+        // Check if the MV File Number exists in the insurance table for user's office
+        $query = \DB::table('insurance_list')
             ->join('client_list', 'insurance_list.client_id', '=', 'client_list.id')
             ->join('policy_list', 'insurance_list.policy_id', '=', 'policy_list.id')
             ->select(
@@ -170,14 +182,20 @@ class InsuranceController extends Controller
                 'client_list.date_updated AS client_date_updated',
                 'client_list.office_id AS client_office_id'
             )
-            ->where('insurance_list.mvfile_no', $mvFileNo)
-            ->first();
+            ->where('insurance_list.mvfile_no', $mvFileNo);
+
+        // Filter by office_id for non-superadmin users
+        if (!$isSuperAdmin) {
+            $query->where('insurance_list.office_id', $userOfficeId);
+        }
+
+        $record = $query->first();
 
         if ($record) {
             return response()->json(['exists' => true, 'record' => $record]);
         }
 
-        return response()->json(['exists' => false, 'message' => 'MV File Number does not exist.']);
+        return response()->json(['exists' => false, 'message' => 'MV File Number does not exist in your office.']);
     }
 
     public function manageInsurance(Request $request)
@@ -212,28 +230,38 @@ class InsuranceController extends Controller
             'status' => 'required|in:0,1',
         ]);
 
-        // Check if mvfile_no already exists
-        if (Insurance::where('mvfile_no', $request->mvfile_no)->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'MVR already found on records cannot issued duplicate not allowed'
-            ], 422);
-        }
-
-        // Check if coc_no already exists
-        if (Insurance::where('coc_no', $request->coc_no)->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Duplicate COC Number. Cannot issued twice'
-            ], 422);
-        }
-
-        // Get the office_id - for superadmin use request value if provided, otherwise use user's office
+        // Get user's office info
         $user = auth()->user();
         $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
-        $officeId = $isSuperAdmin && $request->has('office_id') && $request->office_id 
+        $userOfficeId = $isSuperAdmin && $request->has('office_id') && $request->office_id 
             ? $request->office_id 
             : ($user->office_id ?? null);
+
+        // Check if mvfile_no already exists in the SAME office
+        $existingMvFile = Insurance::where('mvfile_no', $request->mvfile_no)
+            ->where('office_id', $userOfficeId)
+            ->first();
+            
+        if ($existingMvFile) {
+            return response()->json([
+                'success' => false,
+                'message' => 'MVR already found in your office records. Cannot issue duplicate.'
+            ], 422);
+        }
+
+        // Check if coc_no already exists in the SAME office
+        $existingCoc = Insurance::where('coc_no', $request->coc_no)
+            ->where('office_id', $userOfficeId)
+            ->first();
+            
+        if ($existingCoc) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Duplicate COC Number in your office. Cannot issue twice.'
+            ], 422);
+        }
+
+        // officeId already set above during duplicate checks
         
         // Get the policy cost from policy_list table
         $policy = Policy::select('cost')->findOrFail($request->policy_id);
@@ -273,7 +301,7 @@ class InsuranceController extends Controller
             'auth_renewal' => 0,
             'status' => $request->status,
             'remarks' => $request->remarks,
-            'office_id' => $officeId, 
+            'office_id' => $userOfficeId, 
             'date_created' => now(),
             'date_updated' => now(),
         ]);

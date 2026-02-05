@@ -607,16 +607,30 @@ async function showMvFileInputDialog() {
                         const data = await response.json();
 
                         if (data.exists) {
-                            statusIndicator.className = 'status-indicator valid';
-                            statusMessage.textContent = 'MV File found in records';
-                            statusMessage.className = 'status-message valid';
+                            // Check if the found record belongs to the same office
+                            const recordOfficeId = data.record?.insurance_office_id;
+                            const userOfficeId = window.userOfficeId;
+                            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+                            
+                            // For non-superadmin, only allow if same office
+                            if (!isSuperAdmin && recordOfficeId != userOfficeId) {
+                                statusIndicator.className = 'status-indicator invalid';
+                                statusMessage.textContent = 'MV File exists in another office - creating new record for your office';
+                                statusMessage.className = 'status-message warning';
+                                lastMvFileRecord = null; // Don't use existing record
+                                recordDetails.style.display = 'none';
+                            } else {
+                                statusIndicator.className = 'status-indicator valid';
+                                statusMessage.textContent = 'MV File found in your office records';
+                                statusMessage.className = 'status-message valid';
 
-                            lastMvFileRecord = data.record;
-                            recordDetails.innerHTML = createRecordDetailsHTML(data.record);
-                            recordDetails.style.display = 'block';
+                                lastMvFileRecord = data.record;
+                                recordDetails.innerHTML = createRecordDetailsHTML(data.record);
+                                recordDetails.style.display = 'block';
+                            }
                         } else {
                             statusIndicator.className = 'status-indicator invalid';
-                            statusMessage.textContent = 'MV File not found - will create new record';
+                            statusMessage.textContent = 'MV File not found in your office - will create new record';
                             statusMessage.className = 'status-message warning';
                             recordDetails.style.display = 'none';
                         }
