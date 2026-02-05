@@ -29,7 +29,7 @@ class PolicyController extends Controller
             'inactive' => $inactive
         ]);
     }
-
+ 
     public function data()
     {
         $officeId = Auth::user()->office_id;
@@ -89,6 +89,7 @@ class PolicyController extends Controller
         $data = $request->all();
         $data['status'] = $request->has('status') ? 1 : 0;
         $data['date_created'] = now();
+        $data['office_id'] = Auth::user()->office_id;
 
         $policy = Policy::create($data);
         

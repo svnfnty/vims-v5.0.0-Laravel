@@ -17,10 +17,22 @@ class Policy extends Model
         'name',
         'code',
         'description',
+        'description1',
+        'description2',
+        'duration',
+        'third_party_liability',
+        'personal_accident',
+        'tppd',
+        'documentary_stamps',
+        'value_added_tax',
+        'local_gov_tax',
+        'cost',
+        'doc_path',
         'status',
         'date_created',
         'date_updated',
-        'category_id' // Added category_id to fillable
+        'category_id',
+        'office_id'
     ];
 
     public function insurances()

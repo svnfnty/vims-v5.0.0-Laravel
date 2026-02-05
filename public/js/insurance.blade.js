@@ -836,7 +836,7 @@ async function handleInsuranceFormSubmit(e) {
             showConfirmButton: false
         }).then(() => {
             // Redirect to view page after successful save/update
-            window.location.href = `/insurances/view/${insuranceId}`;
+            window.location.href = `/insurances/view/${id}`;
         });
     } catch (err) {
         if (typeof Swal !== 'undefined') {

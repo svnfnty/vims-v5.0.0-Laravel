@@ -5,7 +5,7 @@
 <style>
     @import url('{{ asset("css/policies.blade.css") }}');
 </style>
-
+ 
 <div class="policies-dashboard">
     <!-- Dashboard Header -->
     <div class="dashboard-header">
@@ -202,12 +202,12 @@
                 </div>
 
                 <div class="floating-label">
-                    <input type="number" step="0.01" class="form-control" id="third_party_liability" name="third_party_liability" placeholder=" ">
+                    <input type="text" class="form-control" id="third_party_liability" name="third_party_liability" placeholder=" ">
                     <label for="third_party_liability">Third Party Liability</label>
                 </div>
 
                 <div class="floating-label">
-                    <input type="number" step="0.01" class="form-control" id="personal_accident" name="personal_accident" placeholder=" ">
+                    <input type="text" class="form-control" id="personal_accident" name="personal_accident" placeholder=" ">
                     <label for="personal_accident">Personal Accident</label>
                 </div>
 
