@@ -152,9 +152,19 @@ $(document).ready(function() {
             const email = client.email || '<span style="color: var(--gray);">No email</span>';
             const fullName = (client.lastname + ', ' + client.firstname + ' ' + client.middlename).toUpperCase();
             const createdDate = new Date(client.date_created).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            // Only show office name for super admin (id=1 and office_id=0)
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            const officeName = client.office ? client.office.office_name : 'N/A';
+            const officeDisplay = isSuperAdmin ? `
+                <div class="detail-row">
+                    <span class="detail-label">Office:</span>
+                    <span class="detail-value">${officeName}</span>
+                </div>
+            ` : '';
 
             html += `
-                <div class="client-card" data-status="${status}" data-id="${client.id}">
+                <div class="client-card" data-status="${status}" data-office="${officeName}" data-id="${client.id}">
                     <div class="card-header">
                         <div class="client-meta">
                             <span class="client-id">Client #${client.id}</span>
@@ -176,6 +186,7 @@ $(document).ready(function() {
                                 <span class="detail-label">Address:</span>
                                 <span class="detail-value">${client.address}</span>
                             </div>
+                            ${officeDisplay}
                         </div>
                     </div>
 
@@ -206,9 +217,11 @@ $(document).ready(function() {
     // Render Table View
     function renderTable(data) {
         if (data.length === 0) {
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            const colspan = isSuperAdmin ? 8 : 7;
             $('#tableBody').html(`
                 <tr>
-                    <td colspan="7">
+                    <td colspan="${colspan}">
                         <div class="empty-state">
                             <div class="empty-icon">
                                 <i class="fas fa-users"></i>
@@ -236,14 +249,20 @@ $(document).ready(function() {
             const email = client.email || '<span style="color: var(--gray);">No email</span>';
             const fullName = (client.lastname + ', ' + client.firstname + ' ' + client.middlename).toUpperCase();
             const createdDate = new Date(client.date_created).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            // Only show office name for super admin (id=1 and office_id=0)
+            const isSuperAdmin = window.userId === 1 && window.userOfficeId === 0;
+            const officeName = client.office ? client.office.office_name : 'N/A';
+            const officeDisplay = isSuperAdmin ? `<td>${officeName}</td>` : '';
 
             html += `
-                <tr data-status="${status}" data-id="${client.id}">
+                <tr data-status="${status}" data-office="${officeName}" data-id="${client.id}">
                     <td class="text-center">${index + 1}</td>
                     <td>${createdDate}</td>
                     <td><strong>${fullName}</strong></td>
                     <td>${email}</td>
                     <td>${client.address}</td>
+                    ${officeDisplay}
                     <td class="text-center">
                         <span class="status-badge ${status}">${statusLabel}</span>
                     </td>

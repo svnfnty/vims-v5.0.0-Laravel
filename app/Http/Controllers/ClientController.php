@@ -40,8 +40,9 @@ class ClientController extends Controller
                 'date_created',
                 'email',
                 'address',
-                'status'
-            ])->where('delete_flag', 0);
+                'status',
+                'office_id'
+            ])->with('office')->where('delete_flag', 0);
             
             if (!$isSuperAdmin) {
                 $clientsQuery->where('office_id', $officeId);

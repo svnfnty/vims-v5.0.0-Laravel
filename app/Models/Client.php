@@ -42,4 +42,10 @@ class Client extends Model
     {
         return $this->hasMany(Insurance::class, 'client_id', 'id');
     }
+
+    // Define the relationship with Office model
+    public function office()
+    {
+        return $this->belongsTo(Office::class, 'office_id', 'id');
+    }
 }

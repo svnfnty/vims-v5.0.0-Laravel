@@ -114,6 +114,9 @@
                         <th>Registered Name</th>
                         <th>Registered Email</th>
                         <th>Address</th>
+                        @if(auth()->user()->id == 1 && auth()->user()->office_id == 0)
+                            <th>Office</th>
+                        @endif
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -238,6 +241,8 @@ window.routes = {
     clientsStore: '{{ route("clients.store") }}'
 };
 window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
+window.userId = {{ auth()->user()->id ?? 0 }};
+window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
 </script>
 <script src="{{ asset('js/client.blade.js') }}"></script>
 @endsection
