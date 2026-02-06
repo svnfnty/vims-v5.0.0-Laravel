@@ -24,6 +24,17 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        
+        // Skip database initialization during config:cache
+        $isConfigCache = app()->runningInConsole() && 
+        in_array('config:cache', $_SERVER['argv'] ?? []);
+
+            if ($isConfigCache) {
+            // Prevent DB queries
+            DB::preventAccessingMissingAttributes();
+            return;
+            }
+            
         //URL::forceScheme('https');
 
         // Share system info with all views
