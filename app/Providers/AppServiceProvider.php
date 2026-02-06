@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -34,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             DB::preventAccessingMissingAttributes();
             return;
             }
-            
+
         //URL::forceScheme('https');
 
         // Share system info with all views
