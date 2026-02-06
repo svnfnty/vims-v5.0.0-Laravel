@@ -1,6 +1,7 @@
 // Insurance Dashboard JavaScript
 let countdownTime = 10 * 1000;
 let currentGridView = 'cards';
+let isSubmitting = false;
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
@@ -61,7 +62,21 @@ function initializeEventListeners() {
     // Insurance form submit (Save / Update)
     const insuranceForm = document.getElementById('insuranceForm');
     if (insuranceForm) {
-        insuranceForm.addEventListener('submit', handleInsuranceFormSubmit);
+        insuranceForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Disable submit button immediately to prevent multiple submissions
+            const submitBtn = document.getElementById('insuranceSubmitBtn');
+            if (submitBtn && submitBtn.disabled) {
+                return; // Already processing
+            }
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            }
+
+            handleInsuranceFormSubmit(e);
+        });
     }
 
     // Registration date: auto-fill expiration_date = registration_date + 1 year
@@ -795,13 +810,31 @@ function closeClientEditModal() {
 }
 
 function submitClientEdit() {
+    // Prevent multiple submissions
+    if (isSubmitting) {
+        return; // Already processing
+    }
+    isSubmitting = true;
+
+    // Disable submit button immediately to prevent multiple submissions
+    const submitBtn = document.getElementById('editClientSubmitBtn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+    }
+
     const form = document.getElementById('clientEditForm');
-    
+
     // Validate required fields
     const firstname = document.getElementById('edit-firstname').value.trim();
     const lastname = document.getElementById('edit-lastname').value.trim();
-    
+
     if (!firstname) {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Client';
+        }
+        isSubmitting = false; // Reset flag on validation error
         Swal.fire({
             icon: 'error',
             title: 'Validation Error',
@@ -809,8 +842,13 @@ function submitClientEdit() {
         });
         return;
     }
-    
+
     if (!lastname) {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Client';
+        }
+        isSubmitting = false; // Reset flag on validation error
         Swal.fire({
             icon: 'error',
             title: 'Validation Error',
@@ -818,7 +856,7 @@ function submitClientEdit() {
         });
         return;
     }
-    
+
     // Collect edited client data
     const editedClientData = {
         firstname: firstname,
@@ -830,14 +868,14 @@ function submitClientEdit() {
         markup: document.getElementById('edit-markup').value.trim(),
         address: document.getElementById('edit-address').value.trim()
     };
-    
+
     // Store the pending results locally before closing modal (closeClientEditModal clears them)
     const localMvfileResult = pendingMvfileResult;
     const localCocResult = pendingCocResult;
-    
+
     // Close the client edit modal
     closeClientEditModal();
-    
+
     // Continue to insurance form with edited data
     if (localMvfileResult && localCocResult) {
         updateProgressStep(4);
@@ -848,6 +886,7 @@ function submitClientEdit() {
             policy_no: localCocResult.policyNumber || localCocResult.cocNumber
         }, localMvfileResult.existingRecord || null, localMvfileResult.isCopy || false, editedClientData);
     }
+    isSubmitting = false; // Reset flag after processing
 }
 
 // Create Client Modal Functions
@@ -885,11 +924,28 @@ function closeCreateClientModal() {
 }
 
 async function submitCreateClient() {
+    // Prevent multiple submissions
+    if (isSubmitting) {
+        return; // Already processing
+    }
+    isSubmitting = true;
+
+    // Disable submit button immediately to prevent multiple submissions
+    const submitBtn = document.getElementById('createClientSubmitBtn');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+    }
+
     // Validate required fields
     const firstname = document.getElementById('create-firstname').value.trim();
     const lastname = document.getElementById('create-lastname').value.trim();
-    
+
     if (!firstname) {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Create Client';
+        }
         Swal.fire({
             icon: 'error',
             title: 'Validation Error',
@@ -897,8 +953,12 @@ async function submitCreateClient() {
         });
         return;
     }
-    
+
     if (!lastname) {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Create Client';
+        }
         Swal.fire({
             icon: 'error',
             title: 'Validation Error',
@@ -906,7 +966,7 @@ async function submitCreateClient() {
         });
         return;
     }
-    
+
     // Collect new client data
     // Note: API expects 'walkin_list' instead of 'markup', and 'status' is required
     const clientData = {
@@ -920,7 +980,7 @@ async function submitCreateClient() {
         address: document.getElementById('create-address').value.trim() || 'N/A', // Required field
         status: '1' // Required field - 1 = active
     };
-    
+
     // Show loading
     Swal.fire({
         title: 'Creating Client...',
@@ -974,12 +1034,12 @@ async function submitCreateClient() {
             if (localMvfileResult && localCocResult) {
                 console.log('Opening insurance form with new client:', newClientId);
                 updateProgressStep(4);
-                
+
                 // First, add the new client to the Select2 dropdown options
                 const clientSelect = $('#modal-client_id');
                 const newOption = new Option(newClientName, newClientId, true, true);
                 clientSelect.append(newOption);
-                
+
                 showManageInsuranceModal({
                     mvfile_no: localMvfileResult.mvfile_no,
                     coc_no: localCocResult.cocNumber,
@@ -994,6 +1054,7 @@ async function submitCreateClient() {
                     text: 'Failed to open insurance form. Missing required data.'
                 });
             }
+            isSubmitting = false; // Reset flag after processing
         }, 300);
     } catch (error) {
         console.error('Error creating client:', error);
@@ -1002,6 +1063,13 @@ async function submitCreateClient() {
             title: 'Error',
             text: error.message || 'Failed to create client. Please try again.'
         });
+    } finally {
+        // Re-enable submit button after request completes (success or error)
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-save"></i> Create Client';
+        }
+        isSubmitting = false; // Reset submission flag
     }
 }
 
@@ -1373,6 +1441,7 @@ async function handleInsuranceFormSubmit(e) {
             submitBtn.disabled = false;
             submitBtn.innerHTML = isUpdate ? '<i class="fas fa-save"></i> Update' : '<i class="fas fa-save"></i> Save';
         }
+        isSubmitting = false; // Reset submission flag
     }
 }
 

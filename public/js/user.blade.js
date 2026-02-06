@@ -75,6 +75,14 @@ $(document).ready(function() {
     // Form Submission
     $('#userForm').on('submit', function(e) {
         e.preventDefault();
+
+        // Disable submit button immediately to prevent multiple submissions
+        const $submitBtn = $('#submitBtn');
+        if ($submitBtn.prop('disabled')) {
+            return; // Already processing
+        }
+        $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+
         submitUserForm();
     });
 

@@ -68,6 +68,14 @@ $(document).ready(function() {
     // Form Submission
     $('#walkinForm').on('submit', function(e) {
         e.preventDefault();
+
+        // Disable submit button immediately to prevent multiple submissions
+        const $submitBtn = $('#submitBtn');
+        if ($submitBtn.prop('disabled')) {
+            return; // Already processing
+        }
+        $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+
         submitWalkinForm();
     });
 
@@ -551,6 +559,10 @@ $(document).ready(function() {
     function submitWalkinForm() {
         if (currentMode === 'view') return;
 
+        // Disable submit button to prevent multiple submissions
+        const $submitBtn = $('#submitBtn');
+        $submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+
         const url = $('#walkinForm').attr('action');
         const method = $('#formMethod').val();
 
@@ -648,6 +660,10 @@ $(document).ready(function() {
                         icon: 'error'
                     });
                 }
+            },
+            complete: function() {
+                // Re-enable submit button after request completes (success or error)
+                $submitBtn.prop('disabled', false).html('<i class="fas fa-save"></i> ' + (currentMode === 'create' ? 'Save Walkin' : 'Update Walkin'));
             }
         });
     }
