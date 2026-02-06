@@ -12,7 +12,7 @@
             {
                 id: 1,
                 title: 'Create Walkin',
-                desc: 'Walkins are the processors of vehicles. Click "New Walkin" to start.',
+                desc: 'Walkins are the processors/liason of vehicles. Click "New Walkin" to start.',
                 target: '[data-tutorial-target="walkin-create"]',
                 route: '/walkin',
                 fields: ['#email', '#accountID', '#name', '#color', '#description', '#status'],
@@ -106,7 +106,7 @@
         div.className = 'tutorial-welcome';
         div.innerHTML = `
             <div style="text-align:center;padding:30px;">
-                <div style="font-size:60px;margin-bottom:15px;">🎮</div>
+                <div style="font-size:60px;margin-bottom:15px;">🚗</div>
                 <h2 style="margin:0 0 15px;color:#1e293b;">Welcome to VIMSYS!</h2>
                 <p style="color:#64748b;margin-bottom:25px;">New here? Take our interactive tutorial to learn the system.</p>
                 <button onclick="VIMSYSTutorial.start(0);this.closest('.tutorial-welcome').remove()" 
