@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
          }
          
          URL::forceScheme('https');
-     
+
          // Use environment variables instead of database
          $systemName = env('APP_NAME', 'VEHICLE INSURANCE MANAGEMENT SYSTEM');
          $systemShortName = env('APP_SHORT_NAME', 'VIMSYS SAAS 2026');
