@@ -22,10 +22,10 @@
             </div>
             <div class="user-controls">
                 <div class="batch-controls">
-                    <button class="control-btn primary" id="create_new">
+                    <!--<button class="control-btn primary" id="create_new">
                         <i class="fas fa-plus-circle"></i>
                         New Client
-                    </button>
+                    </button>-->
                     <button class="control-btn primary" id="loadDataBtn">
                         <i class="fas fa-database"></i>
                         Load Data

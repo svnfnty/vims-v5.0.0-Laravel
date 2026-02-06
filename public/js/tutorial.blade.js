@@ -375,29 +375,83 @@
 
     function setupFieldHoverDetection(step) {
         // Clear previous listeners
-        hoverListeners.forEach(({el, handler}) => {
-            el.removeEventListener('mouseenter', handler);
+        hoverListeners.forEach(({el, handler, type}) => {
+            el.removeEventListener(type, handler);
         });
         hoverListeners = [];
 
-        // Add hover listeners to all fields
+        // Add hover and focus listeners to all fields
         step.fields.forEach((selector, index) => {
             const field = document.querySelector(selector);
             if (!field) return;
 
-            const container = field.closest('.floating-label') || field.parentElement;
+            // Try to find the best container for highlighting
+            let container = field.closest('.floating-label') || 
+                           field.closest('.form-group') || 
+                           field.closest('.modal-body') ||
+                           field.parentElement;
             
-            const hoverHandler = () => {
+            // Hover handler
+            const hoverHandler = (e) => {
+                e.stopPropagation();
                 // Only respond if this field hasn't been filled yet
                 if (!field.value?.trim()) {
                     highlightFieldOnHover(step, index, container, field);
                 }
             };
 
+            // Focus handler (for Tab key navigation)
+            const focusHandler = () => {
+                // Only respond if this field hasn't been filled yet
+                if (!field.value?.trim()) {
+                    highlightFieldOnHover(step, index, container, field);
+                }
+            };
+
+            // Add listeners to both container and field itself
             container.addEventListener('mouseenter', hoverHandler);
-            hoverListeners.push({el: container, handler: hoverHandler});
+            field.addEventListener('mouseenter', hoverHandler);
+            field.addEventListener('focus', focusHandler);
+            
+            hoverListeners.push(
+                {el: container, handler: hoverHandler, type: 'mouseenter'},
+                {el: field, handler: hoverHandler, type: 'mouseenter'},
+                {el: field, handler: focusHandler, type: 'focus'}
+            );
         });
+
+        // Add global Tab key handler for sequential navigation
+        document.addEventListener('keydown', handleTabNavigation);
+        hoverListeners.push({el: document, handler: handleTabNavigation, type: 'keydown'});
     }
+
+    function handleTabNavigation(e) {
+        if (e.key === 'Tab' && isActive) {
+            // Let default Tab behavior happen, then highlight the focused field
+            setTimeout(() => {
+                const focusedField = document.activeElement;
+                if (focusedField && focusedField.matches('input, select, textarea')) {
+                    // Find which step field this is
+                    const step = CONFIG.steps[currentStep];
+                    if (!step) return;
+                    
+                    const fieldIndex = step.fields.findIndex(selector => {
+                        const field = document.querySelector(selector);
+                        return field === focusedField;
+                    });
+                    
+                    if (fieldIndex !== -1 && !focusedField.value?.trim()) {
+                        const container = focusedField.closest('.floating-label') || 
+                                         focusedField.closest('.form-group') || 
+                                         focusedField.closest('.modal-body') ||
+                                         focusedField.parentElement;
+                        highlightFieldOnHover(step, fieldIndex, container, focusedField);
+                    }
+                }
+            }, 50);
+        }
+    }
+
 
     function highlightFieldOnHover(step, index, container, field) {
         // Update current field index
@@ -410,21 +464,28 @@
             el.style.cssText = '';
         });
 
-        // Highlight current container
+        // Highlight current container with higher z-index for modal compatibility
         container.classList.add('tutorial-field-active');
-        container.style.cssText = 'position:relative;z-index:10001;background:#fff;border-radius:8px;box-shadow:0 0 0 3px #2563eb,0 0 20px rgba(37,99,235,0.3);padding:5px;transition:all 0.3s;';
+        container.style.cssText = 'position:relative;z-index:10010 !important;background:#fff !important;border-radius:8px;box-shadow:0 0 0 3px #2563eb,0 0 20px rgba(37,99,235,0.5);padding:5px;transition:all 0.3s;pointer-events:auto;';
+        
+        // Also highlight the field itself
+        field.style.cssText = 'position:relative;z-index:10011 !important;';
         
         // Update instruction
-        const label = field.closest('.floating-label')?.querySelector('label')?.textContent || 'this field';
+        const label = field.closest('.floating-label')?.querySelector('label')?.textContent || 
+                      field.getAttribute('placeholder') || 
+                      field.getAttribute('name') || 
+                      'this field';
         document.getElementById('tutFieldInstr').innerHTML = `<i class="bi bi-pencil-fill" style="margin-right:6px;"></i>Enter <strong>${label.replace('*', '').trim()}</strong>`;
         document.getElementById('tutFieldNum').textContent = index + 1;
         
-        // Position arrow pointing to field
+        // Position arrow pointing to field (adjust for modal)
         els.arrow.style.display = 'block';
+        els.arrow.style.zIndex = '10012';
         positionArrow(container, 'right');
         
-        // Focus field
-        field.focus();
+        // Ensure field is focusable and visible
+        field.scrollIntoView({ behavior: 'smooth', block: 'center' });
         
         // Create or update next button
         let nextBtn = container.querySelector('.tut-next-btn');
@@ -432,12 +493,13 @@
             nextBtn = document.createElement('button');
             nextBtn.className = 'tut-next-btn';
             nextBtn.innerHTML = 'Next <i class="bi bi-arrow-right"></i>';
-            nextBtn.style.cssText = 'position:absolute;right:-100px;top:50%;transform:translateY(-50%);background:#2563eb;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;display:none;z-index:10002;white-space:nowrap;';
+            nextBtn.style.cssText = 'position:absolute;right:-100px;top:50%;transform:translateY(-50%);background:#2563eb;color:white;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;display:none;z-index:10013;white-space:nowrap;';
             container.appendChild(nextBtn);
             
             // Next button click handler
             nextBtn.onclick = (e) => {
                 e.stopPropagation();
+                e.preventDefault();
                 if (!field.value?.trim()) {
                     container.classList.add('tutorial-shake');
                     setTimeout(() => container.classList.remove('tutorial-shake'), 500);
@@ -447,6 +509,7 @@
                 // Mark field as filled
                 container.classList.remove('tutorial-field-active');
                 container.style.cssText = '';
+                field.style.cssText = '';
                 nextBtn.remove();
                 
                 // Move to next unfilled field
@@ -458,19 +521,27 @@
         const checkValue = () => {
             nextBtn.style.display = field.value?.trim() ? 'inline-block' : 'none';
         };
+        
+        // Remove old input listener if exists to prevent duplicates
+        field.removeEventListener('input', checkValue);
         field.addEventListener('input', checkValue);
         checkValue();
         
         // Enter key handler
-        field.addEventListener('keydown', (e) => {
+        const enterHandler = (e) => {
             if (e.key === 'Enter' && field.value?.trim()) {
+                e.preventDefault();
                 container.classList.remove('tutorial-field-active');
                 container.style.cssText = '';
+                field.style.cssText = '';
                 nextBtn.remove();
                 moveToNextUnfilledField(step);
             }
-        });
+        };
+        field.removeEventListener('keydown', enterHandler);
+        field.addEventListener('keydown', enterHandler);
     }
+
 
     function moveToNextUnfilledField(step) {
         // Find next unfilled field
@@ -572,9 +643,11 @@
     }
 
     function cleanup() {
-        // Remove hover listeners
-        hoverListeners.forEach(({el, handler}) => {
-            el.removeEventListener('mouseenter', handler);
+        // Remove all listeners
+        hoverListeners.forEach(({el, handler, type}) => {
+            if (el && handler && type) {
+                el.removeEventListener(type, handler);
+            }
         });
         hoverListeners = [];
         
@@ -585,11 +658,19 @@
             el.style.position = '';
             el.style.cssText = '';
         });
+        
+        // Also clean up input fields
+        document.querySelectorAll('input, select, textarea').forEach(field => {
+            field.style.zIndex = '';
+            field.style.position = '';
+        });
+        
         document.querySelectorAll('.tut-next-btn').forEach(el => el.remove());
         if (els.tooltip) els.tooltip.style.display = 'none';
         if (els.spotlight) els.spotlight.style.display = 'none';
         if (els.arrow) els.arrow.style.display = 'none';
     }
+
 
     function saveStep() {
         localStorage.setItem(CONFIG.storageKey, currentStep);

@@ -447,19 +447,64 @@
     opacity: 0;
 }
 
-/* Responsive adjustments */
+/* Responsive adjustments - Mobile: Tiny floating badge, minimal blocking */
 @media (max-width: 768px) {
     .tutorial-tooltip {
-        max-width: 280px;
-        padding: 16px;
+        position: fixed !important;
+        top: auto !important;
+        bottom: 10px !important; /* Bottom corner - away from modal */
+        left: auto !important;
+        right: 10px !important;
+        transform: none !important;
+        max-width: none !important;
+        width: auto !important;
+        max-width: 200px !important;
+        padding: 8px 12px;
+        max-height: none;
+        overflow-y: visible;
+        z-index: 10020 !important;
+        border-radius: 20px; /* Pill shape */
+        font-size: 12px;
+        /* Compact pill layout */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
     
+    /* Minimal text */
     .tutorial-tooltip h4 {
-        font-size: 16px;
+        font-size: 12px;
+        margin: 0;
+        font-weight: 600;
+        white-space: nowrap;
     }
     
-    .tutorial-tooltip p {
-        font-size: 13px;
+    .tutorial-tooltip p,
+    .tutorial-tooltip div[style*="background:#dbeafe"],
+    .tutorial-tooltip div[style*="background:#e2e8f0"] {
+        display: none !important; /* Hide all extra content */
+    }
+    
+    /* Only show step badge and title */
+    .tutorial-tooltip > div:first-child {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        width: 100%;
+    }
+    
+    /* Tiny skip button */
+    .tutorial-tooltip button[onclick*="skip"] {
+        margin: 0 !important;
+        padding: 4px 8px !important;
+        font-size: 10px;
+        border-radius: 12px;
+        margin-left: auto !important;
+        background: rgba(255,255,255,0.9) !important;
+        color: #64748b !important;
+        border: 1px solid #cbd5e1 !important;
     }
     
     .tutorial-welcome,
@@ -481,7 +526,57 @@
         width: 100%;
         justify-content: center;
     }
+    
+    /* Hide arrow on mobile */
+    .tutorial-css-arrow {
+        display: none !important;
+    }
+    
+    /* Mobile field instruction - tiny floating hint near field */
+    .tutorial-field-instruction {
+        position: absolute !important; /* Position relative to field, not fixed */
+        bottom: auto !important;
+        top: -30px !important; /* Above the field */
+        left: 0 !important;
+        right: auto !important;
+        transform: none !important;
+        max-width: none !important;
+        width: auto !important;
+        white-space: nowrap;
+        padding: 4px 10px;
+        z-index: 10019 !important;
+        font-size: 11px;
+        border-radius: 12px;
+        background: #2563eb !important;
+        color: white !important;
+        border: none !important;
+    }
 }
+
+/* Extra small screens - even more minimal */
+@media (max-width: 480px) {
+    .tutorial-tooltip {
+        bottom: 5px !important;
+        right: 5px !important;
+        padding: 6px 10px;
+        font-size: 11px;
+        max-width: 160px !important;
+        border-radius: 16px;
+    }
+    
+    .tutorial-tooltip h4 {
+        font-size: 11px;
+    }
+    
+    .tutorial-field-instruction {
+        font-size: 10px;
+        padding: 3px 8px;
+        top: -25px !important;
+    }
+}
+
+
+
 
 /* Animation for tooltip entrance */
 .tutorial-tooltip-enter {
