@@ -38,7 +38,7 @@ class AppServiceProvider extends ServiceProvider
                 return; // Skip boot code during build
             }
 
-        //URL::forceScheme('https');
+        URL::forceScheme('https');
 
         // Share system info with all views
         $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VIMS';
