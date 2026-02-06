@@ -445,9 +445,12 @@ async function showCocInputDialog() {
                 <i class="fas fa-id-card"></i>
                 <h3>Enter COC Number</h3>
             </div>
-            <div class="input-guide">Please enter the 8-digit COC number</div>
+            <div class="tutorial-tip-box">
+                <i class="fas fa-lightbulb"></i>
+                <span><strong>Tip:</strong> COC (Certificate of Cover) is an 8-digit number found on your insurance certificate.</span>
+            </div>
             <div class="input-wrapper">
-                <input type="text" id="coc-input" class="modern-input" placeholder="12345678" maxlength="8">
+                <input type="text" id="coc-input" class="modern-input" placeholder="12345678" maxlength="8" data-tutorial="coc-input">
                 <div class="status-indicator" id="coc-status-indicator"></div>
             </div>
             <div class="status-message" id="coc-status-message"></div>
@@ -456,8 +459,18 @@ async function showCocInputDialog() {
                     <i class="fas fa-info-circle"></i>
                     <h3>Additional Information</h3>
                 </div>
-                <input type="text" id="or-number" class="modern-input" placeholder="OR Number">
-                <input type="text" id="policy-number" class="modern-input" placeholder="Policy Number">
+                <div class="tutorial-tip-box secondary">
+                    <i class="fas fa-info-circle"></i>
+                    <span>These fields are optional but help with record keeping.</span>
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="or-number" class="modern-input" placeholder="OR Number" data-tutorial="or-input">
+            
+                </div>
+                <div class="input-wrapper">
+                    <input type="text" id="policy-number" class="modern-input" placeholder="Policy Number" data-tutorial="policy-input">
+                   
+                </div>
             </div>
         `;
 
@@ -468,7 +481,7 @@ async function showCocInputDialog() {
             confirmButtonText: 'Continue',
             cancelButtonText: 'Cancel',
             customClass: {
-                popup: 'modern-swal-popup',
+                popup: 'modern-swal-popup tutorial-swal-popup',
                 confirmButton: 'modern-confirm-btn',
                 cancelButton: 'modern-cancel-btn'
             },
@@ -584,9 +597,12 @@ async function showMvFileInputDialog() {
                 <i class="fas fa-car"></i>
                 <h3>Bind MV File Number</h3>
             </div>
-            <div class="input-guide">Please enter MV File number</div>
+            <div class="tutorial-tip-box">
+                <i class="fas fa-lightbulb"></i>
+                <span><strong>Tip:</strong> MV File Number links this insurance to a specific vehicle. If the vehicle exists in another office, you can copy its data.</span>
+            </div>
             <div class="input-wrapper">
-                <input type="text" id="mvfile-input" class="modern-input" placeholder="Enter MV File Number">
+                <input type="text" id="mvfile-input" class="modern-input" placeholder="Enter MV File Number" data-tutorial="mvfile-input">
                 <div class="status-indicator" id="status-indicator"></div>
             </div>
             <div class="status-message" id="status-message"></div>
@@ -600,7 +616,7 @@ async function showMvFileInputDialog() {
             confirmButtonText: 'Bind & Continue',
             cancelButtonText: 'Cancel',
             customClass: {
-                popup: 'modern-swal-popup',
+                popup: 'modern-swal-popup tutorial-swal-popup',
                 confirmButton: 'modern-confirm-btn',
                 cancelButton: 'modern-cancel-btn'
             },

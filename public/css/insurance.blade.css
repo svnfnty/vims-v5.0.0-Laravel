@@ -1782,3 +1782,128 @@
         width: 95% !important;
     }
 }
+
+/* Tutorial Tip Box Styles for SweetAlert */
+.tutorial-tip-box {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-left: 4px solid #3b82f6;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    color: #1e40af;
+    animation: slideInDown 0.3s ease;
+}
+
+.tutorial-tip-box.secondary {
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    border-left-color: #6b7280;
+    color: #374151;
+}
+
+.tutorial-tip-box i {
+    font-size: 18px;
+    color: #3b82f6;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.tutorial-tip-box.secondary i {
+    color: #6b7280;
+}
+
+.tutorial-tip-box strong {
+    font-weight: 600;
+    color: #1e3a8a;
+}
+
+/* Field Tooltip Styles */
+.field-tooltip {
+    position: absolute;
+    right: -220px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #1e293b;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    width: 200px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.field-tooltip::before {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 6px 6px 6px 0;
+    border-style: solid;
+    border-color: transparent #1e293b transparent transparent;
+}
+
+.field-tooltip.show {
+    opacity: 1;
+    visibility: visible;
+    right: -210px;
+}
+
+.field-tooltip i {
+    color: #60a5fa;
+    margin-right: 6px;
+    font-size: 14px;
+}
+
+/* Tutorial-enabled SweetAlert Popup */
+.tutorial-swal-popup {
+    max-width: 520px !important;
+}
+
+.tutorial-swal-popup .modern-input-container {
+    position: relative;
+    overflow: visible;
+}
+
+/* Animation for tutorial elements */
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments for tooltips */
+@media (max-width: 640px) {
+    .field-tooltip {
+        position: fixed;
+        right: auto;
+        left: 50%;
+        top: auto;
+        bottom: 100px;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 300px;
+    }
+    
+    .field-tooltip::before {
+        display: none;
+    }
+    
+    .field-tooltip.show {
+        right: auto;
+        bottom: 120px;
+    }
+}

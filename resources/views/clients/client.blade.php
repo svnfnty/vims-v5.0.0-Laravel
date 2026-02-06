@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     @import url('{{ asset("css/client.blade.css") }}');
+    @import url('{{ asset("css/tutorial.blade.css") }}');
 </style>
  
 <div class="clients-dashboard">
@@ -257,5 +258,83 @@ window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 window.userId = {{ auth()->user()->id ?? 0 }};
 window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
 </script>
+<!-- Client Tutorial Overlay -->
+<div id="clientTutorialOverlay" class="tutorial-overlay" style="display: none; z-index: 10002;"></div>
+
+<!-- Client Tutorial Modal - Matching Tutorial System Design -->
+<div id="clientTutorialModal" class="tutorial-welcome" style="display: none; z-index: 10003;">
+    <div class="tutorial-welcome-icon">
+        <i class="fas fa-lightbulb"></i>
+    </div>
+    <h2>Client Management</h2>
+    <p style="color: #64748b; font-size: 16px; line-height: 1.6; margin-bottom: 20px;">
+        <strong>Did you know?</strong> Clients are automatically created throughout the <strong>New Insurance Process</strong>. 
+        You don't need to manually create clients here!
+    </p>
+    <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-left: 4px solid #2563eb; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; text-align: left;">
+        <div style="display: flex; align-items: flex-start; gap: 10px;">
+            <i class="fas fa-info-circle" style="color: #2563eb; font-size: 16px; margin-top: 2px;"></i>
+            <span style="color: #1e40af; font-size: 14px;">The "New Client" button is hidden because clients are created automatically when you issue a new insurance policy.</span>
+        </div>
+    </div>
+    <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px;">
+        <input type="checkbox" id="dontShowAgain" style="width: 18px; height: 18px; cursor: pointer;">
+        <label for="dontShowAgain" style="color: #64748b; font-size: 14px; cursor: pointer;">Don't show this message again</label>
+    </div>
+    <div class="tutorial-controls" style="justify-content: center;">
+        <button class="tutorial-btn tutorial-btn-primary" onclick="dismissClientTutorial()">
+            <i class="fas fa-check"></i> Got it!
+        </button>
+    </div>
+</div>
+
+
+<script>
+    // Client Tutorial Logic
+    (function() {
+        const TUTORIAL_KEY = 'vimsy_client_tutorial_seen';
+        
+        function showClientTutorial() {
+            const hasSeen = localStorage.getItem(TUTORIAL_KEY);
+            if (hasSeen) return;
+            
+            const modal = document.getElementById('clientTutorialModal');
+            const overlay = document.getElementById('clientTutorialOverlay');
+            if (modal) {
+                modal.style.display = 'block';
+                if (overlay) overlay.style.display = 'block';
+                // Add animation class
+                setTimeout(() => {
+                    modal.classList.add('show');
+                }, 10);
+            }
+        }
+        
+        window.dismissClientTutorial = function() {
+            const dontShowAgain = document.getElementById('dontShowAgain').checked;
+            if (dontShowAgain) {
+                localStorage.setItem(TUTORIAL_KEY, 'true');
+            }
+            
+            const modal = document.getElementById('clientTutorialModal');
+            const overlay = document.getElementById('clientTutorialOverlay');
+            if (modal) {
+                modal.classList.remove('show');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    if (overlay) overlay.style.display = 'none';
+                }, 300);
+            }
+        };
+        
+        // Show tutorial when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', showClientTutorial);
+        } else {
+            showClientTutorial();
+        }
+    })();
+</script>
+
 <script src="{{ asset('js/client.blade.js') }}"></script>
 @endsection
