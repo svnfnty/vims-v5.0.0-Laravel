@@ -14,10 +14,13 @@
     <link rel="stylesheet" href="{{ asset('css/insurance.blade.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.blade.css') }}">
     <link rel="stylesheet" href="{{ asset('css/series.blade.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tutorial.blade.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/tutorial.blade.css') }}">
     <!-- Include jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Include other scripts -->
     <script src="{{ asset('js/series.blade.js') }}"></script>
+    <script src="{{ asset('js/tutorial.blade.js') }}"></script>
     <!-- Include DataTables CSS and JS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
       <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -100,6 +103,7 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('js/tutorial.blade.js') }}"></script>
     <script>
         document.getElementById('sidebarToggle').addEventListener('click', function() {
             const sidebar = document.querySelector('.sidebar');

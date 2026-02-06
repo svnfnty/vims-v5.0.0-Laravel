@@ -21,7 +21,7 @@
             </div>
             <div class="user-controls">
                 <div class="batch-controls">
-                    <button class="control-btn primary" id="create_new">
+                    <button class="control-btn primary" id="create_new" data-tutorial-target="policies-create">
                         <i class="fas fa-plus-circle"></i>
                         New Policy
                     </button>
@@ -305,5 +305,20 @@
     window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
 </script>
 <script src="{{ asset('js/policies.blade.js') }}"></script>
+
+<!-- Tutorial Step Completion Handler -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Listen for policy form submission to trigger tutorial next step
+        const policyForm = document.getElementById('policyForm');
+        if (policyForm) {
+            policyForm.addEventListener('submit', function() {
+                // Dispatch event to notify tutorial system
+                window.dispatchEvent(new CustomEvent('tutorial:actionCompleted', {
+                    detail: { step: 3, action: 'policy_created' }
+                }));
+            });
+        }
+    });
+</script>
 @endsection
-        </div>

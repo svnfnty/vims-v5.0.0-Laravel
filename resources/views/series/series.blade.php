@@ -23,7 +23,7 @@
             </div>
             <div class="user-controls">
                 <div class="batch-controls">
-                    <button class="control-btn primary" id="create_new">
+                    <button class="control-btn primary" id="create_new" data-tutorial-target="series-create">
                         <i class="fas fa-plus-circle"></i>
                         New Series
                     </button>
@@ -290,4 +290,20 @@
 </script>
 
 <script src="{{ asset('js/series.blade.js') }}"></script>
+
+<!-- Tutorial Step Completion Handler -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Listen for series form submission to trigger tutorial next step
+        const seriesForm = document.getElementById('seriesForm');
+        if (seriesForm) {
+            seriesForm.addEventListener('submit', function() {
+                // Dispatch event to notify tutorial system
+                window.dispatchEvent(new CustomEvent('tutorial:actionCompleted', {
+                    detail: { step: 4, action: 'series_created' }
+                }));
+            });
+        }
+    });
+</script>
 @endsection

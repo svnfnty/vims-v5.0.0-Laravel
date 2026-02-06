@@ -1,0 +1,511 @@
+/* filepath: c:\xampp\htdocs\vims-v5.0.0\public\css\tutorial.blade.css */
+
+/* ============================================
+   VIMSYS INTERACTIVE TUTORIAL SYSTEM
+   ============================================ */
+
+/* Tutorial Overlay - Darkens the background */
+.tutorial-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 9998;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+/* Spotlight effect - creates a hole for the target element */
+.tutorial-spotlight {
+    position: absolute;
+    border-radius: 8px;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+    z-index: 9999;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Highlighted target element */
+.tutorial-highlight {
+    position: relative;
+    z-index: 10000 !important;
+    box-shadow: 0 0 20px rgba(37, 99, 235, 0.8), 0 0 40px rgba(37, 99, 235, 0.4) !important;
+    border: 3px solid #2563eb !important;
+    border-radius: 8px !important;
+    animation: tutorial-pulse 2s infinite;
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
+
+/* Pulse animation for highlighted elements */
+@keyframes tutorial-pulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.8), 0 0 40px rgba(37, 99, 235, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(37, 99, 235, 1), 0 0 60px rgba(37, 99, 235, 0.6);
+    }
+}
+
+/* Tooltip/Instruction Box */
+.tutorial-tooltip {
+    position: absolute;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid #2563eb;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 350px;
+    z-index: 10001;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(37, 99, 235, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    pointer-events: auto;
+}
+
+.tutorial-tooltip h4 {
+    margin: 0 0 12px 0;
+    color: #1e293b;
+    font-size: 18px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tutorial-tooltip p {
+    margin: 0 0 16px 0;
+    color: #475569;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Arrow pointing to target */
+.tutorial-arrow {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    z-index: 10002;
+}
+
+.tutorial-arrow.arrow-top {
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 16px solid #2563eb;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tutorial-arrow.arrow-bottom {
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 16px solid #2563eb;
+    bottom: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tutorial-arrow.arrow-left {
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-right: 16px solid #2563eb;
+    left: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.tutorial-arrow.arrow-right {
+    border-top: 12px solid transparent;
+    border-bottom: 12px solid transparent;
+    border-left: 16px solid #2563eb;
+    right: -16px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Animated emoji arrow for tutorial */
+.tutorial-animated-arrow {
+    position: absolute;
+    font-size: 50px;
+    z-index: 10002;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    animation: tut-arrow-bounce 1s infinite;
+    display: none;
+}
+
+@keyframes tut-arrow-bounce {
+    0%, 100% { 
+        transform: translateY(0) scale(1); 
+    }
+    50% { 
+        transform: translateY(-20px) scale(1.1); 
+    }
+}
+
+/* Alternative CSS-only arrow if emoji doesn't work */
+.tutorial-css-arrow {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    z-index: 10002;
+    pointer-events: none;
+    animation: tut-arrow-bounce 1s infinite;
+}
+
+.tutorial-css-arrow::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 30px solid #2563eb;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+}
+
+.tutorial-css-arrow.down::before {
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 30px solid #2563eb;
+    border-bottom: none;
+}
+
+.tutorial-css-arrow.up::before {
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 30px solid #2563eb;
+    border-top: none;
+}
+
+.tutorial-css-arrow.right::before {
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 30px solid #2563eb;
+    border-right: none;
+}
+
+.tutorial-css-arrow.left::before {
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-right: 30px solid #2563eb;
+    border-left: none;
+}
+
+
+/* Step counter badge */
+.tutorial-step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 700;
+    margin-right: 8px;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+}
+
+/* Progress bar */
+.tutorial-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: rgba(37, 99, 235, 0.2);
+    z-index: 10002;
+}
+
+.tutorial-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+}
+
+/* Control buttons */
+.tutorial-controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+}
+
+.tutorial-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tutorial-btn-primary {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+.tutorial-btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
+}
+
+.tutorial-btn-secondary {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+}
+
+.tutorial-btn-secondary:hover {
+    background: #e2e8f0;
+    transform: translateY(-2px);
+}
+
+.tutorial-btn-skip {
+    background: transparent;
+    color: #94a3b8;
+    border: 1px solid #cbd5e1;
+}
+
+.tutorial-btn-skip:hover {
+    color: #64748b;
+    border-color: #94a3b8;
+}
+
+/* Welcome modal */
+.tutorial-welcome {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    z-index: 10003;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+.tutorial-welcome-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 40px;
+}
+
+.tutorial-welcome h2 {
+    margin: 0 0 16px 0;
+    color: #1e293b;
+    font-size: 28px;
+}
+
+.tutorial-welcome p {
+    margin: 0 0 24px 0;
+    color: #64748b;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Completion modal */
+.tutorial-complete {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 450px;
+    width: 90%;
+    z-index: 10003;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+
+.tutorial-complete-icon {
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 50px;
+    animation: tutorial-bounce 1s ease;
+}
+
+@keyframes tutorial-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* Form field instruction popup */
+.tutorial-field-instruction {
+    position: absolute;
+    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+    border: 2px solid #0ea5e9;
+    border-radius: 10px;
+    padding: 16px;
+    max-width: 300px;
+    z-index: 10002;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    pointer-events: auto;
+}
+
+.tutorial-field-instruction h5 {
+    margin: 0 0 8px 0;
+    color: #0369a1;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.tutorial-field-instruction p {
+    margin: 0 0 12px 0;
+    color: #0c4a6e;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.tutorial-field-instruction .tutorial-arrow {
+    border-top-color: #0ea5e9;
+    border-bottom-color: #0ea5e9;
+}
+
+/* Next field button */
+.tutorial-next-field-btn {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.tutorial-next-field-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+}
+
+.tutorial-next-field-btn:disabled {
+    background: #cbd5e1;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Submit button highlight */
+.tutorial-submit-highlight {
+    animation: tutorial-submit-pulse 1.5s infinite !important;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.4) !important;
+    border-color: #22c55e !important;
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+    color: white !important;
+    z-index: 10001 !important;
+    position: relative !important;
+}
+
+@keyframes tutorial-submit-pulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(34, 197, 94, 1), 0 0 60px rgba(34, 197, 94, 0.6);
+        transform: scale(1.02);
+    }
+}
+
+/* Hide spotlight when form is active */
+.tutorial-form-active .tutorial-spotlight {
+    opacity: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tutorial-tooltip {
+        max-width: 280px;
+        padding: 16px;
+    }
+    
+    .tutorial-tooltip h4 {
+        font-size: 16px;
+    }
+    
+    .tutorial-tooltip p {
+        font-size: 13px;
+    }
+    
+    .tutorial-welcome,
+    .tutorial-complete {
+        padding: 24px;
+        width: 95%;
+    }
+    
+    .tutorial-welcome h2,
+    .tutorial-complete h2 {
+        font-size: 22px;
+    }
+    
+    .tutorial-controls {
+        flex-direction: column;
+    }
+    
+    .tutorial-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Animation for tooltip entrance */
+.tutorial-tooltip-enter {
+    animation: tutorial-tooltip-in 0.3s ease;
+}
+
+@keyframes tutorial-tooltip-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Shake animation for required fields */
+.tutorial-shake {
+    animation: tutorial-shake 0.5s ease;
+}
+
+@keyframes tutorial-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}

@@ -19,7 +19,7 @@
             </div>
             <div class="user-controls">
                 <div class="batch-controls">
-                    <button class="control-btn primary" id="addInsuranceBtn">
+                    <button class="control-btn primary" id="addInsuranceBtn" data-tutorial-target="insurance-create">
                         <i class="fas fa-plus-circle"></i>
                         New Insurance
                     </button>
@@ -461,6 +461,22 @@
 </script>
 
 <script src="{{ asset('js/insurance.blade.js') }}"></script>
+
+<!-- Tutorial Step Completion Handler -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Listen for insurance form submission to trigger tutorial completion
+        const insuranceForm = document.getElementById('insuranceForm');
+        if (insuranceForm) {
+            insuranceForm.addEventListener('submit', function() {
+                // Dispatch event to notify tutorial system
+                window.dispatchEvent(new CustomEvent('tutorial:actionCompleted', {
+                    detail: { step: 5, action: 'insurance_created' }
+                }));
+            });
+        }
+    });
+</script>
 
 <script>
     $(document).ready(function() {

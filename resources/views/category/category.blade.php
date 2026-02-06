@@ -22,7 +22,7 @@
             </div>
             <div class="user-controls">
                 <div class="batch-controls">
-                    <button class="control-btn primary" id="create_new">
+                    <button class="control-btn primary" id="create_new" data-tutorial-target="category-create">
                         <i class="fas fa-plus-circle"></i>
                         New Category
                     </button>
@@ -209,4 +209,20 @@
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
 <script src="{{ asset('js/category.blade.js') }}"></script>
+
+<!-- Tutorial Step Completion Handler -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Listen for category form submission to trigger tutorial next step
+        const categoryForm = document.getElementById('categoryForm');
+        if (categoryForm) {
+            categoryForm.addEventListener('submit', function() {
+                // Dispatch event to notify tutorial system
+                window.dispatchEvent(new CustomEvent('tutorial:actionCompleted', {
+                    detail: { step: 2, action: 'category_created' }
+                }));
+            });
+        }
+    });
+</script>
 @endsection

@@ -22,7 +22,7 @@
             </div>
             <div class="user-controls">
                 <div class="batch-controls">
-                    <button class="control-btn primary" id="create_new">
+                    <button class="control-btn primary" id="create_new" data-tutorial-target="walkin-create">
                         <i class="fas fa-plus-circle"></i>
                         New Walkin
                     </button>
@@ -251,4 +251,20 @@
     window.isSuperAdmin = {{ $isSuperAdmin ? 'true' : 'false' }};
 </script>
 <script src="{{ asset('js/walkin.blade.js') }}"></script>
+
+<!-- Tutorial Step Completion Handler -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Listen for walkin form submission to trigger tutorial next step
+        const walkinForm = document.getElementById('walkinForm');
+        if (walkinForm) {
+            walkinForm.addEventListener('submit', function() {
+                // Dispatch event to notify tutorial system
+                window.dispatchEvent(new CustomEvent('tutorial:actionCompleted', {
+                    detail: { step: 1, action: 'walkin_created' }
+                }));
+            });
+        }
+    });
+</script>
 @endsection
