@@ -26,7 +26,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         
-           
+                // Always return early during build - don't execute any boot code
+            if (!isset($_ENV['DATABASE_URL']) || empty($_ENV['DATABASE_URL'])) {
+                return;
+            } 
+            
+            // Only run boot code if database is actually available
+            try {
+                \DB::connection()->getPdo();
+            } catch (\Exception $e) {
+                return; // Skip boot code during build
+            }
 
         URL::forceScheme('https');
 
