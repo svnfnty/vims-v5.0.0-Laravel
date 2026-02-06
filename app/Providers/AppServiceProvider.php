@@ -23,40 +23,37 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
 
-    public function boot(): void
-    {
-        
-                // Always return early during build - don't execute any boot code
-            if (!isset($_ENV['DATABASE_URL']) || empty($_ENV['DATABASE_URL'])) {
-                return;
-            } 
-            
-            // Only run boot code if database is actually available
-            try {
-                \DB::connection()->getPdo();
-            } catch (\Exception $e) {
-                return; // Skip boot code during build
-            }
-
-        URL::forceScheme('https');
-
-        // Share system info with all views
-        $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VIMS';
-        $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'SAAS';
-        View::share('systemName', $systemName);
-        View::share('systemShortName', $systemShortName);
-
-        // Share office name for authenticated users in the layout
-        View::composer('layouts.app', function ($view) {
-            $officeName = 'VEHICLE INSURANCE MANAGEMENT SYSTEM'; // default
-            if (auth()->check() && auth()->user()->office_id) {
-                $office = Office::find(auth()->user()->office_id);
-                if ($office) {
-                    $officeName = $office->office_name;
-                }
-            }
-            $view->with('officeName', $officeName);
-        });
-    }
+     public function boot(): void
+     {
+         // Skip during config cache
+         if (app()->runningInConsole() && in_array('config:cache', $_SERVER['argv'] ?? [])) {
+             return;
+         }
+         
+         URL::forceScheme('https');
+     
+         // Use environment variables instead of database
+         $systemName = env('APP_NAME', 'VIMS');
+         $systemShortName = env('APP_SHORT_NAME', 'SAAS');
+         
+         View::share('systemName', $systemName);
+         View::share('systemShortName', $systemShortName);
+     
+         View::composer('layouts.app', function ($view) {
+             $officeName = 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
+             // Only query if user is logged in AND we're not in a console command
+             if (!app()->runningInConsole() && auth()->check() && auth()->user()->office_id) {
+                 try {
+                     $office = Office::find(auth()->user()->office_id);
+                     if ($office) {
+                         $officeName = $office->office_name;
+                     }
+                 } catch (\Exception $e) {
+                     // Keep default
+                 }
+             }
+             $view->with('officeName', $officeName);
+         });
+     }
 
 }
