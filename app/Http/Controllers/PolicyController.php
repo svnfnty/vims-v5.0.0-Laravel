@@ -111,6 +111,13 @@ class PolicyController extends Controller
         $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
         
         $data = $request->all();
+        $data['code'] = strtoupper($data['code']);
+        $data['name'] = strtoupper($data['name']);
+        $data['description1'] = strtoupper($data['description1'] ?? '');
+        $data['description2'] = strtoupper($data['description2'] ?? '');
+        $data['third_party_liability'] = strtoupper($data['third_party_liability'] ?? '');
+        $data['personal_accident'] = strtoupper($data['personal_accident'] ?? '');
+        $data['doc_path'] = strtoupper($data['doc_path'] ?? '');
         $data['status'] = $request->has('status') ? 1 : 0;
         $data['date_created'] = now();
         
@@ -168,6 +175,13 @@ class PolicyController extends Controller
         
         $policy = $policyQuery->firstOrFail();
         $data = $request->all();
+        $data['code'] = strtoupper($data['code']);
+        $data['name'] = strtoupper($data['name']);
+        $data['description1'] = strtoupper($data['description1'] ?? '');
+        $data['description2'] = strtoupper($data['description2'] ?? '');
+        $data['third_party_liability'] = strtoupper($data['third_party_liability'] ?? '');
+        $data['personal_accident'] = strtoupper($data['personal_accident'] ?? '');
+        $data['doc_path'] = strtoupper($data['doc_path'] ?? '');
         $data['status'] = $request->has('status') ? 1 : 0;
         $data['date_updated'] = now();
 

@@ -139,6 +139,8 @@ class WalkinController extends Controller
         $walkinOfficeId = $isSuperAdmin ? ($request->office_id ?? $officeId) : $officeId;
 
         $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'status']);
+        $data['accountID'] = strtoupper($data['accountID']);
+        $data['name'] = strtoupper($data['name']);
         $data['office_id'] = $walkinOfficeId;
 
         $walkin = Walkin::create($data);
@@ -191,6 +193,8 @@ class WalkinController extends Controller
         
         // Do NOT update office_id - it should remain unchanged
         $data = $request->only(['email', 'accountID', 'name', 'color', 'description', 'status']);
+        $data['accountID'] = strtoupper($data['accountID']);
+        $data['name'] = strtoupper($data['name']);
 
         $walkin->update($data);
 

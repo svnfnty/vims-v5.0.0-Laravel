@@ -68,14 +68,16 @@ class CategoryController extends Controller
         ]);
 
         $data = $request->all();
+        $data['name'] = strtoupper($data['name']);
+        $data['description'] = strtoupper($data['description'] ?? '');
         $data['status'] = $request->has('status') ? 1 : 0;
         $data['code'] = $this->generateCategoryCode();
         $data['office_id'] = auth()->user()->office_id ?? 1;
 
         $category = Category::create($data);
-        
+
         return response()->json([
-            'success' => true, 
+            'success' => true,
             'message' => 'Category created successfully',
             'category' => $category
         ]);

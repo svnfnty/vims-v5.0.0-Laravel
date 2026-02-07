@@ -67,6 +67,8 @@ class OfficeController extends Controller
         ]);
 
         $data = $request->only(['office_name', 'office_address', 'status']);
+        $data['office_name'] = strtoupper($data['office_name']);
+        $data['office_address'] = strtoupper($data['office_address']);
 
         $office = Office::create($data);
 

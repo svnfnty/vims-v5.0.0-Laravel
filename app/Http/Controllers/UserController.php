@@ -149,6 +149,11 @@ class UserController extends Controller
             'firstname', 'middlename', 'lastname', 'username', 'email', 'avatar',
             'type', 'status', 'permissions', 'credit', 'office_id'
         ]);
+        $data['firstname'] = strtoupper($data['firstname']);
+        $data['middlename'] = strtoupper($data['middlename'] ?? '');
+        $data['lastname'] = strtoupper($data['lastname']);
+        $data['username'] = strtoupper($data['username']);
+        $data['avatar'] = strtoupper($data['avatar'] ?? '');
         $data['password'] = Hash::make($request->password);
         $data['date_added'] = now();
 
@@ -209,6 +214,11 @@ class UserController extends Controller
             'firstname', 'middlename', 'lastname', 'username', 'email', 'avatar',
             'type', 'status', 'permissions', 'credit', 'office_id'
         ]);
+        $data['firstname'] = strtoupper($data['firstname']);
+        $data['middlename'] = strtoupper($data['middlename'] ?? '');
+        $data['lastname'] = strtoupper($data['lastname']);
+        $data['username'] = strtoupper($data['username']);
+        $data['avatar'] = strtoupper($data['avatar'] ?? '');
         if ($request->filled('password')) {
             $data['password'] = Hash::make($request->password);
         }

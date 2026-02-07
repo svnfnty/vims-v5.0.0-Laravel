@@ -1975,7 +1975,7 @@ function renderPolicies(insurances) {
         grid.appendChild(card);
     });
 }
-// Helper function to update floating labels for Select2
+
 function updateSelect2Labels() {
     $('.js-example-basic-single').each(function() {
         var $select = $(this);
@@ -1986,10 +1986,9 @@ function updateSelect2Labels() {
         } else {
             $label.removeClass('active');
         }
-    });
+    }); 
 }
 
-// Add this event listener for Select2 change events
 $(document).ready(function() {
     $('.js-example-basic-single').on('change', function() {
         updateSelect2Labels();

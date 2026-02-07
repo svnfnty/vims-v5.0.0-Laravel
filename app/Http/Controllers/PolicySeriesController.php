@@ -80,7 +80,7 @@ class PolicySeriesController extends Controller
         } else {
             // No overlap, create new
             $seriesData = [
-                'name' => $request->name,
+                'name' => strtoupper($request->name),
                 'range_start' => $request->range_start,
                 'range_stop' => $request->range_stop,
                 'status' => $request->status,
@@ -142,7 +142,7 @@ class PolicySeriesController extends Controller
 
             // Update the current series with merged range
             $series->update([
-                'name' => $request->name,
+                'name' => strtoupper($request->name),
                 'range_start' => $minStart,
                 'range_stop' => $maxStop,
                 'status' => $request->status,

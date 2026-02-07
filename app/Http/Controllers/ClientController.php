@@ -184,11 +184,11 @@ class ClientController extends Controller
             
             $client = $clientQuery->firstOrFail();
             $client->update([
-                'firstname' => $validated['firstname'],
-                'middlename' => $validated['middlename'] ?? '',
-                'lastname' => $validated['lastname'],
+                'firstname' => strtoupper($validated['firstname']),
+                'middlename' => strtoupper($validated['middlename'] ?? ''),
+                'lastname' => strtoupper($validated['lastname']),
                 'email' => $validated['email'] ?? '',
-                'address' => $validated['address'],
+                'address' => strtoupper($validated['address']),
                 'markup' => $validated['walkin_list'],
                 'status' => $validated['status'],
             ]);
