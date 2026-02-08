@@ -1,0 +1,653 @@
+@import "tailwindcss";
+
+/* Custom Category Styles with Tailwind v4 */
+@layer components {
+    /* Dashboard Container */
+    .categories-dashboard {
+        @apply max-w-[1400px] mx-auto p-5 font-sans bg-slate-50 min-h-screen;
+    }
+
+    /* Header Styles */
+    .dashboard-header {
+        @apply bg-white rounded-2xl p-6 mb-6 shadow-md border border-gray-200;
+    }
+
+    .header-content {
+        @apply flex justify-between items-center;
+    }
+
+    .logo-section {
+        @apply flex items-center gap-4;
+    }
+
+    .logo-icon {
+        @apply w-[60px] h-[60px] bg-gradient-to-br from-blue-600 to-purple-700 rounded-xl flex items-center justify-center text-white text-2xl;
+    }
+
+    .system-title {
+        @apply text-[28px] font-bold text-slate-800 leading-tight m-0;
+    }
+
+    .system-subtitle {
+        @apply text-gray-500 mt-1 text-base font-normal;
+    }
+
+    .user-controls {
+        @apply flex flex-col gap-3 items-end;
+    }
+
+    .batch-controls {
+        @apply flex gap-3;
+    }
+
+    /* Control Buttons */
+    .control-btn {
+        @apply px-6 py-3 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-200 flex items-center gap-2 no-underline min-w-[120px] justify-center;
+    }
+
+    .control-btn i {
+        @apply text-base transition-transform duration-200;
+    }
+
+    .control-btn:hover i {
+        @apply translate-x-0.5;
+    }
+
+    .control-btn.primary {
+        @apply bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-[0_4px_12px_rgba(24,119,242,0.3)] hover:from-purple-800 hover:to-blue-600 hover:-translate-y-0.5 hover:shadow-[0_6px_16px_rgba(67,97,238,0.3)] active:translate-y-0;
+    }
+
+    .control-btn.secondary {
+        @apply bg-white text-gray-500 border border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0;
+    }
+
+    .control-btn.primary i {
+        @apply text-white;
+    }
+
+    .control-btn.secondary i {
+        @apply text-gray-500;
+    }
+
+    /* Stats Section */
+    .dashboard-stats {
+        @apply grid gap-5 mb-8;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .stat-card {
+        @apply bg-white p-6 rounded-xl shadow-md flex items-center gap-4 transition-transform duration-300 hover:-translate-y-1;
+    }
+
+    .stat-icon {
+        @apply w-[60px] h-[60px] rounded-xl flex items-center justify-center text-2xl text-white;
+    }
+
+    .stat-icon.active {
+        @apply bg-gradient-to-br from-emerald-500 to-teal-600;
+    }
+
+    .stat-icon.total {
+        @apply bg-gradient-to-br from-blue-600 to-blue-700;
+    }
+
+    .stat-icon.inactive {
+        @apply bg-gradient-to-br from-rose-500 to-pink-600;
+    }
+
+    .stat-value {
+        @apply block text-[32px] font-bold text-slate-800 leading-none;
+    }
+
+    .stat-label {
+        @apply text-gray-500 text-sm font-medium;
+    }
+
+    /* Categories Section */
+    .categories-section {
+        @apply bg-white rounded-2xl p-8 shadow-md;
+    }
+
+    .section-title {
+        @apply text-2xl font-semibold text-slate-800 mb-6;
+    }
+
+    .section-header {
+        @apply flex justify-between items-center mb-6;
+    }
+
+    .view-controls {
+        @apply flex gap-4 items-center;
+    }
+
+    .view-toggle {
+        @apply flex border border-gray-200 rounded-lg overflow-hidden;
+    }
+
+    .toggle-btn {
+        @apply px-4 py-2 bg-white border-none cursor-pointer transition-all duration-200 text-sm flex items-center gap-1.5;
+    }
+
+    .toggle-btn.active {
+        @apply bg-blue-600 text-white;
+    }
+
+    .filter-select {
+        @apply px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white;
+    }
+
+    /* Modern Table Styles */
+    .modern-table-container {
+        @apply bg-white rounded-xl overflow-hidden shadow-md hidden;
+    }
+
+    .modern-table-container.active {
+        @apply block;
+    }
+
+    .modern-table {
+        @apply w-full border-collapse bg-white;
+    }
+
+    .modern-table thead {
+        @apply bg-gradient-to-br from-blue-600 to-blue-700;
+    }
+
+    .modern-table th {
+        @apply px-3 py-4 text-white font-semibold text-sm text-left border-none;
+    }
+
+    .modern-table td {
+        @apply px-3 py-4 border-b border-gray-200 align-middle;
+    }
+
+    .modern-table tbody tr {
+        @apply transition-all duration-300;
+    }
+
+    .modern-table tbody tr:hover {
+        @apply bg-gray-50;
+    }
+
+    .status-badge {
+        @apply px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wide;
+    }
+
+    .status-badge.active {
+        @apply bg-emerald-50 text-emerald-600;
+    }
+
+    .status-badge.inactive {
+        @apply bg-red-50 text-red-600;
+    }
+
+    /* Action Dropdown */
+    .action-dropdown {
+        @apply relative inline-block;
+    }
+
+    .action-btn {
+        @apply px-4 py-2 bg-white border border-gray-200 rounded-md cursor-pointer transition-all duration-200 flex items-center gap-1.5 text-sm;
+    }
+
+    .action-btn:hover {
+        @apply bg-gray-50 border-blue-600;
+    }
+
+    .dropdown-menu {
+        @apply absolute right-0 top-full bg-white border border-gray-200 rounded-lg shadow-xl min-w-[160px] z-50 hidden mt-1;
+    }
+
+    .dropdown-menu.show {
+        @apply block;
+    }
+
+    .dropdown-item {
+        @apply px-4 py-2.5 flex items-center gap-2 no-underline text-slate-800 transition-all duration-200 border-none bg-transparent w-full text-left text-sm cursor-pointer;
+    }
+
+    .dropdown-item:hover {
+        @apply bg-gray-50 text-blue-600;
+    }
+
+    .dropdown-divider {
+        @apply h-px bg-gray-200 my-1;
+    }
+
+    /* Card Grid Views */
+    .categories-grid {
+        @apply grid gap-6;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+
+    .categories-grid.cards-view {
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    }
+
+    .categories-grid.grid-view {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    }
+
+    .categories-grid.list-view {
+        @apply grid-cols-1 gap-3;
+    }
+
+    .category-card {
+        @apply bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 border border-gray-200;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .category-card:hover {
+        @apply -translate-y-1 shadow-lg;
+    }
+
+    .card-header {
+        @apply p-5 pb-4 flex justify-between items-start border-b border-gray-200;
+    }
+
+    .category-meta {
+        @apply flex flex-col;
+    }
+
+    .category-id {
+        @apply font-semibold text-slate-800 text-base;
+    }
+
+    .category-date {
+        @apply text-gray-500 text-sm mt-1;
+    }
+
+    .card-body {
+        @apply p-5;
+    }
+
+    .category-name {
+        @apply font-semibold text-lg text-slate-800 mb-4;
+    }
+
+    .category-details {
+        @apply flex flex-col gap-3;
+    }
+
+    .detail-row {
+        @apply flex justify-between items-start;
+    }
+
+    .detail-label {
+        @apply text-gray-500 text-sm font-medium flex-[0_0_100px];
+    }
+
+    .detail-value {
+        @apply font-medium text-slate-800 text-sm flex-1 text-right;
+    }
+
+    .card-footer {
+        @apply px-5 pb-5;
+    }
+
+    .action-buttons {
+        @apply flex gap-2;
+    }
+
+    .action-btn-small {
+        @apply flex-1 px-3 py-2 rounded-md border-none text-xs font-medium cursor-pointer transition-all duration-200 flex items-center justify-center gap-1;
+    }
+
+    .action-btn-small.view {
+        @apply bg-blue-600 text-white hover:bg-blue-700;
+    }
+
+    .action-btn-small.edit {
+        @apply bg-gray-50 text-gray-500 border border-gray-200 hover:bg-gray-100;
+    }
+
+    .action-btn-small.delete {
+        @apply bg-red-50 text-rose-500 border border-red-200 hover:bg-red-100;
+    }
+
+    /* List View Card Styles */
+    .categories-grid.list-view .category-card {
+        @apply flex flex-row items-center p-4 min-h-0;
+    }
+
+    .categories-grid.list-view .card-header {
+        @apply flex-[0_0_150px] border-b-0 border-r border-gray-200 pr-4 mr-4 py-0;
+    }
+
+    .categories-grid.list-view .card-body {
+        @apply flex-1 p-0 flex items-center;
+    }
+
+    .categories-grid.list-view .category-info {
+        @apply flex-1 flex items-center gap-5;
+    }
+
+    .categories-grid.list-view .category-name {
+        @apply mb-0 flex-[0_0_200px];
+    }
+
+    .categories-grid.list-view .category-details {
+        @apply flex-1 flex gap-5 mb-0;
+    }
+
+    .categories-grid.list-view .detail-row {
+        @apply flex-col items-start gap-1;
+    }
+
+    .categories-grid.list-view .card-footer {
+        @apply flex-[0_0_auto] p-0;
+    }
+
+    .categories-grid.list-view .action-buttons {
+        @apply flex-col gap-2;
+    }
+
+    .categories-grid.list-view .action-btn-small {
+        @apply min-w-[100px];
+    }
+
+    /* Empty State */
+    .empty-state {
+        @apply text-center p-16 text-gray-500 col-span-full;
+    }
+
+    .empty-icon {
+        @apply text-6xl mb-5 text-slate-300;
+    }
+
+    .empty-state h3 {
+        @apply m-0 mb-3 text-gray-500 font-semibold;
+    }
+
+    .empty-state p {
+        @apply m-0 mb-6 text-base;
+    }
+
+    /* Modal Styles */
+    .modal {
+        @apply fixed inset-0 flex items-center justify-center z-[2000] p-5;
+    }
+
+    .modal-content {
+        @apply bg-gradient-to-br from-white to-gray-50 rounded-2xl shadow-2xl z-[2000] w-full max-w-3xl max-h-[90vh] border border-white/30 flex flex-col overflow-hidden;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    .modal-content::-webkit-scrollbar {
+        @apply w-2;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+        @apply bg-gray-50 rounded-lg;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+        @apply bg-gray-400 rounded-lg border-2 border-gray-50;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb:hover {
+        @apply bg-gray-500;
+    }
+
+    .modal-overlay {
+        @apply fixed inset-0 bg-black/50 z-[1999] hidden;
+    }
+
+    .modal-header {
+        @apply px-6 py-5 bg-gradient-to-br from-white to-gray-50 border-b border-black/10 rounded-t-2xl flex justify-between items-center flex-shrink-0;
+    }
+
+    .modal-header h2 {
+        @apply m-0 text-2xl font-semibold text-gray-800 drop-shadow-sm;
+    }
+
+    .modal-close {
+        @apply bg-transparent border-none cursor-pointer text-2xl text-gray-400 transition-colors duration-300 flex items-center justify-center w-8 h-8;
+    }
+
+    .modal-close:hover {
+        @apply text-gray-800;
+    }
+
+    .modal-body {
+        @apply p-6 overflow-y-auto flex-1;
+    }
+
+    .modal-body::-webkit-scrollbar {
+        @apply w-2;
+    }
+
+    .modal-body::-webkit-scrollbar-track {
+        @apply bg-gray-50 rounded-lg;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb {
+        @apply bg-gray-400 rounded-lg border-2 border-gray-50;
+    }
+
+    .modal-body::-webkit-scrollbar-thumb:hover {
+        @apply bg-gray-500;
+    }
+
+    .modal-actions {
+        @apply flex gap-3 px-6 py-5 bg-gradient-to-br from-white to-gray-50 border-t border-black/10 flex-shrink-0 justify-end m-0;
+    }
+
+    /* Floating Label Styles */
+    .floating-label {
+        @apply relative mb-6;
+    }
+
+    .floating-label input,
+    .floating-label select,
+    .floating-label textarea {
+        @apply px-3 py-3 text-[15px] border border-gray-300 rounded-lg w-full transition-all duration-200 resize-none bg-white box-border;
+        font-family: inherit;
+    }
+
+    .floating-label input,
+    .floating-label select {
+        @apply h-[50px];
+    }
+
+    .floating-label textarea {
+        @apply min-h-[100px] leading-normal;
+    }
+
+    .floating-label input:focus,
+    .floating-label select:focus,
+    .floating-label textarea:focus {
+        @apply border-blue-400 shadow-[0_0_0_0.2rem_rgba(0,123,255,0.25)] outline-none;
+    }
+
+    .floating-label label {
+        @apply absolute top-1/2 left-3 -translate-y-1/2 text-gray-500 pointer-events-none transition-all duration-200 bg-white px-1.5 text-sm font-medium;
+    }
+
+    .floating-label input:focus ~ label,
+    .floating-label input:not(:placeholder-shown) ~ label,
+    .floating-label select:valid ~ label,
+    .floating-label textarea:focus ~ label,
+    .floating-label textarea:not(:placeholder-shown) ~ label {
+        @apply top-0 -translate-y-1/2 scale-[0.85] text-blue-600 font-semibold;
+    }
+
+    .form-group {
+        @apply mb-5;
+    }
+
+    .form-label {
+        @apply font-semibold text-slate-800 mb-2 block text-sm;
+    }
+
+    .form-control {
+        @apply px-3 py-2.5 border border-gray-200 rounded-lg text-sm transition-all duration-200 w-full box-border;
+        font-family: inherit;
+    }
+
+    .form-control:focus {
+        @apply outline-none border-blue-600 shadow-[0_0_0_3px_rgba(24,119,242,0.1)];
+    }
+
+    .form-control.error {
+        @apply border-rose-500;
+    }
+
+    .error-message {
+        @apply text-rose-500 text-xs mt-1 block;
+    }
+
+    /* Filter Controls */
+    .filter-controls {
+        @apply flex gap-3;
+    }
+
+    /* Hidden utility */
+    .hidden {
+        @apply hidden;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .categories-dashboard {
+        @apply p-4;
+    }
+
+    .header-content {
+        @apply flex-col items-start gap-5;
+    }
+
+    .user-controls {
+        @apply items-stretch w-full;
+    }
+
+    .batch-controls {
+        @apply justify-between;
+    }
+
+    .categories-grid.list-view .category-card {
+        @apply flex-col items-stretch;
+    }
+
+    .categories-grid.list-view .card-header {
+        @apply border-r-0 border-b border-gray-200 mr-0 mb-4 pr-0 pb-4;
+    }
+
+    .categories-grid.list-view .category-info {
+        @apply flex-col items-stretch gap-4;
+    }
+
+    .categories-grid.list-view .category-details {
+        @apply flex-col gap-3;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-stats {
+        @apply grid-cols-2;
+    }
+
+    .section-header {
+        @apply flex-col items-start gap-4;
+    }
+
+    .view-controls {
+        @apply w-full justify-between;
+    }
+
+    .categories-grid {
+        @apply flex flex-col gap-4;
+    }
+
+    .categories-grid.cards-view,
+    .categories-grid.grid-view {
+        @apply flex flex-col gap-4;
+    }
+
+    .categories-grid.list-view .action-buttons {
+        @apply flex-row;
+    }
+
+    .category-card .card-header {
+        @apply p-4 pb-3;
+    }
+
+    .category-card .card-body {
+        @apply p-4;
+    }
+
+    .category-card .card-footer {
+        @apply px-4 pb-4;
+    }
+
+    .detail-row {
+        @apply flex-col items-start gap-1;
+    }
+
+    .detail-label {
+        @apply flex-none w-auto text-left;
+    }
+
+    .detail-value {
+        @apply text-left flex-none w-auto;
+    }
+
+    .modern-table-container {
+        @apply overflow-x-auto;
+    }
+
+    .modern-table {
+        @apply min-w-[800px];
+    }
+
+    .modal {
+        @apply p-2.5;
+    }
+
+    .modal-content {
+        @apply max-w-[95vw] max-h-[95vh];
+    }
+
+    .modal-header h2 {
+        @apply text-xl;
+    }
+
+    .modal-body {
+        @apply p-4;
+    }
+
+    .control-btn {
+        @apply px-4 py-2.5 text-[13px];
+    }
+}
+
+@media (max-width: 480px) {
+    .dashboard-stats {
+        @apply grid-cols-1;
+    }
+
+    .batch-controls {
+        @apply flex-col;
+    }
+
+    .control-btn {
+        @apply px-4 py-2.5 text-[13px];
+    }
+
+    .action-buttons {
+        @apply flex-col;
+    }
+}

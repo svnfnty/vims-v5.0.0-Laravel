@@ -9,6 +9,11 @@
     "src": "resources/css/app.css",
     "isEntry": true
   },
+  "resources/css/category.css": {
+    "file": "assets/category-Bv-XuESP.css",
+    "src": "resources/css/category.css",
+    "isEntry": true
+  },
   "resources/css/office.css": {
     "file": "assets/office-Bfb-dVjA.css",
     "src": "resources/css/office.css",
@@ -34,6 +39,15 @@
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true
+  },
+  "resources/js/category.js": {
+    "file": "assets/category-hvs_Z7Zc.js",
+    "name": "category",
+    "src": "resources/js/category.js",
+    "isEntry": true,
+    "imports": [
+      "_sweetalert2.esm.all-D1ysrxTe.js"
+    ]
   },
   "resources/js/office.js": {
     "file": "assets/office-3H23CJwU.js",
