@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "DISABLE_ROLLUP_PREBUILT=1 vite build",
+        "build": "vite build",
         "dev": "vite"
     },
     "devDependencies": {
