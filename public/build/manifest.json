@@ -14,6 +14,11 @@
     "src": "resources/css/office.css",
     "isEntry": true
   },
+  "resources/css/policies.css": {
+    "file": "assets/policies-BvWGBiC7.css",
+    "src": "resources/css/policies.css",
+    "isEntry": true
+  },
   "resources/css/user.css": {
     "file": "assets/user-C35hdra9.css",
     "src": "resources/css/user.css",
@@ -34,6 +39,15 @@
     "file": "assets/office-3H23CJwU.js",
     "name": "office",
     "src": "resources/js/office.js",
+    "isEntry": true,
+    "imports": [
+      "_sweetalert2.esm.all-D1ysrxTe.js"
+    ]
+  },
+  "resources/js/policies.js": {
+    "file": "assets/policies-Do1peZGS.js",
+    "name": "policies",
+    "src": "resources/js/policies.js",
     "isEntry": true,
     "imports": [
       "_sweetalert2.esm.all-D1ysrxTe.js"
