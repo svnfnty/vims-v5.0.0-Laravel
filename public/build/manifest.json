@@ -19,6 +19,11 @@
     "src": "resources/css/client.css",
     "isEntry": true
   },
+  "resources/css/login.css": {
+    "file": "assets/login-CqRqACUf.css",
+    "src": "resources/css/login.css",
+    "isEntry": true
+  },
   "resources/css/office.css": {
     "file": "assets/office-BXBJBncG.css",
     "src": "resources/css/office.css",
@@ -68,6 +73,12 @@
     "file": "assets/client-Bj7xteO-.js",
     "name": "client",
     "src": "resources/js/client.js",
+    "isEntry": true
+  },
+  "resources/js/login.js": {
+    "file": "assets/login-BF1sWNUq.js",
+    "name": "login",
+    "src": "resources/js/login.js",
     "isEntry": true
   },
   "resources/js/office.js": {

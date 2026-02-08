@@ -6,15 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="icon" href="https://ectpl-vimsys.com/vims-v4.0.0/uploads/logo-1738897187.png" type="image/png">
-    <link rel="stylesheet" href="{{ secure_asset('css/login.blade.css') }}">
-    <link rel="stylesheet" href="{{ secure_asset('css/app.blade.css') }}">
+    @vite(['resources/css/login.css', 'resources/js/login.js'])
 </head>
 <body>
     <div class="login-container">
@@ -51,30 +48,30 @@
                 @endif
                 <form method="POST" action="{{ route('login.post') }}" id="login-frm">
                     @csrf
-                    <div class="form-floating mb-3 animate__animated animate__fadeInUp animate__delay-1s">
+                    <div class="form-floating mb-3 animate__animated animate__fadeInUp animate-delay-1">
                         <input type="text" class="form-control" id="email" name="email" placeholder="Email" required autofocus value="{{ old('email') }}">
                         <label for="email">Email</label>
                     </div>
-                    <div class="form-floating mb-3 animate__animated animate__fadeInUp animate__delay-2s">
+                    <div class="form-floating mb-3 animate__animated animate__fadeInUp animate-delay-2">
                         <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                         <label for="password">Password</label>
                     </div>
-                    <div class="terms-check form-check mb-3 animate__animated animate__fadeInUp animate__delay-3s">
+                    <div class="terms-check form-check mb-3 animate__animated animate__fadeInUp animate-delay-3">
                         <input class="form-check-input" type="checkbox" id="accept-eula" name="accept-eula" required>
                         <label class="form-check-label" for="accept-eula">
                             I accept the <a href="#" target="_blank">End-User Agreement (EULA)</a>
                         </label>
                     </div>
-                    <div class="terms-check form-check mb-4 animate__animated animate__fadeInUp animate__delay-4s">
+                    <div class="terms-check form-check mb-4 animate__animated animate__fadeInUp animate-delay-4">
                         <input class="form-check-input" type="checkbox" id="accept-nda" name="accept-nda" required>
                         <label class="form-check-label" for="accept-nda">
                             I accept <a href="#" target="_blank">Non-Disclosure Agreement (NDA)</a>
                         </label>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-login w-100 mb-3 animate__animated animate__fadeInUp animate__delay-5s">
+                    <button type="submit" class="btn btn-login w-100 mb-3 animate__animated animate__fadeInUp animate-delay-5">
                         <i class="fas fa-sign-in-alt me-2"></i> Log In
                     </button>
-                    <div class="copyright animate__animated animate__fadeInUp animate__delay-5s">
+                    <div class="copyright animate__animated animate__fadeInUp animate-delay-5">
                         © 2025 SaaS System | All Rights Reserved
                     </div>
                 </form>
@@ -110,8 +107,7 @@
             <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
-    <!-- JS Libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
