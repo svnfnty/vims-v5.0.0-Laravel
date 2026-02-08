@@ -3,9 +3,7 @@
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-    @import url('{{ asset("css/office.blade.css") }}');
-</style>
+@vite(['resources/css/office.css', 'resources/js/office.js'])
 
 <div class="office-dashboard">
     <!-- Dashboard Header -->
@@ -198,8 +196,6 @@
 <!-- Modal Overlay -->
 <div id="modalOverlay" class="modal-overlay" style="display: none;" onclick="closeOfficeModal()"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     window.officeRoutes = {
         stats: '{{ route("office.stats") }}',
@@ -209,5 +205,4 @@
     };
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
-<script src="{{ asset('js/office.blade.js') }}"></script>
 @endsection

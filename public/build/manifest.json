@@ -1,0 +1,25 @@
+{
+  "resources/css/app.css": {
+    "file": "assets/app-l0sNRNKZ.js",
+    "name": "app",
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/css/office.css": {
+    "file": "assets/office-Bfb-dVjA.css",
+    "src": "resources/css/office.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-DIuewKhF.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  },
+  "resources/js/office.js": {
+    "file": "assets/office-4tGtA2Rd.js",
+    "name": "office",
+    "src": "resources/js/office.js",
+    "isEntry": true
+  }
+}
