@@ -3,10 +3,7 @@
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<style>
-    @import url('{{ asset("css/series.blade.css") }}');
-    @import url('{{ asset("css/select2search.blade.css") }}');
-</style>
+@vite(['resources/css/series.css', 'resources/css/select2search.css', 'resources/js/series.js'])
 
 <div class="series-dashboard">
     <!-- Dashboard Header -->
@@ -272,11 +269,6 @@
 <!-- Modal Overlay -->
 <div id="modalOverlay" class="modal-overlay" style="display: none;" onclick="closeSeriesModal()"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 <!-- Define Laravel routes for JavaScript -->
 <script>
     window.seriesRoutes = {
@@ -288,8 +280,16 @@
     window.userId = {{ auth()->user()->id ?? 0 }};
     window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
 </script>
-
-<script src="{{ asset('js/series.blade.js') }}"></script>
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2({
+            width: '100%',
+            containerCssClass: function() {
+                return $(this).hasClass('form-control shadow-sm') ? 'form-control shadow-sm' : '';
+            }
+        });
+    });
+</script>
 
 <!-- Tutorial Step Completion Handler -->
 <script>
@@ -306,4 +306,5 @@
         }
     });
 </script>
+
 @endsection

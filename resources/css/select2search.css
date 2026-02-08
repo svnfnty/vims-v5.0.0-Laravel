@@ -1,0 +1,156 @@
+/* Select2 Search Styles - Tailwind CSS v4 */
+
+/* Import Tailwind */
+@import "tailwindcss";
+
+/* Select2 Container - Single Selection */
+.select2-container .select2-selection--single {
+  @apply h-[45px] border border-gray-300 rounded bg-white text-base text-gray-800;
+  font-family: inherit;
+}
+
+.select2-container .select2-selection--single .select2-selection__rendered {
+  @apply leading-[45px] pl-3 pr-8 text-sm font-semibold;
+}
+
+/* Arrow Styling */
+.select2-container .select2-selection--single .select2-selection__arrow {
+  @apply h-9 w-6 right-px;
+}
+
+.select2-container .select2-selection--single .select2-selection__arrow b {
+  @apply -ml-1 -mt-0.5;
+  border-color: #6c757d transparent transparent transparent;
+  border-width: 5px 4px 0 4px;
+}
+
+/* Focus State */
+.select2-container.select2-container--focus .select2-selection--single {
+  @apply border-blue-400 outline-0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Open State Arrow */
+.select2-container.select2-container--open .select2-selection--single .select2-selection__arrow b {
+  @apply -mt-0.5;
+  border-color: transparent transparent #6c757d transparent;
+  border-width: 0 4px 5px 4px;
+}
+
+/* Floating Label Positioning */
+.floating-label {
+  @apply relative;
+}
+
+.floating-label label {
+  @apply absolute top-1/2 left-3 -translate-y-1/2 text-gray-500 text-sm transition-all duration-200 pointer-events-none bg-transparent px-1 z-[1];
+}
+
+/* Label Active State */
+.select2-container--open ~ label,
+.select2-container--focus ~ label,
+.select2-container--filled ~ label,
+.floating-label select:focus ~ label,
+.floating-label select:not(:placeholder-shown) ~ label {
+  @apply top-0 -translate-y-1/2 text-blue-600 bg-white z-[5];
+  font-size: 12px;
+}
+
+/* Required Asterisk */
+.floating-label label span {
+  @apply text-red-500;
+}
+
+/* Dropdown Styling */
+.select2-dropdown {
+  @apply border border-gray-300 rounded-lg shadow-md mt-1;
+  z-index: 2001;
+}
+
+.select2-results__option {
+  @apply px-3 py-2 text-sm;
+}
+
+.select2-results__option--highlighted {
+  @apply bg-blue-600 text-white;
+}
+
+.select2-container--open .select2-dropdown {
+  z-index: 2001;
+}
+
+/* Remove Select2 Container Padding */
+.select2-container {
+  @apply p-0;
+}
+
+/* Ensure it matches other form controls */
+.form-control.select2-container {
+  @apply block w-full text-base font-normal leading-normal bg-clip-padding;
+  font-family: inherit;
+}
+
+/* Select2 Multiple Selection */
+.select2-container .select2-selection--multiple {
+  @apply min-h-[45px] border border-gray-300 rounded bg-white;
+  font-family: inherit;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__rendered {
+  @apply px-2 py-1;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__choice {
+  @apply bg-blue-100 text-blue-800 border border-blue-200 rounded px-2 py-0.5 text-sm mr-1 mt-1;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__choice__remove {
+  @apply text-blue-600 mr-1 cursor-pointer;
+}
+
+.select2-container .select2-selection--multiple .select2-selection__choice__remove:hover {
+  @apply text-red-500;
+}
+
+/* Search Field in Dropdown */
+.select2-container .select2-search--inline .select2-search__field {
+  @apply mt-1;
+}
+
+/* Loading State */
+.select2-container .select2-selection__clear {
+  @apply text-gray-400 text-lg mr-4;
+}
+
+.select2-container .select2-selection__clear:hover {
+  @apply text-red-500;
+}
+
+/* Disabled State */
+.select2-container.select2-container--disabled .select2-selection--single {
+  @apply bg-gray-100 cursor-not-allowed;
+}
+
+/* Error State */
+.select2-container.has-error .select2-selection--single {
+  @apply border-red-500;
+}
+
+.select2-container.has-error.select2-container--focus .select2-selection--single {
+  box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .select2-container .select2-selection--single {
+    @apply h-[40px];
+  }
+
+  .select2-container .select2-selection--single .select2-selection__rendered {
+    @apply leading-[40px] text-xs;
+  }
+
+  .select2-results__option {
+    @apply px-2 py-1.5 text-xs;
+  }
+}

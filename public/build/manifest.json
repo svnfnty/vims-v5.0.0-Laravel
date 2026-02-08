@@ -10,32 +10,42 @@
     "isEntry": true
   },
   "resources/css/category.css": {
-    "file": "assets/category-kexJqxC5.css",
+    "file": "assets/category-C_fY0KyI.css",
     "src": "resources/css/category.css",
     "isEntry": true
   },
   "resources/css/client.css": {
-    "file": "assets/client-Lbdt4vPY.css",
+    "file": "assets/client-HjSrnu-M.css",
     "src": "resources/css/client.css",
     "isEntry": true
   },
   "resources/css/office.css": {
-    "file": "assets/office-IiX32OAG.css",
+    "file": "assets/office-vH2oahtz.css",
     "src": "resources/css/office.css",
     "isEntry": true
   },
   "resources/css/policies.css": {
-    "file": "assets/policies-BW4USjDx.css",
+    "file": "assets/policies-148sDGyb.css",
     "src": "resources/css/policies.css",
     "isEntry": true
   },
+  "resources/css/select2search.css": {
+    "file": "assets/select2search-CPVQA0L4.css",
+    "src": "resources/css/select2search.css",
+    "isEntry": true
+  },
+  "resources/css/series.css": {
+    "file": "assets/series-D_9zbJBk.css",
+    "src": "resources/css/series.css",
+    "isEntry": true
+  },
   "resources/css/user.css": {
-    "file": "assets/user-D31l66hL.css",
+    "file": "assets/user-C8PGeSUp.css",
     "src": "resources/css/user.css",
     "isEntry": true
   },
   "resources/css/walkin.css": {
-    "file": "assets/walkin-DG4o4e0I.css",
+    "file": "assets/walkin-BWwIRRHq.css",
     "src": "resources/css/walkin.css",
     "isEntry": true
   },
@@ -73,6 +83,15 @@
     "file": "assets/policies-Do1peZGS.js",
     "name": "policies",
     "src": "resources/js/policies.js",
+    "isEntry": true,
+    "imports": [
+      "_sweetalert2.esm.all-D1ysrxTe.js"
+    ]
+  },
+  "resources/js/series.js": {
+    "file": "assets/series-DoyUL2KC.js",
+    "name": "series",
+    "src": "resources/js/series.js",
     "isEntry": true,
     "imports": [
       "_sweetalert2.esm.all-D1ysrxTe.js"
