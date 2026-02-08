@@ -4,52 +4,57 @@
     "name": "sweetalert2.esm.all"
   },
   "resources/css/app.css": {
-    "file": "assets/app-8g3WBXXn.css",
+    "file": "assets/app-DBSr_IPx.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/category.css": {
-    "file": "assets/category-B6U62T7o.css",
+    "file": "assets/category-DyNHb3bP.css",
     "src": "resources/css/category.css",
     "isEntry": true
   },
   "resources/css/client.css": {
-    "file": "assets/client-I_9M4Fer.css",
+    "file": "assets/client-DPiL3egV.css",
     "src": "resources/css/client.css",
     "isEntry": true
   },
   "resources/css/login.css": {
-    "file": "assets/login-pWKNF_25.css",
+    "file": "assets/login-HCPSs2EX.css",
     "src": "resources/css/login.css",
     "isEntry": true
   },
   "resources/css/office.css": {
-    "file": "assets/office-D7MngwZn.css",
+    "file": "assets/office-CM7cAejy.css",
     "src": "resources/css/office.css",
     "isEntry": true
   },
   "resources/css/policies.css": {
-    "file": "assets/policies-BpKYwSoo.css",
+    "file": "assets/policies-ey4xzoSx.css",
     "src": "resources/css/policies.css",
     "isEntry": true
   },
   "resources/css/select2search.css": {
-    "file": "assets/select2search-BWHkY3Ah.css",
+    "file": "assets/select2search-HCxghFmg.css",
     "src": "resources/css/select2search.css",
     "isEntry": true
   },
   "resources/css/series.css": {
-    "file": "assets/series-DTpxTQBG.css",
+    "file": "assets/series-DzWGhFL1.css",
     "src": "resources/css/series.css",
     "isEntry": true
   },
   "resources/css/user.css": {
-    "file": "assets/user-Dif6G3FA.css",
+    "file": "assets/user-CjTw-qDN.css",
     "src": "resources/css/user.css",
     "isEntry": true
   },
+  "resources/css/view.css": {
+    "file": "assets/view-9s1RYjXm.css",
+    "src": "resources/css/view.css",
+    "isEntry": true
+  },
   "resources/css/walkin.css": {
-    "file": "assets/walkin-BIa6Rsv0.css",
+    "file": "assets/walkin-DGFwliqN.css",
     "src": "resources/css/walkin.css",
     "isEntry": true
   },
@@ -115,6 +120,12 @@
     "imports": [
       "_sweetalert2.esm.all-D1ysrxTe.js"
     ]
+  },
+  "resources/js/view.js": {
+    "file": "assets/view-DEeKDr2R.js",
+    "name": "view",
+    "src": "resources/js/view.js",
+    "isEntry": true
   },
   "resources/js/walkin.js": {
     "file": "assets/walkin-Bvxhpyt5.js",

@@ -2,15 +2,16 @@
 @extends('layouts.app') 
 
 @section('content')
-<link rel="stylesheet" href="{{ asset('css/view.blade.css') }}">
-<link rel="stylesheet" href="{{ asset('css/select2search.blade.css') }}">
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@vite(['resources/css/view.css', 'resources/js/view.js'])
 <div class="content py-3">
 
     <div class="card card-outline card-primary rounded-0 shadow">
         <div class="card-header">
             <h5 class="card-title">
             </h5>
-            <div class="card-tools">
+            <div class="card-tools justify-end">
                 <button class="btn btn-outline-success btn-sm shadow rounded-pill px-3"
                     type="button"
                     id="check"
@@ -79,15 +80,14 @@
                         $imageSrc = isset($insurance->image) && !empty($insurance->image) ? asset('storage/' . $insurance->image) : $defaultImage;
                     @endphp
                     <div class="row align-items-center">
-                        <div class="col-lg-4 col-md-4 col-sm-12 text-center">
+                        <!--<div class="col-lg-4 col-md-4 col-sm-12 text-center">
                             <div class="image-container">
                                 <img src="{{ $imageSrc }}" alt="Client Image" id="img-thumb-path" class="img-fluid rounded-circle border bg-light shadow-sm p-2" style="max-width: 200px; height: 200px;">
                                 <div class="overlay-text" id="view-profile-text">
                                     <p>View Profile</p>
                                 </div>
                             </div>
-                        </div>
-
+                        </div> -->
                         <div class="col-lg-8 col-md-12 col-sm-12">
                             @php
                                 $coc_no = $insurance->coc_no ?? "";
@@ -407,12 +407,12 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
-    const insuranceUpdateUrl = "/insurances/{{ $insurance->id }}";
-    const insuranceDestroyUrl = "/insurances/{{ $insurance->id }}";
-    const insurancesIndexUrl = "{{ route('insurances.index') }}";
+    window.insuranceUpdateUrl = "/insurances/{{ $insurance->id }}";
+    window.insuranceDestroyUrl = "/insurances/{{ $insurance->id }}";
+    window.insurancesIndexUrl = "{{ route('insurances.index') }}";
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
 </script>
-<script src="{{ asset('js/view.blade.js') }}"></script>
+
 <script>
     $(document).ready(function() {
         $('.js-example-basic-single').select2({
