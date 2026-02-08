@@ -157,17 +157,6 @@
             z-index: 1060;
         }
 
-        /* Dashboard Styles */
-        .dashboard-header {
-            background: linear-gradient(90deg, #1e88e5 60%, #1565c0 100%);
-            color: #fff;
-            border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
         .dashboard-cards .card {
             border: none;
             border-radius: 12px;

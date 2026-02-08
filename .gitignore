@@ -24,3 +24,4 @@ Thumbs.db
 /database/migrations/*.php
 /app/Providers/AppServiceProvider.php
 /resources/views/auth/login.blade.php
+/build/
