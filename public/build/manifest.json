@@ -10,27 +10,32 @@
     "isEntry": true
   },
   "resources/css/category.css": {
-    "file": "assets/category-Bv-XuESP.css",
+    "file": "assets/category-kexJqxC5.css",
     "src": "resources/css/category.css",
     "isEntry": true
   },
+  "resources/css/client.css": {
+    "file": "assets/client-Lbdt4vPY.css",
+    "src": "resources/css/client.css",
+    "isEntry": true
+  },
   "resources/css/office.css": {
-    "file": "assets/office-Bfb-dVjA.css",
+    "file": "assets/office-IiX32OAG.css",
     "src": "resources/css/office.css",
     "isEntry": true
   },
   "resources/css/policies.css": {
-    "file": "assets/policies-BvWGBiC7.css",
+    "file": "assets/policies-BW4USjDx.css",
     "src": "resources/css/policies.css",
     "isEntry": true
   },
   "resources/css/user.css": {
-    "file": "assets/user-C35hdra9.css",
+    "file": "assets/user-D31l66hL.css",
     "src": "resources/css/user.css",
     "isEntry": true
   },
   "resources/css/walkin.css": {
-    "file": "assets/walkin-DPtXTlWR.css",
+    "file": "assets/walkin-DG4o4e0I.css",
     "src": "resources/css/walkin.css",
     "isEntry": true
   },
@@ -48,6 +53,12 @@
     "imports": [
       "_sweetalert2.esm.all-D1ysrxTe.js"
     ]
+  },
+  "resources/js/client.js": {
+    "file": "assets/client-Bj7xteO-.js",
+    "name": "client",
+    "src": "resources/js/client.js",
+    "isEntry": true
   },
   "resources/js/office.js": {
     "file": "assets/office-3H23CJwU.js",

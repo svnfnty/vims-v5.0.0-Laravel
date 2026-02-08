@@ -3,8 +3,8 @@
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@vite(['resources/css/client.css', 'resources/js/client.js'])
 <style>
-    @import url('{{ asset("css/client.blade.css") }}');
     @import url('{{ asset("css/tutorial.blade.css") }}');
 </style>
  
@@ -93,7 +93,8 @@
                 </div>
                 <div class="filter-controls">
                     <select class="filter-select" id="statusFilter">
-                       <option value="active">Active</option>
+                       <option value="all">All Clients</option>
+                        <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
                     </select>
                 </div>
@@ -247,7 +248,7 @@
 <div id="modalOverlay" class="modal-overlay" style="display: none;" onclick="closeClientModal()"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 window.routes = {
     clientsStats: '{{ route("clients.stats") }}',
@@ -336,5 +337,4 @@ window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
     })();
 </script>
 
-<script src="{{ asset('js/client.blade.js') }}"></script>
 @endsection
