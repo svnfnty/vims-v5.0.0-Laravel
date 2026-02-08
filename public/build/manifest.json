@@ -19,6 +19,11 @@
     "src": "resources/css/user.css",
     "isEntry": true
   },
+  "resources/css/walkin.css": {
+    "file": "assets/walkin-DPtXTlWR.css",
+    "src": "resources/css/walkin.css",
+    "isEntry": true
+  },
   "resources/js/app.js": {
     "file": "assets/app-DIuewKhF.js",
     "name": "app",
@@ -38,6 +43,15 @@
     "file": "assets/user-BKJv11MB.js",
     "name": "user",
     "src": "resources/js/user.js",
+    "isEntry": true,
+    "imports": [
+      "_sweetalert2.esm.all-D1ysrxTe.js"
+    ]
+  },
+  "resources/js/walkin.js": {
+    "file": "assets/walkin-Bvxhpyt5.js",
+    "name": "walkin",
+    "src": "resources/js/walkin.js",
     "isEntry": true,
     "imports": [
       "_sweetalert2.esm.all-D1ysrxTe.js"
