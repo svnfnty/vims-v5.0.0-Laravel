@@ -765,16 +765,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Delete Category
     function deleteCategory(id) {
-        fetch('/categories/' + id, {
+        fetch('/category/' + id, {
             method: 'DELETE',
             headers: defaultHeaders
         })
         .then(response => {
             if (!response.ok) {
+                if (response.status === 422) {
+                    return response.json().then(data => {
+                        throw { type: 'business', message: data.message };
+                    });
+                }
                 if (response.status === 419) {
                     throw { type: 'session' };
                 }
-                throw { type: 'http', status: response.status };
+                throw { type: 'http', status: response.status, statusText: response.statusText };
             }
             return response.json();
         })
@@ -791,7 +796,13 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(error => {
             console.error('Error:', error);
-            if (error.type === 'session') {
+            if (error.type === 'business') {
+                Swal.fire({
+                    title: 'Error!',
+                    text: error.message,
+                    icon: 'error'
+                });
+            } else if (error.type === 'session') {
                 Swal.fire({
                     title: 'Error!',
                     text: 'Session expired. Please refresh the page and try again.',
@@ -801,7 +812,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Error deleting category',
+                    text: 'Error deleting category: ' + error.status + ' - ' + error.statusText,
                     icon: 'error'
                 });
             }

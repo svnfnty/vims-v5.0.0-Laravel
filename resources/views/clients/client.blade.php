@@ -3,11 +3,8 @@
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-@vite(['resources/css/client.css', 'resources/js/client.js'])
-<style>
-    @import url('{{ asset("css/tutorial.blade.css") }}');
-</style>
- 
+@vite(['resources/css/client.css', 'resources/css/tutorial.css', 'resources/js/client.js'])
+
 <div class="clients-dashboard">
     <!-- Dashboard Header -->
     <div class="dashboard-header">
