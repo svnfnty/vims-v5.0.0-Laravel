@@ -821,7 +821,7 @@
 }
 
 
-.hidden {
+.series-hidden {
   @apply hidden;
 }
 

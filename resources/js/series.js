@@ -1,11 +1,9 @@
 // Series Management JavaScript - Vite Compatible
-import $ from 'jquery';
 import { gsap } from 'gsap';
 import Swal from 'sweetalert2';
 
-// Ensure jQuery is available globally
-
-window.$ = window.jQuery = $;
+// Use global jQuery and select2 from CDN (loaded in app.blade.php)
+const $ = window.jQuery;
 
 // Set default CSRF token for all AJAX requests
 $.ajaxSetup({
@@ -20,11 +18,16 @@ $(document).ready(function() {
     let currentView = 'cards'; // Default to cards view on first load
     let currentMode = 'create'; // create, edit, view
 
+    // Initialize Select2 for the series dropdown
+    $('.js-example-basic-single').select2({
+        width: '100%',
+        placeholder: 'Select a policy series to view details...',
+        allowClear: true
+    });
+
     // Load initial data
     loadStats();
     loadSeries();
-
-
 
     // Toggle to cards view on first reload
     setTimeout(function() {
@@ -86,7 +89,6 @@ $(document).ready(function() {
     });
 
     // Load Stats
-
     function loadStats() {
         $.ajax({
             url: window.seriesRoutes.stats,
