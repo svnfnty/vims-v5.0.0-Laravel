@@ -1,8 +1,8 @@
 @extends('layouts.app')
  
 @section('content')
+@vite(['resources/css/insurance.css', 'resources/js/insurance.js'])
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link rel="stylesheet" href="{{ asset('css/insurance.blade.css') }}">
 <link rel="stylesheet" href="{{ asset('css/select2search.blade.css') }}">
 <div class="insurance-dashboard">
     <!-- Dashboard Header -->
@@ -459,8 +459,6 @@
     window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
     window.isSuperAdmin = {{ $isSuperAdmin ? 'true' : 'false' }};
 </script>
-
-<script src="{{ asset('js/insurance.blade.js') }}"></script>
 
 <!-- Tutorial Step Completion Handler -->
 <script>
