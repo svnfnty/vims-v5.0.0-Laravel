@@ -2,6 +2,7 @@
 @extends('layouts.app')
 
 @section('content')
+@vite(['resources/css/tutorial.css', 'resources/js/tutorial.js'])
 <br>
 <div class="dashboard-header-app">
     <div class="flex justify-between items-center">
