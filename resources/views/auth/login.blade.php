@@ -10,17 +10,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
-    <link rel="icon" href="https://ectpl-vimsys.com/vims-v4.0.0/uploads/logo-1738897187.png" type="image/png">
+    <link rel="icon" href="{{ $systemLogo ? asset('storage/' . $systemLogo) : asset('logo.png') }}" type="image/png">
     @vite(['resources/css/login.css', 'resources/js/login.js'])
 </head>
 <body>
     <div class="login-container">
         <div class="login-card">
-            <div class="login-left">
-                <div class="login-left-content">
-                    <div class="version-badge">v5.0.0 (APO Release)</div>
-                    <div class="logo-container">
-                        <img src="{{ asset('logo.png') }}" alt="Logo" class="logo">
+        <div class="login-left" style="{{ $systemCover ? 'background-image: url(' . asset('storage/' . $systemCover) . '); background-size: cover; background-position: center;' : '' }}">
+            <div class="login-left-content">
+                <div class="version-badge">v5.0.0 (APO Release)</div>
+                <div class="logo-container">
+                    <img src="{{ $systemLogo ? asset('storage/' . $systemLogo) : asset('logo.png') }}" alt="Logo" class="logo">
+
                         <div class="system-name">{{ $systemName }}</div>
                         <div class="system-description"><b>{{ $systemShortName }}</b></div>
                     </div>

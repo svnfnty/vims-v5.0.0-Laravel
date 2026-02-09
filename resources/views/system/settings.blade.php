@@ -51,8 +51,9 @@
                 </div>
                 
                 <div class="form-group flex justify-center">
-                    <img src="{{ $logo ? asset('storage/' . $logo) : asset('logo.png') }}" alt="System Logo" id="cimg" class="img-preview-logo">
+                    <img src="{{ $logo ? asset('storage/' . $logo) : asset('logo.png') }}" alt="System Logo" id="cimg" class="img-preview-logo" onerror="this.src='{{ asset('logo.png') }}'">
                 </div>
+
                 
                 <div class="form-group">
                     <label class="form-label"><i class="bi bi-image mr-2"></i>Cover Image</label>
@@ -63,8 +64,9 @@
                 </div>
                 
                 <div class="form-group flex justify-center">
-                    <img src="{{ $cover ? asset('storage/' . $cover) : asset('cover.png') }}" alt="Cover Image" id="cimg2" class="img-preview-cover">
+                    <img src="{{ $cover ? asset('storage/' . $cover) : asset('cover.png') }}" alt="Cover Image" id="cimg2" class="img-preview-cover" onerror="this.src='{{ asset('cover.png') }}'">
                 </div>
+
                 
             </form>
         </div>
@@ -77,29 +79,40 @@
 </div>
 
 <script>
+    // Display logo preview
     function displayImg(input, _this) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
                 $('#cimg').attr('src', e.target.result);
-                _this.siblings('.custom-file-label').html(input.files[0].name)
+                _this.siblings('.custom-file-label').html(input.files[0].name);
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
+    
+    // Display cover preview
     function displayImg2(input, _this) {
         if (input.files && input.files[0]) {
             var reader = new FileReader();
             reader.onload = function (e) {
-                _this.siblings('.custom-file-label').html(input.files[0].name)
                 $('#cimg2').attr('src', e.target.result);
+                _this.siblings('.custom-file-label').html(input.files[0].name);
             }
             reader.readAsDataURL(input.files[0]);
         }
     }
+    
     $(document).ready(function(){
-        // Initialize any necessary plugins here
+        // Update file label on file selection
+        $('.custom-file-input').on('change', function() {
+            var fileName = $(this).val().split('\\').pop();
+            if (fileName) {
+                $(this).siblings('.custom-file-label').html(fileName);
+            }
+        });
     });
 </script>
+
 
 @endsection

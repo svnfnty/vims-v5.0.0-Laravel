@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="icon" href="https://ectpl-vimsys.com/vims-v4.0.0/uploads/logo-1738897187.png" type="image/png">
+    <link rel="icon" href="{{ $systemLogo ? asset('storage/' . $systemLogo) : asset('logo.png') }}" type="image/png">
     <!-- Vite Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <!-- Include jQuery -->
@@ -31,7 +31,7 @@
     <!-- Sidebar -->
     <div class="sidebar custom-scrollbar">
         <div class="sidebar-header flex items-center mb-3">
-            <img src="https://img.icons8.com/ios-filled/50/ffffff/car--v2.png" width="32" class="mr-2"/>
+            <img src="{{ $systemLogo ? asset('storage/' . $systemLogo) : asset('logo.png') }}" width="32" class="mr-2" alt="Logo"/>
             <span class="hidden xl:inline font-bold">{{ $systemShortName }}</span>
             <span class="xl:hidden font-bold">{{ $systemShortName }}</span>
         </div>
