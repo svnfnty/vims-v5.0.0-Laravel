@@ -1,2 +1,0 @@
-import{S as o}from"./sweetalert2.esm.all-BoFtKDfH.js";function s(r){o.fire({icon:"success",title:"Success!",text:r,confirmButtonColor:"#10B981",background:"#F0FDF4",color:"#065F46",timer:3e3,timerProgressBar:!0,showConfirmButton:!1})}function t(r){const e=r.join(`
-`);o.fire({icon:"error",title:"Error!",text:e,confirmButtonColor:"#EF4444",background:"#FEF2F2",color:"#991B1B"})}window.successMessage&&s(window.successMessage);window.errorMessages&&window.errorMessages.length>0&&t(window.errorMessages);
