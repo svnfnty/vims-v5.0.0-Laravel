@@ -76,7 +76,7 @@
         <div class="top-navbar">
             <div class="flex items-center">
                 <span class="sidebar-toggle hidden lg:inline mr-3 text-2xl cursor-pointer" id="sidebarToggle">☰</span>
-                <span class="font-bold text-base md:text-lg lg:text-xl">{{ $officeName }} - Admin</span>
+                <span class="font-bold text-base md:text-lg lg:text-sl">{{ $officeName }} - Admin</span>
             </div>
             <div class="flex items-center">
                 <i class="bi bi-github text-xl mr-3 hidden md:inline"></i>
