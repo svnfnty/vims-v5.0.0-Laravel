@@ -2,7 +2,7 @@
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-@vite(['resources/css/policies.css', 'resources/js/policies.js'])
+@vite(['resources/css/policies.css', 'resources/js/policies.js', 'resources/css/tutorial.css', 'resources/js/tutorial.js'])
  
 <div class="policies-dashboard">
     <!-- Dashboard Header -->

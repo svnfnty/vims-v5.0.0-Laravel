@@ -16,7 +16,7 @@
     window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
 </script>
 
-@vite(['resources/css/series.css', 'resources/css/select2search.css', 'resources/js/series.js'])
+@vite(['resources/css/series.css', 'resources/css/select2search.css', 'resources/js/series.js', 'resources/css/tutorial.css', 'resources/js/tutorial.js'])
 
 <div class="series-dashboard">
     <!-- Dashboard Header -->

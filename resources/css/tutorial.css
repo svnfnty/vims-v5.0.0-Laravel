@@ -1,0 +1,369 @@
+@import "tailwindcss";
+
+/* ============================================
+   VIMSYS INTERACTIVE TUTORIAL SYSTEM
+   Tailwind v4 Compatible Styles
+   ============================================ */
+
+@layer components {
+    /* Tutorial Overlay - Darkens the background */
+    .tutorial-overlay {
+        @apply fixed inset-0 bg-black/70 z-[9998] pointer-events-none transition-opacity duration-300 ease-out;
+    }
+
+    /* Spotlight effect - creates a hole for the target element */
+    .tutorial-spotlight {
+        @apply absolute rounded-lg z-[9999] pointer-events-none transition-all duration-300 ease-out;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7);
+    }
+
+    /* Highlighted target element */
+    .tutorial-highlight {
+        @apply relative z-[10000] !shadow-[0_0_20px_rgba(37,99,235,0.8),0_0_40px_rgba(37,99,235,0.4)] !border-[3px] !border-blue-600 !rounded-lg pointer-events-auto !cursor-pointer;
+        animation: tutorial-pulse 2s infinite;
+    }
+
+    /* Tooltip/Instruction Box */
+    .tutorial-tooltip {
+        @apply absolute bg-gradient-to-br from-white to-slate-50 border-2 border-blue-600 rounded-xl p-5 max-w-[350px] z-[10001] pointer-events-auto shadow-[0_10px_40px_rgba(0,0,0,0.3),0_0_0_1px_rgba(37,99,235,0.2)] font-sans;
+    }
+
+    .tutorial-tooltip h4 {
+        @apply m-0 mb-3 text-slate-800 text-lg font-semibold flex items-center gap-2;
+    }
+
+    .tutorial-tooltip p {
+        @apply m-0 mb-4 text-slate-600 text-sm leading-relaxed;
+    }
+
+    /* Arrow pointing to target */
+    .tutorial-arrow {
+        @apply absolute w-0 h-0 z-[10002];
+        border-style: solid;
+    }
+
+    .tutorial-arrow.arrow-top {
+        @apply -top-4 left-1/2 -translate-x-1/2;
+        border-left: 12px solid transparent;
+        border-right: 12px solid transparent;
+        border-bottom: 16px solid #2563eb;
+    }
+
+    .tutorial-arrow.arrow-bottom {
+        @apply -bottom-4 left-1/2 -translate-x-1/2;
+        border-left: 12px solid transparent;
+        border-right: 12px solid transparent;
+        border-top: 16px solid #2563eb;
+    }
+
+    .tutorial-arrow.arrow-left {
+        @apply -left-4 top-1/2 -translate-y-1/2;
+        border-top: 12px solid transparent;
+        border-bottom: 12px solid transparent;
+        border-right: 16px solid #2563eb;
+    }
+
+    .tutorial-arrow.arrow-right {
+        @apply -right-4 top-1/2 -translate-y-1/2;
+        border-top: 12px solid transparent;
+        border-bottom: 12px solid transparent;
+        border-left: 16px solid #2563eb;
+    }
+
+    /* Animated emoji arrow for tutorial */
+    .tutorial-animated-arrow {
+        @apply absolute text-[50px] z-[10002] pointer-events-none hidden;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+        animation: tut-arrow-bounce 1s infinite;
+    }
+
+    /* Alternative CSS-only arrow if emoji doesn't work */
+    .tutorial-css-arrow {
+        @apply absolute w-10 h-10 z-[10002] pointer-events-none hidden;
+        animation: tut-arrow-bounce 1s infinite;
+    }
+
+    .tutorial-css-arrow::before {
+        @apply absolute w-0 h-0;
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-top: 30px solid #2563eb;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
+    }
+
+
+    .tutorial-css-arrow.down::before {
+        top: 0;
+        left: 0;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-top: 30px solid #2563eb;
+        border-bottom: none;
+    }
+
+    .tutorial-css-arrow.up::before {
+        top: 0;
+        left: 0;
+        border-left: 20px solid transparent;
+        border-right: 20px solid transparent;
+        border-bottom: 30px solid #2563eb;
+        border-top: none;
+    }
+
+    .tutorial-css-arrow.right::before {
+        top: 0;
+        left: 0;
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        border-left: 30px solid #2563eb;
+        border-right: none;
+    }
+
+    .tutorial-css-arrow.left::before {
+        top: 0;
+        left: 0;
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        border-right: 30px solid #2563eb;
+        border-left: none;
+    }
+
+
+    /* Step counter badge */
+    .tutorial-step-badge {
+        @apply inline-flex items-center justify-center w-7 h-7 bg-gradient-to-br from-blue-600 to-blue-700 text-white rounded-full text-sm font-bold mr-2 shadow-[0_2px_8px_rgba(37,99,235,0.4)];
+    }
+
+    /* Progress bar */
+    .tutorial-progress {
+        @apply fixed top-0 left-0 w-full h-1 bg-blue-600/20 z-[10002];
+    }
+
+    .tutorial-progress-bar {
+        @apply h-full bg-gradient-to-r from-blue-600 to-blue-500 transition-all duration-300 shadow-[0_0_10px_rgba(37,99,235,0.5)];
+    }
+
+    /* Control buttons */
+    .tutorial-controls {
+        @apply flex gap-2.5 mt-4 flex-wrap;
+    }
+
+    .tutorial-btn {
+        @apply px-5 py-2.5 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-200 inline-flex items-center gap-1.5;
+    }
+
+    .tutorial-btn-primary {
+        @apply bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-[0_4px_12px_rgba(37,99,235,0.3)] hover:-translate-y-0.5 hover:shadow-[0_6px_16px_rgba(37,99,235,0.4)];
+    }
+
+    .tutorial-btn-secondary {
+        @apply bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200 hover:-translate-y-0.5;
+    }
+
+    .tutorial-btn-skip {
+        @apply bg-transparent text-slate-400 border border-slate-300 hover:text-slate-500 hover:border-slate-400;
+    }
+
+    /* Welcome modal */
+    .tutorial-welcome {
+        @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-10 max-w-[500px] w-[90%] z-[10003] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] text-center;
+    }
+
+    .tutorial-welcome-icon {
+        @apply w-20 h-20 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-6 text-[40px];
+    }
+
+    .tutorial-welcome h2 {
+        @apply m-0 mb-4 text-slate-800 text-[28px];
+    }
+
+    .tutorial-welcome p {
+        @apply m-0 mb-6 text-slate-500 text-base leading-relaxed;
+    }
+
+    /* Completion modal */
+    .tutorial-complete {
+        @apply fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-10 max-w-[450px] w-[90%] z-[10003] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] text-center;
+    }
+
+    .tutorial-complete-icon {
+        @apply w-[100px] h-[100px] bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-6 text-[50px];
+        animation: tutorial-bounce 1s ease;
+    }
+
+    /* Form field instruction popup */
+    .tutorial-field-instruction {
+        @apply absolute bg-gradient-to-br from-white to-sky-50 border-2 border-sky-500 rounded-xl p-4 max-w-[300px] z-[10002] pointer-events-auto shadow-[0_8px_30px_rgba(0,0,0,0.2)] font-sans;
+    }
+
+    .tutorial-field-instruction h5 {
+        @apply m-0 mb-2 text-sky-700 text-[15px] font-semibold;
+    }
+
+    .tutorial-field-instruction p {
+        @apply m-0 mb-3 text-sky-900 text-[13px] leading-relaxed;
+    }
+
+    .tutorial-field-instruction .tutorial-arrow {
+        @apply border-t-sky-500 border-b-sky-500;
+    }
+
+    /* Next field button */
+    .tutorial-next-field-btn {
+        @apply bg-gradient-to-br from-sky-500 to-sky-600 text-white border-none px-4 py-2 rounded-md text-[13px] font-semibold cursor-pointer transition-all duration-200 inline-flex items-center gap-1.5 mt-2 hover:-translate-y-px hover:shadow-[0_4px_12px_rgba(14,165,233,0.4)];
+    }
+
+    .tutorial-next-field-btn:disabled {
+        @apply bg-slate-300 cursor-not-allowed translate-y-0 shadow-none;
+    }
+
+    /* Submit button highlight */
+    .tutorial-submit-highlight {
+        @apply relative z-[10001] !bg-gradient-to-br from-green-500 to-green-600 !text-white;
+        animation: tutorial-submit-pulse 1.5s infinite !important;
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.4) !important;
+        border-color: #22c55e !important;
+    }
+
+    /* Hide spotlight when form is active */
+    .tutorial-form-active .tutorial-spotlight {
+        @apply opacity-0;
+    }
+
+    /* Animation for tooltip entrance */
+    .tutorial-tooltip-enter {
+        animation: tutorial-tooltip-in 0.3s ease;
+    }
+
+    /* Shake animation for required fields */
+    .tutorial-shake {
+        animation: tutorial-shake 0.5s ease;
+    }
+
+    /* Field active state */
+    .tutorial-field-active {
+        @apply relative z-[10010] bg-white rounded-lg shadow-[0_0_0_3px_#2563eb,0_0_20px_rgba(37,99,235,0.5)] p-1.5 transition-all duration-300 pointer-events-auto;
+    }
+}
+
+/* Keyframe Animations */
+@keyframes tutorial-pulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(37, 99, 235, 0.8), 0 0 40px rgba(37, 99, 235, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(37, 99, 235, 1), 0 0 60px rgba(37, 99, 235, 0.6);
+    }
+}
+
+@keyframes tut-arrow-bounce {
+    0%, 100% { 
+        transform: translateY(0) scale(1); 
+    }
+    50% { 
+        transform: translateY(-20px) scale(1.1); 
+    }
+}
+
+@keyframes tutorial-bounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes tutorial-submit-pulse {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.8), 0 0 40px rgba(34, 197, 94, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(34, 197, 94, 1), 0 0 60px rgba(34, 197, 94, 0.6);
+        transform: scale(1.02);
+    }
+}
+
+@keyframes tutorial-tooltip-in {
+    from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes tutorial-shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* Responsive adjustments - Mobile: Tiny floating badge, minimal blocking */
+@media (max-width: 768px) {
+    .tutorial-tooltip {
+        @apply fixed !top-auto !bottom-2.5 !left-auto !right-2.5 !transform-none max-w-[200px] p-2 z-[10020] rounded-[20px] text-xs flex flex-col items-start gap-1 shadow-[0_2px_10px_rgba(0,0,0,0.2)];
+    }
+    
+    .tutorial-tooltip h4 {
+        @apply text-xs m-0 font-semibold whitespace-nowrap;
+    }
+    
+    .tutorial-tooltip p,
+    .tutorial-tooltip div[style*="background:#dbeafe"],
+    .tutorial-tooltip div[style*="background:#e2e8f0"] {
+        @apply hidden;
+    }
+    
+    .tutorial-tooltip > div:first-child {
+        @apply flex items-center gap-1.5 w-full;
+    }
+    
+    .tutorial-tooltip button[onclick*="skip"] {
+        @apply m-0 px-2 py-1 text-[10px] rounded-xl ml-auto bg-white/90 text-slate-500 border border-slate-300;
+    }
+    
+    .tutorial-welcome,
+    .tutorial-complete {
+        @apply p-6 w-[95%];
+    }
+    
+    .tutorial-welcome h2,
+    .tutorial-complete h2 {
+        @apply text-[22px];
+    }
+    
+    .tutorial-controls {
+        @apply flex-col;
+    }
+    
+    .tutorial-btn {
+        @apply w-full justify-center;
+    }
+    
+    .tutorial-css-arrow {
+        @apply hidden;
+    }
+    
+    .tutorial-field-instruction {
+        @apply absolute !bottom-auto !top-[-30px] !left-0 !right-auto !transform-none max-w-none w-auto whitespace-nowrap px-2.5 py-1 z-[10019] text-[11px] rounded-xl bg-blue-600 text-white border-none;
+    }
+}
+
+/* Extra small screens - even more minimal */
+@media (max-width: 480px) {
+    .tutorial-tooltip {
+        @apply bottom-1 right-1 px-2.5 py-1.5 text-[11px] max-w-[160px] rounded-2xl;
+    }
+    
+    .tutorial-tooltip h4 {
+        @apply text-[11px];
+    }
+    
+    .tutorial-field-instruction {
+        @apply text-[10px] px-2 py-0.5 top-[-25px];
+    }
+}
