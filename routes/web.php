@@ -9,8 +9,6 @@ use App\Http\Controllers\ClientController;
 use App\Http\Controllers\InsuranceController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\PolicySeriesController;
-use App\Http\Controllers\UsageHistoryController;
-use App\Http\Controllers\LTOTransactionController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\WalkinController;
@@ -18,8 +16,8 @@ use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\ActivityController;
 use App\Models\SystemInfo;
+use App\Http\Middleware\MaintenanceModeMiddleware;
 
 Route::get('/login', function () {
     $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
@@ -50,7 +48,7 @@ Route::post('/logout', function () {
     return redirect('/login');
 })->name('logout');
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/search', [DashboardController::class, 'search'])->name('dashboard.search');
 
@@ -104,8 +102,6 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::get('/series/api/getseries', [PolicySeriesController::class, 'getSeries'])->name('series.api.getseries');
-    Route::get('/usage-history', [UsageHistoryController::class, 'index'])->name('usage.history');
-    Route::get('/lto-transactions', [LTOTransactionController::class, 'index'])->name('lto.transactions');
     Route::get('/categories', [CategoryController::class, 'getAll'])->name('categories.all');
     // Policy Routes
     Route::group(['prefix' => 'policies'], function () {
@@ -146,7 +142,6 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
     });
-    Route::get('/activity', [ActivityController::class, 'index'])->name('activity');
 
     // Account Routes
     Route::get('/account/setting', [AccountController::class, 'setting'])->name('account.setting');
@@ -155,6 +150,9 @@ Route::middleware('auth')->group(function () {
     // System Settings Routes
     Route::get('/system/settings', [SettingsController::class, 'index'])->name('system.settings');
     Route::put('/system/settings', [SettingsController::class, 'update'])->name('system.settings.update');
+    
+    // Maintenance Mode Toggle Route (Admin only)
+    Route::post('/system/maintenance/toggle', [SettingsController::class, 'toggleMaintenance'])->name('system.maintenance.toggle');
 });
 
 Route::get('/', function () {
