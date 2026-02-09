@@ -66,6 +66,9 @@
             <a class="nav-link {{ request()->routeIs('office.index') ? 'active' : '' }}" href="{{ route('office.index') }}">
                 <i class="bi bi-person-lines-fill mr-2"></i> <span class="nav-text">Office List</span>
             </a>
+            <a class="nav-link {{ request()->routeIs('system.settings') ? 'active' : '' }}" href="{{ route('system.settings') }}">
+                <i class="bi bi-gear mr-2"></i> <span class="nav-text">System Settings</span>
+            </a>
             @endif
         </nav>
     </div>

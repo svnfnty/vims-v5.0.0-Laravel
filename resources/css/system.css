@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+/* System Settings Page Styles with Tailwind v4 */
+@layer components {
+    /* Card Styles */
+    .system-card {
+        @apply border-none shadow-[0_4px_20px_rgba(0,0,0,0.1)] rounded-xl overflow-hidden bg-white;
+    }
+
+    .system-card-header {
+        @apply bg-gradient-to-b from-[#268fff] to-[#007bff] text-white border-b-0 px-6 py-4;
+    }
+
+    .system-card-header h5 {
+        @apply font-semibold flex items-center text-lg;
+    }
+
+    .system-card-header h5 i {
+        @apply mr-2.5 text-xl;
+    }
+
+    .system-card-body {
+        @apply p-6;
+    }
+
+    .system-card-footer {
+        @apply px-6 py-4 text-right bg-gray-50 border-t border-gray-100;
+    }
+
+    /* Section Title */
+    .section-title {
+        @apply text-lg font-semibold text-gray-600 mb-4 flex items-center;
+    }
+
+    .section-title i {
+        @apply mr-2.5 text-[#6777ef];
+    }
+
+    /* Floating Label Styles */
+    .floating-label {
+        @apply relative mt-5 mb-6;
+    }
+
+    .floating-label input, 
+    .floating-label select, 
+    .floating-label textarea {
+        @apply px-3 py-4 text-base border border-gray-300 rounded-lg w-full transition-all duration-200 resize-none bg-white;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .floating-label input, 
+    .floating-label select {
+        @apply h-[55px];
+    }
+
+    .floating-label textarea {
+        @apply min-h-[100px] leading-normal;
+    }
+
+    .floating-label input:focus, 
+    .floating-label select:focus, 
+    .floating-label textarea:focus {
+        @apply border-[#80bdff] outline-none;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .floating-label label {
+        @apply absolute top-1/2 left-3 -translate-y-1/2 text-gray-500 pointer-events-none transition-all duration-200 bg-white px-1.5 text-sm;
+    }
+
+    .floating-label input:focus ~ label,
+    .floating-label input:not(:placeholder-shown) ~ label,
+    .floating-label select:valid ~ label,
+    .floating-label textarea:focus ~ label,
+    .floating-label textarea:not(:placeholder-shown) ~ label {
+        @apply top-0 -translate-y-1/2 scale-[0.85] text-[#007bff];
+    }
+
+    /* Custom File Input */
+    .custom-file {
+        @apply relative inline-block w-full;
+    }
+
+    .custom-file-input {
+        @apply absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10;
+    }
+
+    .custom-file-label {
+        @apply block px-3 py-2.5 text-sm text-gray-500 bg-white border border-gray-300 rounded-lg overflow-hidden text-ellipsis whitespace-nowrap transition-all duration-200;
+    }
+
+    .custom-file-label::after {
+        @apply absolute right-0 top-0 bottom-0 px-4 bg-[#007bff] text-white flex items-center text-sm font-medium;
+        content: "Browse";
+        border-left: 1px solid #5a6be0;
+    }
+
+    .custom-file-input:focus ~ .custom-file-label {
+        @apply border-[#80bdff];
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+    /* Image Previews */
+    .img-preview-logo {
+        @apply h-[15vh] w-[15vh] object-contain rounded-full shadow-[0_4px_8px_rgba(0,0,0,0.1)] border-[3px] border-white;
+    }
+
+    .img-preview-cover {
+        @apply h-[50vh] w-full object-contain shadow-[0_4px_12px_rgba(0,0,0,0.1)] border border-gray-200 bg-gray-50;
+    }
+
+    /* Update Button */
+    .btn-update {
+        @apply inline-flex items-center justify-center px-5 py-2.5 bg-[#007bff] text-white border-none rounded-lg text-sm font-semibold transition-all duration-300 shadow-[0_4px_6px_rgba(103,119,239,0.3)] cursor-pointer;
+    }
+
+    .btn-update:hover {
+        @apply bg-[#0056b3] -translate-y-0.5 shadow-[0_6px_8px_rgba(103,119,239,0.4)];
+    }
+
+    .btn-update i {
+        @apply mr-2;
+    }
+
+    /* Form Group */
+    .form-group {
+        @apply mb-5;
+    }
+
+    .form-label {
+        @apply block text-sm font-medium text-gray-700 mb-2;
+    }
+
+    /* Message Container */
+    #msg {
+        @apply mb-4;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .system-card-body {
+        @apply p-4;
+    }
+
+    .img-preview-cover {
+        @apply h-[30vh];
+    }
+
+    .floating-label input, 
+    .floating-label select {
+        @apply h-[50px];
+    }
+}
