@@ -80,14 +80,15 @@
             </div>
             <div class="flex items-center">
                 <i class="bi bi-github text-xl mr-3 hidden md:inline"></i>
-                <div class="relative group">
+            <div class="relative">
                     <span class="font-bold cursor-pointer flex items-center" id="userDropdown">
                         {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                         </svg>
                     </span>
-                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden group-hover:block z-50">
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 hidden z-50" id="userDropdownMenu">
+                        <a href="{{ route('account.setting') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Account</a>
                         <form action="{{ route('logout') }}" method="POST" class="px-4 py-2">
                             @csrf
                             <button type="submit" class="w-full text-left text-red-600 hover:text-red-800 text-sm font-medium">Logout</button>
@@ -126,6 +127,24 @@
                 sidebar.classList.toggle('sidebar-active');
             });
         });
+
+        // User Dropdown Toggle
+        document.getElementById('userDropdown').addEventListener('click', function(event) {
+            event.stopPropagation();
+            const menu = document.getElementById('userDropdownMenu');
+            menu.classList.toggle('hidden');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.relative');
+            const menu = document.getElementById('userDropdownMenu');
+            if (!dropdown.contains(event.target)) {
+                menu.classList.add('hidden');
+            }
+        });
     </script>
+    
+    @yield('scripts')
 </body>
 </html>

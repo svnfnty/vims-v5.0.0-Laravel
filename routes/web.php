@@ -16,6 +16,7 @@ use App\Http\Controllers\PolicyController;
 use App\Http\Controllers\WalkinController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\ActivityController;
 use App\Models\SystemInfo;
@@ -144,6 +145,10 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
     });
     Route::get('/activity', [ActivityController::class, 'index'])->name('activity');
+
+    // Account Routes
+    Route::get('/account/setting', [AccountController::class, 'setting'])->name('account.setting');
+    Route::put('/account/setting', [AccountController::class, 'update'])->name('account.update');
 });
 
 Route::get('/', function () {
