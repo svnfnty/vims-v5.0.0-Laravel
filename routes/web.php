@@ -21,8 +21,8 @@ use App\Http\Controllers\ActivityController;
 use App\Models\SystemInfo;
 
 Route::get('/login', function () {
-    $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VIMS';
-    $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'SAAS';
+    $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
+    $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'VIMSYS SAAS 2026';
     return view('auth.login', compact('systemName', 'systemShortName'));
 })->name('login')->middleware('guest');
 
