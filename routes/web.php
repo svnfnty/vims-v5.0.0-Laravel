@@ -149,6 +149,10 @@ Route::middleware('auth')->group(function () {
     // Account Routes
     Route::get('/account/setting', [AccountController::class, 'setting'])->name('account.setting');
     Route::put('/account/setting', [AccountController::class, 'update'])->name('account.update');
+
+    // System Settings Routes
+    Route::get('/system/settings', [SettingsController::class, 'index'])->name('system.settings');
+    Route::put('/system/settings', [SettingsController::class, 'update'])->name('system.settings.update');
 });
 
 Route::get('/', function () {
@@ -157,4 +161,3 @@ Route::get('/', function () {
     }
     return view('welcome', ['wrapperClass' => 'table-responsive']);
 })->name('welcome');
-

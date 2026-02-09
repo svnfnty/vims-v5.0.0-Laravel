@@ -1,0 +1,1 @@
+document.addEventListener("DOMContentLoaded",function(){window.successMessage&&Swal.fire({icon:"success",title:"Success!",text:window.successMessage,confirmButtonColor:"#007bff",timer:3e3,timerProgressBar:!0}),window.errorMessages&&window.errorMessages.length>0&&Swal.fire({icon:"error",title:"Error!",html:window.errorMessages.join("<br>"),confirmButtonColor:"#dc3545"})});
