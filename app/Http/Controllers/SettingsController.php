@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SystemInfo;
+use App\Models\MaintenanceMode;
+use Illuminate\Support\Facades\Auth;
 
 class SettingsController extends Controller
 {
@@ -16,7 +18,15 @@ class SettingsController extends Controller
         $logo = SystemInfo::where('meta_field', 'logo')->value('meta_value') ?? '';
         $cover = SystemInfo::where('meta_field', 'cover')->value('meta_value') ?? '';
 
-        return view('system.settings', compact('systemName', 'systemShortName', 'logo', 'cover'));
+        // Get maintenance mode status
+        $maintenanceStatus = MaintenanceMode::getStatus();
+        $maintenanceEnabled = $maintenanceStatus['enabled'];
+        
+        // Check if current user is admin (id=1 is the main admin)
+        $user = Auth::user();
+        $isAdmin = $user && $user->id == 1;
+
+        return view('system.settings', compact('systemName', 'systemShortName', 'logo', 'cover', 'maintenanceEnabled', 'isAdmin'));
     }
 
     public function update(Request $request)
@@ -59,5 +69,34 @@ class SettingsController extends Controller
         }
 
         return redirect()->route('system.settings')->with('success', 'System settings updated successfully.');
+    }
+
+    /**
+     * Toggle maintenance mode
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function toggleMaintenance(Request $request)
+    {
+        // Check if user is admin (id=1 is the main admin)
+        $user = Auth::user();
+        $isAdmin = $user && $user->id == 1;
+
+        if (!$isAdmin) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized. Only admin can toggle maintenance mode.'
+            ], 403);
+        }
+
+        $enabled = MaintenanceMode::toggle();
+        $status = MaintenanceMode::getStatus();
+
+        return response()->json([
+            'success' => true,
+            'enabled' => $enabled,
+            'message' => $enabled ? 'Maintenance mode enabled.' : 'Maintenance mode disabled.'
+        ]);
     }
 }
