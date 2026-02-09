@@ -30,14 +30,18 @@ class AppServiceProvider extends ServiceProvider
              return;
          }
          
-         URL::forceScheme('https');
+         //URL::forceScheme('https');
 
-         // Use environment variables instead of database
-         $systemName = env('APP_NAME', 'VEHICLE INSURANCE MANAGEMENT SYSTEM');
-         $systemShortName = env('APP_SHORT_NAME', 'VIMSYS SAAS 2026');
+         // Get system info from database
+         $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
+         $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'VIMSYS SAAS 2026';
+         $systemLogo = SystemInfo::where('meta_field', 'logo')->value('meta_value') ?? '';
+         $systemCover = SystemInfo::where('meta_field', 'cover')->value('meta_value') ?? '';
          
          View::share('systemName', $systemName);
          View::share('systemShortName', $systemShortName);
+         View::share('systemLogo', $systemLogo);
+         View::share('systemCover', $systemCover);
      
          View::composer('layouts.app', function ($view) {
              $officeName = 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
