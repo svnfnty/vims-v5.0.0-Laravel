@@ -45,30 +45,32 @@
                 <div class="space-y-4">
                     <div>
                         <label for="current_password" class="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                        <div class="flex border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-blue-500">
-                            <input type="password" id="current_password" name="current_password" class="flex-1 px-3 py-2 border-0 rounded-l-md focus:outline-none focus:ring-0" required>
-                            <button type="button" onclick="togglePassword('current_password', 'eye-current')" class="px-3 py-2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700">
+                        <div class="relative">
+                            <input type="password" id="current_password" name="current_password" class="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <button type="button" onclick="togglePassword('current_password', 'eye-current')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
                                 <i id="eye-current" class="bi bi-eye text-lg"></i>
                             </button>
                         </div>
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                        <div class="flex border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-blue-500">
-                            <input type="password" id="password" name="password" class="flex-1 px-3 py-2 border-0 rounded-l-md focus:outline-none focus:ring-0" required>
-                            <button type="button" onclick="togglePassword('password', 'eye-new')" class="px-3 py-2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700">
+                        <div class="relative">
+                            <input type="password" id="password" name="password" class="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <button type="button" onclick="togglePassword('password', 'eye-new')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
                                 <i id="eye-new" class="bi bi-eye text-lg"></i>
                             </button>
                         </div>
+                        <div id="password-feedback" style="display: none;"></div>
                     </div>
                     <div>
                         <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                        <div class="flex border border-gray-300 rounded-md focus-within:ring-2 focus-within:ring-blue-500">
-                            <input type="password" id="password_confirmation" name="password_confirmation" class="flex-1 px-3 py-2 border-0 rounded-l-md focus:outline-none focus:ring-0" required>
-                            <button type="button" onclick="togglePassword('password_confirmation', 'eye-confirm')" class="px-3 py-2 text-gray-500 hover:text-gray-700 focus:outline-none focus:text-gray-700">
+                        <div class="relative">
+                            <input type="password" id="password_confirmation" name="password_confirmation" class="w-full px-3 py-2 pr-12 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                            <button type="button" onclick="togglePassword('password_confirmation', 'eye-confirm')" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none">
                                 <i id="eye-confirm" class="bi bi-eye text-lg"></i>
                             </button>
                         </div>
+                        <div id="confirmation-feedback" style="display: none;"></div>
                     </div>
                 </div>
             </div>
