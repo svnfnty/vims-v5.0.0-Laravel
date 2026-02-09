@@ -3,6 +3,19 @@
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Define Laravel routes and variables for JavaScript BEFORE loading Vite assets -->
+<script>
+    window.seriesRoutes = {
+        stats: '{{ route("series.stats") }}',
+        data: '{{ route("series.data") }}',
+        store: '{{ route("series.store") }}'
+    };
+    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
+    window.userId = {{ auth()->user()->id ?? 0 }};
+    window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
+</script>
+
 @vite(['resources/css/series.css', 'resources/css/select2search.css', 'resources/js/series.js'])
 
 <div class="series-dashboard">
@@ -268,28 +281,6 @@
 
 <!-- Modal Overlay -->
 <div id="modalOverlay" class="modal-overlay" style="display: none;" onclick="closeSeriesModal()"></div>
-
-<!-- Define Laravel routes for JavaScript -->
-<script>
-    window.seriesRoutes = {
-        stats: '{{ route("series.stats") }}',
-        data: '{{ route("series.data") }}',
-        store: '{{ route("series.store") }}'
-    };
-    window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
-    window.userId = {{ auth()->user()->id ?? 0 }};
-    window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
-</script>
-<script>
-    $(document).ready(function() {
-        $('.js-example-basic-single').select2({
-            width: '100%',
-            containerCssClass: function() {
-                return $(this).hasClass('form-control shadow-sm') ? 'form-control shadow-sm' : '';
-            }
-        });
-    });
-</script>
 
 <!-- Tutorial Step Completion Handler -->
 <script>
