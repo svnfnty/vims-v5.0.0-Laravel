@@ -143,8 +143,6 @@ Route::middleware('auth')->group(function () {
         Route::put('/{id}', [UserController::class, 'update'])->name('users.update');
         Route::delete('/{id}', [UserController::class, 'destroy'])->name('users.destroy');
     });
-    Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
-    Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
     Route::get('/activity', [ActivityController::class, 'index'])->name('activity');
 });
 
