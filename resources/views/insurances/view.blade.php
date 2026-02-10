@@ -276,9 +276,9 @@
     </div>
 </div>
 
-<!-- Manage Insurance Modal (for edit) -->
-<div id="manageInsuranceModal" class="modal insurance-form-modal" style="display: none;">
-    <div class="modal-content">
+<!-- Manage Insurance Modal (for edit) - Client Style with Two Columns Landscape -->
+<div id="manageInsuranceModal" class="modal" style="display: none;">
+    <div class="modal-content landscape-modal-content">
         <div class="modal-header">
             <h2 id="manageInsuranceModalTitle">Edit Insurance</h2>
             <button type="button" class="modal-close" onclick="closeInsuranceModal()">
@@ -291,91 +291,116 @@
                 <input type="hidden" id="insurance_form_method" name="_method" value="PUT">
                 <input type="hidden" id="insurance_id" name="insurance_id" value="{{ $insurance->id }}">
 
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-mvfile_no" name="mvfile_no" placeholder=" " value="{{ $insurance->mvfile_no }}">
-                    <label for="modal-mvfile_no">MV File No</label>
-                </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-coc_no" name="coc_no" placeholder=" " value="{{ $insurance->coc_no }}">
-                    <label for="modal-coc_no">COC No</label>
-                </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-or_no" name="or_no" placeholder=" " value="{{ $insurance->or_no }}">
-                    <label for="modal-or_no">OR No</label>
-                </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-policy_no" name="policy_no" placeholder=" " value="{{ $insurance->policy_no }}">
-                    <label for="modal-policy_no">Policy No</label>
-                </div>
-                <div class="floating-label">
-                    <select class="js-example-basic-single" id="modal-client_id" name="client_id" placeholder=" " required>
-                        <option value="">Select Client</option>
-                        @foreach(\App\Models\Client::select('id', 'lastname', 'firstname', 'middlename')->get() as $client)
-                            <option value="{{ $client->id }}" {{ $insurance->client_id == $client->id ? 'selected' : '' }}>{{ $client->lastname }}, {{ $client->firstname }}{{ $client->middlename ? ' ' . $client->middlename : '' }}</option>
-                        @endforeach
-                    </select>
-                    <label for="modal-client_id">Client <span style="color: var(--danger);">*</span></label>
-                </div>
-                <div class="floating-label">
-                    <select class="js-example-basic-single" id="modal-policy_id" name="policy_id" placeholder=" " required>
-                        <option value="">Select Policy</option>
-                        @foreach(\App\Models\Policy::select('id', 'name', 'code')->get() as $policy)
-                            <option value="{{ $policy->id }}" {{ $insurance->policy_id == $policy->id ? 'selected' : '' }}>{{ $policy->name }} ({{ $policy->code }})</option>
-                        @endforeach
-                    </select>
-                    <label for="modal-policy_id">Policy <span style="color: var(--danger);">*</span></label>
-                </div>
-                <div class="floating-label">
-                    <select class="js-example-basic-single" id="modal-category_id" name="category_id" placeholder=" " required>
-                        <option value="">Select Category</option>
-                        @foreach(\App\Models\Category::select('id', 'name', 'code')->get() as $category)
-                            <option value="{{ $category->id }}" {{ $insurance->auth_no == $category->id ? 'selected' : '' }}>{{ $category->name }} ({{ $category->code }})</option>
-                        @endforeach
-                    </select>
-                    <label for="modal-category_id">Category <span style="color: var(--danger);">*</span></label>
-                </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-registration_no" name="registration_no" placeholder=" " value="{{ $insurance->registration_no }}">
-                    <label for="modal-registration_no">Registration No</label>
-                </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-chassis_no" name="chassis_no" placeholder=" " value="{{ $insurance->chassis_no }}">
-                    <label for="modal-chassis_no">Chassis No</label>
-                </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-engine_no" name="engine_no" placeholder=" " value="{{ $insurance->engine_no }}">
-                    <label for="modal-engine_no">Engine No</label>
-                </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-vehicle_model" name="vehicle_model" placeholder=" " value="{{ $insurance->vehicle_model }}">
-                    <label for="modal-vehicle_model">Vehicle Model</label>
-                </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-vehicle_color" name="vehicle_color" placeholder=" " value="{{ $insurance->vehicle_color }}">
-                    <label for="modal-vehicle_color">Vehicle Color</label>
-                </div>
-                <div class="floating-label">
-                    <input type="text" class="form-control" id="modal-make" name="make" placeholder=" " value="{{ $insurance->make }}">
-                    <label for="modal-make">Make</label>
-                </div>
-                <div class="floating-label">
-                    <input type="date" class="form-control" id="modal-registration_date" name="registration_date" placeholder=" " value="{{ $insurance->registration_date }}">
-                    <label for="modal-registration_date">Registration Date</label>
-                </div>
-                <div class="floating-label">
-                    <input type="date" class="form-control" id="modal-expiration_date" name="expiration_date" placeholder=" " value="{{ $insurance->expiration_date }}">
-                    <label for="modal-expiration_date">Expiration Date</label>
-                </div>
-                <div class="floating-label">
-                    <select class="form-control" id="modal-status" name="status" placeholder=" ">
-                        <option value="0" {{ $insurance->status == 0 ? 'selected' : '' }}>Pending</option>
-                        <option value="1" {{ $insurance->status == 1 ? 'selected' : '' }}>Active</option>
-                    </select>
-                    <label for="modal-status">Status</label>
-                </div>
-                <div class="floating-label">
-                    <textarea class="form-control" id="modal-remarks" name="remarks" rows="2" placeholder=" ">{{ $insurance->remarks }}</textarea>
-                    <label for="modal-remarks">Remarks</label>
+                <div class="form-row">
+                    <!-- Left Column -->
+                    <div class="form-col">
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-mvfile_no" name="mvfile_no" placeholder=" " value="{{ $insurance->mvfile_no }}">
+                            <label for="modal-mvfile_no">MV File No</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-coc_no" name="coc_no" placeholder=" " value="{{ $insurance->coc_no }}">
+                            <label for="modal-coc_no">COC No</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-or_no" name="or_no" placeholder=" " value="{{ $insurance->or_no }}">
+                            <label for="modal-or_no">OR No</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-policy_no" name="policy_no" placeholder=" " value="{{ $insurance->policy_no }}">
+                            <label for="modal-policy_no">Policy No</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <select class="js-example-basic-single form-control" id="modal-client_id" name="client_id" required>
+                                <option value="">Select Client</option>
+                                @foreach(\App\Models\Client::select('id', 'lastname', 'firstname', 'middlename')->get() as $client)
+                                    <option value="{{ $client->id }}" {{ $insurance->client_id == $client->id ? 'selected' : '' }}>{{ $client->lastname }}, {{ $client->firstname }}{{ $client->middlename ? ' ' . $client->middlename : '' }}</option>
+                                @endforeach
+                            </select>
+                            <label for="modal-client_id">Client <span style="color: #dc3545;">*</span></label>
+                        </div>
+
+                        <div class="floating-label">
+                            <select class="js-example-basic-single form-control" id="modal-policy_id" name="policy_id" required>
+                                <option value="">Select Policy</option>
+                                @foreach(\App\Models\Policy::select('id', 'name', 'code')->get() as $policy)
+                                    <option value="{{ $policy->id }}" {{ $insurance->policy_id == $policy->id ? 'selected' : '' }}>{{ $policy->name }} ({{ $policy->code }})</option>
+                                @endforeach
+                            </select>
+                            <label for="modal-policy_id">Policy <span style="color: #dc3545;">*</span></label>
+                        </div>
+
+                        <div class="floating-label">
+                            <select class="js-example-basic-single form-control" id="modal-category_id" name="category_id" required>
+                                <option value="">Select Category</option>
+                                @foreach(\App\Models\Category::select('id', 'name', 'code')->get() as $category)
+                                    <option value="{{ $category->id }}" {{ $insurance->auth_no == $category->id ? 'selected' : '' }}>{{ $category->name }} ({{ $category->code }})</option>
+                                @endforeach
+                            </select>
+                            <label for="modal-category_id">Category <span style="color: #dc3545;">*</span></label>
+                        </div>
+
+                        
+                        <div class="floating-label">
+                            <textarea class="form-control" id="modal-remarks" name="remarks" rows="2" placeholder=" ">{{ $insurance->remarks }}</textarea>
+                            <label for="modal-remarks">Remarks</label>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="form-col">
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-registration_no" name="registration_no" placeholder=" " value="{{ $insurance->registration_no }}">
+                            <label for="modal-registration_no">Registration No</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-chassis_no" name="chassis_no" placeholder=" " value="{{ $insurance->chassis_no }}">
+                            <label for="modal-chassis_no">Chassis No</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-engine_no" name="engine_no" placeholder=" " value="{{ $insurance->engine_no }}">
+                            <label for="modal-engine_no">Engine No</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-vehicle_model" name="vehicle_model" placeholder=" " value="{{ $insurance->vehicle_model }}">
+                            <label for="modal-vehicle_model">Vehicle Model</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-vehicle_color" name="vehicle_color" placeholder=" " value="{{ $insurance->vehicle_color }}">
+                            <label for="modal-vehicle_color">Vehicle Color</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="text" class="form-control" id="modal-make" name="make" placeholder=" " value="{{ $insurance->make }}">
+                            <label for="modal-make">Make</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="date" class="form-control" id="modal-registration_date" name="registration_date" placeholder=" " value="{{ $insurance->registration_date }}">
+                            <label for="modal-registration_date">Registration Date</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <input type="date" class="form-control" id="modal-expiration_date" name="expiration_date" placeholder=" " value="{{ $insurance->expiration_date }}">
+                            <label for="modal-expiration_date">Expiration Date</label>
+                        </div>
+
+                        <div class="floating-label">
+                            <select class="form-control" id="modal-status" name="status">
+                                <option value="0" {{ $insurance->status == 0 ? 'selected' : '' }}>Pending</option>
+                                <option value="1" {{ $insurance->status == 1 ? 'selected' : '' }}>Active</option>
+                            </select>
+                            <label for="modal-status">Status</label>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -412,9 +437,7 @@
     $(document).ready(function() {
         $('.js-example-basic-single').select2({
             width: '100%',
-            containerCssClass: function() {
-                return $(this).hasClass('form-control') ? 'form-control' : '';
-            }
+            dropdownParent: $('#manageInsuranceModal')
         });
     });
 </script>
