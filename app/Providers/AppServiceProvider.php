@@ -30,7 +30,7 @@ class AppServiceProvider extends ServiceProvider
              return;
          }
          
-         //URL::forceScheme('https');
+         URL::forceScheme('https');
 
          // Get system info from database
          $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
