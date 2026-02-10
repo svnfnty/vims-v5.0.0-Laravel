@@ -431,6 +431,23 @@
     window.insuranceDestroyUrl = "/insurances/{{ $insurance->id }}";
     window.insurancesIndexUrl = "{{ route('insurances.index') }}";
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
+    
+    // Authentication flow data
+    window.authData = {
+        clientName: "{{ $insurance->client->firstname ?? '' }} {{ $insurance->client->middlename ?? '' }} {{ $insurance->client->lastname ?? '' }}",
+        clientAddress: "{{ $insurance->client->address ?? '' }}",
+        plateNo: "{{ $insurance->registration_no ?? '' }}",
+        mvFileNo: "{{ $insurance->mvfile_no ?? '' }}",
+        chassisNo: "{{ $insurance->chassis_no ?? '' }}",
+        engineNo: "{{ $insurance->engine_no ?? '' }}",
+        cocNo: "{{ $insurance->coc_no ?? '' }}",
+        orNo: "{{ $insurance->or_no ?? '' }}",
+        policyNo: "{{ $insurance->policy_no ?? '' }}",
+        insuranceId: "{{ $insurance->id ?? '' }}",
+        clientId: "{{ $insurance->client_id ?? '' }}",
+        userCredit: {{ auth()->user()->credit ?? 0 }},
+        userFullname: "{{ auth()->user()->firstname ?? '' }} {{ auth()->user()->lastname ?? '' }}"
+    };
 </script>
 
 <script>
