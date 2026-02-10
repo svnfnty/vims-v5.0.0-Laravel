@@ -401,6 +401,10 @@ async function handleNewInsurance() {
         return;
     }
 
+    // Store COC result globally for the entire flow
+    globalCocResult = cocResult;
+    console.log('Stored global COC result:', globalCocResult);
+
     const { cocNumber, orNumber, policyNumber } = cocResult;
     updateProgressStep(2);
 
@@ -857,6 +861,7 @@ function createRecordDetailsHTML(record) {
 let clientEditCallback = null;
 let pendingMvfileResult = null;
 let pendingCocResult = null;
+let globalCocResult = null; // Store COC result globally for the entire flow
 
 function openClientEditModal(existingRecord, cocResult, mvfileResult) {
     const modal = document.getElementById('clientEditModal');
@@ -1002,6 +1007,22 @@ window.submitClientEdit = async function() {
 
         console.log('Client updated successfully:', data);
 
+        // Show success toast notification
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'colored-toast'
+            }
+        });
+        Toast.fire({
+            icon: 'success',
+            title: 'Client updated successfully'
+        });
+
         // Update the client dropdown option with the new name
         const updatedClient = data.data || data.client;
         if (updatedClient) {
@@ -1032,20 +1053,26 @@ window.submitClientEdit = async function() {
 
         // Store the pending results locally before closing modal (closeClientEditModal clears them)
         const localMvfileResult = pendingMvfileResult;
-        const localCocResult = pendingCocResult;
+        // Use pendingCocResult or fall back to globalCocResult
+        const localCocResult = pendingCocResult || globalCocResult;
+        
+        console.log('Preparing to show MV File dialog again:', { localMvfileResult, localCocResult, globalCocResult });
 
         // Close the client edit modal
         closeClientEditModal();
 
-        // Continue to insurance form with updated client data
+        // Re-show the MV File dialog so user can see the info and proceed
         if (localMvfileResult && localCocResult) {
-            updateProgressStep(4);
-            showManageInsuranceModal({
-                mvfile_no: localMvfileResult.mvfile_no,
-                coc_no: localCocResult.cocNumber,
-                or_no: localCocResult.orNumber || localCocResult.cocNumber,
-                policy_no: localCocResult.policyNumber || localCocResult.cocNumber
-            }, localMvfileResult.existingRecord || null, localMvfileResult.isCopy || false, editedClientData);
+            // Ensure any remaining Swal is closed, then show MV File dialog
+            Swal.close();
+            // Small delay to ensure previous modal closes completely
+            setTimeout(() => {
+                console.log('Calling showMvFileDialogAgain with:', { localMvfileResult, localCocResult, editedClientData });
+                // Show MV File dialog again with updated client info
+                showMvFileDialogAgain(localMvfileResult, localCocResult, editedClientData);
+            }, 500);
+        } else {
+            console.error('Missing data to show MV File dialog:', { localMvfileResult, localCocResult, pendingMvfileResult, pendingCocResult, globalCocResult });
         }
     } catch (error) {
         console.error('Error updating client:', error);
@@ -1195,45 +1222,60 @@ window.submitCreateClient = async function() {
         const newClientName = `${newClient.lastname}, ${newClient.firstname}${newClient.middlename ? ' ' + newClient.middlename : ''}`;
         
         console.log('Client created successfully:', newClientId, newClientName);
+
+        // Show success toast notification
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            customClass: {
+                popup: 'colored-toast'
+            }
+        });
+        Toast.fire({
+            icon: 'success',
+            title: 'Client created successfully'
+        });
         
         // Store the pending results BEFORE closing modal (closeCreateClientModal clears them)
         const localMvfileResult = pendingCreateMvfileResult;
-        const localCocResult = pendingCreateCocResult;
+        // Use pendingCreateCocResult or fall back to globalCocResult
+        const localCocResult = pendingCreateCocResult || globalCocResult;
         
-        console.log('Stored results:', { localMvfileResult, localCocResult });
+        console.log('Stored results:', { localMvfileResult, localCocResult, globalCocResult });
         
         // Close the create client modal
         closeCreateClientModal();
         Swal.close();
         
-        // Small delay to ensure modal is fully closed
-        setTimeout(() => {
-            // Continue to insurance form with new client
-            if (localMvfileResult && localCocResult) {
-                console.log('Opening insurance form with new client:', newClientId);
-                updateProgressStep(4);
-
-                // First, add the new client to the Select2 dropdown options
-                const clientSelect = $('#modal-client_id');
-                const newOption = new Option(newClientName, newClientId, true, true);
-                clientSelect.append(newOption);
-
-                showManageInsuranceModal({
-                    mvfile_no: localMvfileResult.mvfile_no,
-                    coc_no: localCocResult.cocNumber,
-                    or_no: localCocResult.orNumber || localCocResult.cocNumber,
-                    policy_no: localCocResult.policyNumber || localCocResult.cocNumber
-                }, null, false, null, newClientId);
-            } else {
-                console.error('Missing required data:', { localMvfileResult, localCocResult });
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Failed to open insurance form. Missing required data.'
-                });
-            }
-            isSubmitting = false; // Reset flag after processing
-        }, 300);
+        // Re-show the MV File dialog so user can see the info and proceed
+        if (localMvfileResult && localCocResult) {
+            // Prepare new client data for the MV File dialog
+            const newClientData = {
+                id: newClientId,
+                firstname: clientData.firstname,
+                middlename: clientData.middlename,
+                lastname: clientData.lastname
+            };
+            // Ensure any remaining Swal is closed, then show MV File dialog
+            Swal.close();
+            // Small delay to ensure previous modal closes completely
+            setTimeout(() => {
+                console.log('Calling showMvFileDialogAgain with:', { localMvfileResult, localCocResult, newClientData });
+                // Show MV File dialog again with new client info
+                showMvFileDialogAgain(localMvfileResult, localCocResult, null, newClientData);
+            }, 500);
+        } else {
+            console.error('Missing required data:', { localMvfileResult, localCocResult });
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to continue. Missing required data.'
+            });
+        }
+        isSubmitting = false; // Reset flag after processing
     } catch (error) {
         console.error('Error creating client:', error);
         Swal.fire({
@@ -2099,10 +2141,100 @@ window.transferClientEdit = function() {
         hideMvFileNotification();
 
         // Open client edit modal with the existing record
-        openClientEditModal(existingRecord, null, { mvfile_no: existingRecord.mvfile_no, existingRecord: existingRecord, isCopy: false });
+        // Use globalCocResult to ensure COC data is available
+        openClientEditModal(existingRecord, globalCocResult, { mvfile_no: existingRecord.mvfile_no, existingRecord: existingRecord, isCopy: false });
     } catch (error) {
         console.error('Error parsing record data:', error);
     }
+}
+
+// Show MV File dialog again after client save (to keep it open for user review)
+function showMvFileDialogAgain(mvfileResult, cocResult, editedClientData = null, newClientData = null) {
+    console.log('showMvFileDialogAgain called with:', { mvfileResult, cocResult, editedClientData, newClientData });
+    
+    // Ensure all previous Swal dialogs are closed
+    Swal.close();
+    
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+        const container = document.createElement('div');
+        container.className = 'modern-input-container';
+        
+        // Determine client display info
+        let clientInfo = '';
+        if (editedClientData) {
+            const fullName = `${editedClientData.firstname} ${editedClientData.middlename ? editedClientData.middlename + ' ' : ''}${editedClientData.lastname}`;
+            clientInfo = `<div class="status-message valid" style="margin-bottom: 15px;"><i class="fas fa-check-circle"></i> Client updated: <strong>${fullName}</strong></div>`;
+        } else if (newClientData) {
+            const fullName = `${newClientData.firstname} ${newClientData.middlename ? newClientData.middlename + ' ' : ''}${newClientData.lastname}`;
+            clientInfo = `<div class="status-message valid" style="margin-bottom: 15px;"><i class="fas fa-check-circle"></i> New client created: <strong>${fullName}</strong></div>`;
+        }
+        
+        // Handle case where existingRecord might be null
+        const record = mvfileResult.existingRecord || { mvfile_no: mvfileResult.mvfile_no };
+        
+        container.innerHTML = `
+            <div class="input-header">
+                <i class="fas fa-car"></i>
+                <h3>Bind MV File Number</h3>
+            </div>
+            ${clientInfo}
+            <div class="tutorial-tip-box">
+                <i class="fas fa-lightbulb"></i>
+                <span><strong>Tip:</strong> Review the MV File information below, then click "Bind & Continue" to proceed to the insurance form.</span>
+            </div>
+            <div class="input-wrapper">
+                <input type="text" id="mvfile-input" class="modern-input" value="${mvfileResult.mvfile_no}" readonly>
+                <div class="status-indicator valid"></div>
+            </div>
+            <div class="status-message valid">MV File ready to bind</div>
+            <div class="record-details" id="record-details">
+                ${createRecordDetailsHTML(record)}
+            </div>
+        `;
+
+        console.log('Opening Swal dialog for MV File');
+
+        Swal.fire({
+            title: '',
+            html: container,
+            showCancelButton: true,
+            confirmButtonText: 'Bind & Continue',
+            cancelButtonText: 'Cancel',
+            allowOutsideClick: false,
+            customClass: {
+                popup: 'modern-swal-popup tutorial-swal-popup',
+                confirmButton: 'modern-confirm-btn',
+                cancelButton: 'modern-cancel-btn'
+            },
+            didOpen: () => {
+                console.log('MV File dialog opened successfully');
+            }
+        }).then(result => {
+            console.log('MV File dialog result:', result);
+            if (result.isConfirmed) {
+                // Now proceed to insurance form
+                updateProgressStep(4);
+                if (editedClientData) {
+                    showManageInsuranceModal({
+                        mvfile_no: mvfileResult.mvfile_no,
+                        coc_no: cocResult.cocNumber,
+                        or_no: cocResult.orNumber || cocResult.cocNumber,
+                        policy_no: cocResult.policyNumber || cocResult.cocNumber
+                    }, mvfileResult.existingRecord || null, mvfileResult.isCopy || false, editedClientData);
+                } else if (newClientData) {
+                    showManageInsuranceModal({
+                        mvfile_no: mvfileResult.mvfile_no,
+                        coc_no: cocResult.cocNumber,
+                        or_no: cocResult.orNumber || cocResult.cocNumber,
+                        policy_no: cocResult.policyNumber || cocResult.cocNumber
+                    }, null, false, null, newClientData.id);
+                }
+            }
+        }).catch(error => {
+            console.error('Error showing MV File dialog:', error);
+        });
+    }, 100);
 }
 
 // Explicitly expose all functions to window for inline onclick handlers
@@ -2116,3 +2248,4 @@ window.viewInsuranceDetails = window.viewInsuranceDetails || viewInsuranceDetail
 window.editInsuranceDetails = window.editInsuranceDetails || editInsuranceDetails;
 window.skipClientEdit = window.skipClientEdit || skipClientEdit;
 window.transferClientEdit = window.transferClientEdit || transferClientEdit;
+window.showMvFileDialogAgain = window.showMvFileDialogAgain || showMvFileDialogAgain;
