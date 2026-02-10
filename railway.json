@@ -1,0 +1,10 @@
+{
+    "$schema": "https://railway.app/railway.schema.json",
+    "build": {
+      "builder": "NIXPACKS",
+      "buildCommand": "composer install --optimize-autoloader --no-interaction && npm ci && npm run build && php artisan config:cache && php artisan route:cache && php artisan view:cache"
+    },
+    "deploy": {
+      "startCommand": "php artisan migrate --force && php artisan event:cache && php-fpm"
+    }
+  }
