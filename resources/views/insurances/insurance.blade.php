@@ -94,8 +94,8 @@
                     <div class="step-connector"></div>
                 </div>
                 <div class="step-content">
-                    <h3>Policy Details</h3>
-                    <p>Complete policy information</p>
+                    <h3>Client Setup</h3>
+                    <p>Edit or create client information</p>
                 </div>
             </div>
             <div class="flow-step" data-step="4">
@@ -103,8 +103,8 @@
                     <div class="step-number">4</div>
                 </div>
                 <div class="step-content">
-                    <h3>Confirmation</h3>
-                    <p>Review and finalize</p>
+                    <h3>Policy Details</h3>
+                    <p>Complete and save insurance record</p>
                 </div>
             </div>
         </div>
