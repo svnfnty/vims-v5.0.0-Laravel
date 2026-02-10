@@ -22,42 +22,49 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
+    public function boot(): void
+    {
+        // Skip during console commands that don't need DB
+        if (app()->runningInConsole()) {
+            $command = $_SERVER['argv'][1] ?? '';
+            $skipCommands = ['package:discover', 'config:cache', 'event:cache', 'route:cache', 'view:cache'];
+            
+            if (in_array($command, $skipCommands)) {
+                return;
+            }
+        }
+        
+        URL::forceScheme('https');
 
-     public function boot(): void
-     {
-         // Skip during config cache
-         if (app()->runningInConsole() && in_array('config:cache', $_SERVER['argv'] ?? [])) {
-             return;
-         }
-         
-         URL::forceScheme('https');
-
-         // Get system info from database
-         $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
-         $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'VIMSYS SAAS 2026';
-         $systemLogo = SystemInfo::where('meta_field', 'logo')->value('meta_value') ?? '';
-         $systemCover = SystemInfo::where('meta_field', 'cover')->value('meta_value') ?? '';
-         
-         View::share('systemName', $systemName);
-         View::share('systemShortName', $systemShortName);
-         View::share('systemLogo', $systemLogo);
-         View::share('systemCover', $systemCover);
-     
-         View::composer('layouts.app', function ($view) {
-             $officeName = 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
-             // Only query if user is logged in AND we're not in a console command
-             if (!app()->runningInConsole() && auth()->check() && auth()->user()->office_id) {
-                 try {
-                     $office = Office::find(auth()->user()->office_id);
-                     if ($office) {
-                         $officeName = $office->office_name;
-                     }
-                 } catch (\Exception $e) {
-                     // Keep default
-                 }
-             }
-             $view->with('officeName', $officeName);
-         });
-     }
-
+        // Get system info from database - only if not in console
+        if (!app()->runningInConsole()) {
+            $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
+            $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'VIMSYS SAAS 2026';
+            $systemLogo = SystemInfo::where('meta_field', 'logo')->value('meta_value') ?? '';
+            $systemCover = SystemInfo::where('meta_field', 'cover')->value('meta_value') ?? '';
+            
+            View::share('systemName', $systemName);
+            View::share('systemShortName', $systemShortName);
+            View::share('systemLogo', $systemLogo);
+            View::share('systemCover', $systemCover);
+        }
+        
+        View::composer('layouts.app', function ($view) {
+            $officeName = 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
+            
+            // Only query if user is logged in AND we're not in a console command
+            if (!app()->runningInConsole() && auth()->check() && auth()->user()->office_id) {
+                try {
+                    $office = Office::find(auth()->user()->office_id);
+                    if ($office) {
+                        $officeName = $office->office_name;
+                    }
+                } catch (\Exception $e) {
+                    // Keep default
+                }
+            }
+            
+            $view->with('officeName', $officeName);
+        });
+    }
 }
