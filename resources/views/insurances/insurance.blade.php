@@ -441,8 +441,7 @@
             <i class="fas fa-info-circle"></i>
         </div>
         <div class="notification-text">
-            <h4>MV File Found in Your Office</h4>
-            <p>Some old clients may have transferred their name/vehicle. Would you like to edit the client information first?</p>
+            <!-- displayed here -->
         </div>
         <div class="notification-actions">
             <button class="notification-btn skip" onclick="skipClientEdit()">
