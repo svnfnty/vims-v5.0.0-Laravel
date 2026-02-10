@@ -589,6 +589,9 @@ async function showMvFileInputDialog() {
     let lastMvFileRecord = null;
     let isCopyFromOtherOffice = false;
     let validationComplete = false;
+    let abortController = null;
+    let debounceTimer = null;
+    let lastInputValue = '';
 
     return new Promise((resolve) => {
         const container = document.createElement('div');
@@ -627,8 +630,20 @@ async function showMvFileInputDialog() {
                 const statusMessage = document.getElementById('status-message');
                 const recordDetails = document.getElementById('record-details');
 
-                input.addEventListener('input', async function() {
+                input.addEventListener('input', function() {
                     const value = this.value.trim();
+                    lastInputValue = value;
+
+                    // Clear any pending debounce timer
+                    if (debounceTimer) {
+                        clearTimeout(debounceTimer);
+                    }
+
+                    // Cancel any pending request
+                    if (abortController) {
+                        abortController.abort();
+                        abortController = null;
+                    }
 
                     if (!value) {
                         statusIndicator.className = 'status-indicator';
@@ -637,9 +652,11 @@ async function showMvFileInputDialog() {
                         lastMvFileRecord = null;
                         isCopyFromOtherOffice = false;
                         validationComplete = true;
+                        hideMvFileNotification();
                         return;
                     }
 
+                    // Show checking state immediately
                     statusIndicator.className = 'status-indicator checking';
                     statusMessage.textContent = 'Checking MV File availability...';
                     statusMessage.className = 'status-message checking';
@@ -648,74 +665,103 @@ async function showMvFileInputDialog() {
                     isCopyFromOtherOffice = false;
                     validationComplete = false;
 
-                    try {
-                        const response = await fetch(insuranceValidateMvFileUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                            },
-                            body: JSON.stringify({ mvfile_no: value })
-                        });
+                    // Debounce the validation request by 300ms
+                    debounceTimer = setTimeout(async () => {
+                        // Double-check input hasn't changed during debounce
+                        if (input.value.trim() !== lastInputValue) {
+                            return;
+                        }
 
-                        const data = await response.json();
-                        validationComplete = true;
+                        // Create new abort controller for this request
+                        abortController = new AbortController();
 
-                        if (data.exists) {
-                            if (data.sameOffice) {
-                                // Record exists in user's own office - show floating notification immediately
-                                statusIndicator.className = 'status-indicator valid';
-                                statusMessage.textContent = 'MV File found in your office records';
-                                statusMessage.className = 'status-message valid';
+                        try {
+                            const response = await fetch(insuranceValidateMvFileUrl, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                                },
+                                body: JSON.stringify({ mvfile_no: value }),
+                                signal: abortController.signal
+                            });
 
-                                lastMvFileRecord = data.record;
-                                isCopyFromOtherOffice = false;
-                                recordDetails.innerHTML = createRecordDetailsHTML(data.record, false);
-                                recordDetails.style.display = 'block';
-
-                                // Show floating notification immediately when MV file is found
-                                showMvFileNotification(data.record);
-                            } else {
-                                // Record exists in another office - allow copying
-                                statusIndicator.className = 'status-indicator valid';
-                                statusMessage.textContent = `MV File found in ${data.record?.source_office_name || 'another office'} - you can copy this data to your office`;
-                                statusMessage.className = 'status-message valid';
-
-                                lastMvFileRecord = data.record;
-                                isCopyFromOtherOffice = true;
-                                recordDetails.innerHTML = createRecordDetailsHTML(data.record, true);
-                                recordDetails.style.display = 'block';
-
-                                // Hide notification if it was shown for a different record
-                                hideMvFileNotification();
+                            // Ignore response if input has changed since request was made
+                            if (input.value.trim() !== lastInputValue) {
+                                return;
                             }
-                        } else {
-                            // Not found - will create new record
-                            statusIndicator.className = 'status-indicator invalid';
-                            statusMessage.textContent = 'MV File not found - will create new record';
-                            statusMessage.className = 'status-message warning';
-                            recordDetails.style.display = 'none';
-                            lastMvFileRecord = null;
-                            isCopyFromOtherOffice = false;
 
-                            // Hide notification if it was shown
-                            hideMvFileNotification();
-                            const confirmButton = document.querySelector('.swal2-confirm');
+                            const data = await response.json();
+                            validationComplete = true;
+
+                            if (data.exists) {
+                                if (data.sameOffice) {
+                                    // Record exists in user's own office - show floating notification immediately
+                                    statusIndicator.className = 'status-indicator valid';
+                                    statusMessage.textContent = 'MV File found in your office records';
+                                    statusMessage.className = 'status-message valid';
+
+                                    lastMvFileRecord = data.record;
+                                    isCopyFromOtherOffice = false;
+                                    recordDetails.innerHTML = createRecordDetailsHTML(data.record, false);
+                                    recordDetails.style.display = 'block';
+
+                                    // Show floating notification immediately when MV file is found
+                                    showMvFileNotification(data.record);
+                                } else {
+                                    // Record exists in another office - allow copying
+                                    statusIndicator.className = 'status-indicator valid';
+                                    statusMessage.textContent = `MV File found in ${data.record?.source_office_name || 'another office'} - you can copy this data to your office`;
+                                    statusMessage.className = 'status-message valid';
+
+                                    lastMvFileRecord = data.record;
+                                    isCopyFromOtherOffice = true;
+                                    recordDetails.innerHTML = createRecordDetailsHTML(data.record, true);
+                                    recordDetails.style.display = 'block';
+
+                                    // Hide notification if it was shown for a different record
+                                    hideMvFileNotification();
+                                }
+                            } else {
+                                // Not found - will create new record
+                                statusIndicator.className = 'status-indicator invalid';
+                                statusMessage.textContent = 'MV File not found - will create new record';
+                                statusMessage.className = 'status-message warning';
+                                recordDetails.style.display = 'none';
+                                lastMvFileRecord = null;
+                                isCopyFromOtherOffice = false;
+
+                                // Hide notification if it was shown
+                                hideMvFileNotification();
+                                const confirmButton = document.querySelector('.swal2-confirm');
 
                                 if (confirmButton) {
                                     confirmButton.disabled = false;
                                     confirmButton.style.opacity = '1';
                                     confirmButton.style.cursor = 'pointer';
                                 }
-                        }
+                            }
 
-                    } catch (error) {
-                        validationComplete = true;
-                        statusIndicator.className = 'status-indicator error';
-                        statusMessage.textContent = 'Error checking MV File';
-                        statusMessage.className = 'status-message error';
-                        console.error(error);
-                    }
+                        } catch (error) {
+                            // Ignore abort errors (they're expected when cancelling)
+                            if (error.name === 'AbortError') {
+                                return;
+                            }
+
+                            // Ignore if input has changed since request was made
+                            if (input.value.trim() !== lastInputValue) {
+                                return;
+                            }
+
+                            validationComplete = true;
+                            statusIndicator.className = 'status-indicator error';
+                            statusMessage.textContent = 'Error checking MV File';
+                            statusMessage.className = 'status-message error';
+                            console.error(error);
+                        } finally {
+                            abortController = null;
+                        }
+                    }, 300); // 300ms debounce delay
                 });
             },
             preConfirm: async () => {
@@ -725,6 +771,18 @@ async function showMvFileInputDialog() {
                 if (!value) {
                     Swal.showValidationMessage('MV File number is required!');
                     return false;
+                }
+
+                // Cancel any pending debounced validation
+                if (debounceTimer) {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = null;
+                }
+
+                // Cancel any pending request
+                if (abortController) {
+                    abortController.abort();
+                    abortController = null;
                 }
 
                 // If validation hasn't completed yet, run it now synchronously
