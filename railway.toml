@@ -2,8 +2,7 @@
 builder = "nixpacks"
 buildCommand = """
   mkdir -p /var/log/nginx /var/cache/nginx && \
-  COMPOSER_ALLOW_SUPERUSER=1 composer install --ignore-platform-reqs --no-scripts --no-autoloader && \
-  COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize --no-dev && \
+  COMPOSER_ALLOW_SUPERUSER=1 composer install --ignore-platform-reqs --no-interaction && \
   npm ci && \
   npm run build
 """

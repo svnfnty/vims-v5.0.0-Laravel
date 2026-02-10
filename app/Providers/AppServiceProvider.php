@@ -24,30 +24,35 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Always set forceScheme
+        URL::forceScheme('https');
+        
         // Skip during console commands that don't need DB
         if (app()->runningInConsole()) {
             $command = $_SERVER['argv'][1] ?? '';
             $skipCommands = ['package:discover', 'config:cache', 'event:cache', 'route:cache', 'view:cache'];
             
             if (in_array($command, $skipCommands)) {
+                // Still set default view shares for console
+                View::share('systemName', 'VEHICLE INSURANCE MANAGEMENT SYSTEM');
+                View::share('systemShortName', 'VIMSYS SAAS 2026');
+                View::share('systemLogo', '');
+                View::share('systemCover', '');
                 return;
             }
         }
         
-        URL::forceScheme('https');
-
         // Get system info from database - only if not in console
-        if (!app()->runningInConsole()) {
-            $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
-            $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'VIMSYS SAAS 2026';
-            $systemLogo = SystemInfo::where('meta_field', 'logo')->value('meta_value') ?? '';
-            $systemCover = SystemInfo::where('meta_field', 'cover')->value('meta_value') ?? '';
-            
-            View::share('systemName', $systemName);
-            View::share('systemShortName', $systemShortName);
-            View::share('systemLogo', $systemLogo);
-            View::share('systemCover', $systemCover);
-        }
+        // OR if it's a console command that needs DB (like migrate)
+        $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
+        $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'VIMSYS SAAS 2026';
+        $systemLogo = SystemInfo::where('meta_field', 'logo')->value('meta_value') ?? '';
+        $systemCover = SystemInfo::where('meta_field', 'cover')->value('meta_value') ?? '';
+        
+        View::share('systemName', $systemName);
+        View::share('systemShortName', $systemShortName);
+        View::share('systemLogo', $systemLogo);
+        View::share('systemCover', $systemCover);
         
         View::composer('layouts.app', function ($view) {
             $officeName = 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
