@@ -148,11 +148,6 @@
                                 <div class="info-label">Plate No.</div>
                                 <div class="info-value">
                                     {{ $insurance->registration_no }}
-                                    @if(isset($insurance->registration_no) && !in_array(substr($insurance->registration_no, 0, 4), ['1001', '1016', '1201']))
-                                        <img src="https://cdn-icons-png.flaticon.com/512/5253/5253963.png" alt="Verified"
-                                            style="width: 20px; height: 20px; vertical-align: right; margin-left: 5px;"
-                                            title="Plate Verified">
-                                    @endif
                                 </div>
                             </div>
 
