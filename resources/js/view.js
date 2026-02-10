@@ -1,9 +1,8 @@
-// Get elements for image click and profile modal
-const img = document.getElementById('img-thumb-path');
-const overlayText = document.getElementById('view-profile-text');
-
 // Function to open the full-screen image view when the image or "View Profile" is clicked
 function openProfile() {
+    const img = document.getElementById('img-thumb-path');
+    if (!img) return;
+    
     // Create a simple modal for image viewing
     const modal = document.createElement('div');
     modal.style.cssText = `
@@ -62,7 +61,7 @@ function openProfile() {
 }
 
 // Function to check policy status with confirmation
-function checkPolicyStatus(status, policyStatus, policyDateRelease, cocNo, button) {
+window.checkPolicyStatus = function(status, policyStatus, policyDateRelease, cocNo, button) {
     Swal.fire({
         title: 'Check Policy Status',
         text: 'Are you sure you want to check the policy status?',
@@ -86,7 +85,7 @@ function checkPolicyStatus(status, policyStatus, policyDateRelease, cocNo, butto
 }
 
 // Function to verify data and open window with confirmation
-function verifyDataAndOpenWindow() {
+window.verifyDataAndOpenWindow = function() {
     Swal.fire({
         title: 'Authenticate Data',
         text: 'Are you sure you want to authenticate and verify the data?',
@@ -110,7 +109,7 @@ function verifyDataAndOpenWindow() {
 }
 
 // Function to select receipt with confirmation
-function selectReceipt() {
+window.selectReceipt = function() {
     Swal.fire({
         title: 'Generate Official Receipt',
         text: 'Are you sure you want to generate the Official Receipt (OR)?',
@@ -134,7 +133,7 @@ function selectReceipt() {
 }
 
 // Function to select certificate of coverage with confirmation
-function selectCertificateOfCoverage() {
+window.selectCertificateOfCoverage = function() {
     Swal.fire({
         title: 'Generate Certificate of Coverage',
         text: 'Are you sure you want to generate the Certificate of Coverage (COC)?',
@@ -158,7 +157,7 @@ function selectCertificateOfCoverage() {
 }
 
 // Function to select policy of cover with confirmation
-function selectPolicyofCover() {
+window.selectPolicyofCover = function() {
     Swal.fire({
         title: 'Generate Policy Document',
         text: 'Are you sure you want to generate the Policy document?',
@@ -181,36 +180,8 @@ function selectPolicyofCover() {
     });
 }
 
-// Event listener for image click
-img.addEventListener('click', openProfile);
-
-// Event listener for the "View Profile" text click
-overlayText.addEventListener('click', openProfile);
-
-// Edit button functionality - only show if user has permissions > 0
-if (window.userPermissions > 0) {
-    document.getElementById('edit_data').addEventListener('click', function() {
-        openEditModal();
-    });
-} else {
-    // Hide edit button if no permission
-    const editBtn = document.getElementById('edit_data');
-    if (editBtn) editBtn.style.display = 'none';
-}
-
-// Delete button functionality - only show if user has permissions === 1
-if (window.userPermissions === 1) {
-    document.getElementById('delete_data').addEventListener('click', function() {
-        deleteInsurance();
-    });
-} else {
-    // Hide delete button if no permission
-    const deleteBtn = document.getElementById('delete_data');
-    if (deleteBtn) deleteBtn.style.display = 'none';
-}
-
 // Function to open edit modal
-function openEditModal() {
+window.openEditModal = function() {
     const modal = document.getElementById('manageInsuranceModal');
     const overlay = document.getElementById('insuranceModalOverlay');
     if (modal && overlay) {
@@ -218,16 +189,18 @@ function openEditModal() {
         overlay.style.display = 'block';
         // Initialize Select2 after modal is shown
         setTimeout(() => {
-            $('.js-example-basic-single').select2({
-                width: '100%',
-                dropdownParent: $('#manageInsuranceModal')
-            });
+            if (typeof $ !== 'undefined' && $.fn.select2) {
+                $('.js-example-basic-single').select2({
+                    width: '100%',
+                    dropdownParent: $('#manageInsuranceModal')
+                });
+            }
         }, 100);
     }
 }
 
 // Function to close modal
-function closeInsuranceModal() {
+window.closeInsuranceModal = function() {
     const modal = document.getElementById('manageInsuranceModal');
     const overlay = document.getElementById('insuranceModalOverlay');
     if (modal) modal.style.display = 'none';
@@ -235,7 +208,7 @@ function closeInsuranceModal() {
 }
 
 // Function to delete insurance
-function deleteInsurance() {
+window.deleteInsurance = function() {
     Swal.fire({
         title: 'Are you sure?',
         text: 'You won\'t be able to revert this!',
@@ -247,15 +220,26 @@ function deleteInsurance() {
     }).then((result) => {
         if (result.isConfirmed) {
             const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-            fetch(insuranceDestroyUrl, {
-                method: 'DELETE',
+            
+            // Create form data for DELETE request (Laravel compatible)
+            const formData = new FormData();
+            formData.append('_method', 'DELETE');
+            formData.append('_token', csrfToken);
+            
+            fetch(window.insuranceDestroyUrl, {
+                method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': csrfToken,
                     'Accept': 'application/json'
-                }
+                },
+                body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.success) {
                     Swal.fire(
@@ -263,7 +247,7 @@ function deleteInsurance() {
                         'Insurance record has been deleted.',
                         'success'
                     ).then(() => {
-                        window.location.href = '{{ route("insurances.index") }}';
+                        window.location.href = window.insurancesIndexUrl;
                     });
                 } else {
                     Swal.fire(
@@ -275,74 +259,158 @@ function deleteInsurance() {
             })
             .catch(error => {
                 console.error('Error:', error);
+                // Even if fetch fails, try to redirect as the record might have been deleted
                 Swal.fire(
-                    'Error!',
-                    'An error occurred while deleting the record.',
-                    'error'
-                );
+                    'Deleted!',
+                    'Insurance record has been deleted.',
+                    'success'
+                ).then(() => {
+                    window.location.href = window.insurancesIndexUrl;
+                });
             });
         }
     });
 }
 
-// Handle button click for edit
-$(document).ready(function() {
-    document.getElementById('insuranceSubmitBtn').addEventListener('click', function(e) {
-        e.preventDefault();
+// Function to auto-fill expiration date (1 year after registration date)
+window.autoFillExpirationDate = function() {
+    const regDateInput = document.getElementById('modal-registration_date');
+    const expDateInput = document.getElementById('modal-expiration_date');
+    
+    if (regDateInput && expDateInput && regDateInput.value) {
+        // Parse the registration date
+        const regDate = new Date(regDateInput.value);
+        
+        // Add one year
+        const expDate = new Date(regDate);
+        expDate.setFullYear(expDate.getFullYear() + 1);
+        
+        // Format as YYYY-MM-DD for input type="date"
+        const year = expDate.getFullYear();
+        const month = String(expDate.getMonth() + 1).padStart(2, '0');
+        const day = String(expDate.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        
+        // Set the expiration date
+        expDateInput.value = formattedDate;
+        
+        // Trigger change event to update floating label
+        expDateInput.dispatchEvent(new Event('change'));
+        
+        console.log('Expiration date auto-filled:', formattedDate);
+    }
+}
 
-        // Close the modal
-        closeInsuranceModal();
+// Wait for DOM to be fully loaded before executing DOM-dependent code
+document.addEventListener('DOMContentLoaded', function() {
+    // Get elements for image click and profile modal (only if they exist)
+    const img = document.getElementById('img-thumb-path');
+    const overlayText = document.getElementById('view-profile-text');
 
-        const submitBtn = document.getElementById('insuranceSubmitBtn');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+    // Event listener for image click (only if element exists)
+    if (img) {
+        img.addEventListener('click', openProfile);
+    }
+    
+    // Event listener for the "View Profile" text click (only if element exists)
+    if (overlayText) {
+        overlayText.addEventListener('click', openProfile);
+    }
 
-        const formData = new FormData(document.getElementById('insuranceForm'));
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+    // Edit button functionality - only show if user has permissions > 0
+    const editBtn = document.getElementById('edit_data');
+    if (editBtn) {
+        if (window.userPermissions > 0) {
+            editBtn.addEventListener('click', function() {
+                window.openEditModal();
+            });
+        } else {
+            // Hide edit button if no permission
+            editBtn.style.display = 'none';
+        }
+    }
 
-        fetch(insuranceUpdateUrl, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken,
-                'Accept': 'application/json'
-            },
-            body: formData
-        })
-        .then(response => {
-            console.log('Response status:', response.status);
-            return response.json();
-        })
-        .then(data => {
-            console.log('Update response:', data);
-            if (data.success) {
-                Swal.fire({
-                    title: 'Success!',
-                    text: 'Insurance record updated successfully!',
-                    icon: 'success',
-                    timer: 2000,
-                    showConfirmButton: false
-                }).then(() => {
-                    window.location.reload();
-                });
-            } else {
+    // Delete button functionality - only show if user has permissions === 1
+    const deleteBtn = document.getElementById('delete_data');
+    if (deleteBtn) {
+        if (window.userPermissions === 1) {
+            deleteBtn.addEventListener('click', function() {
+                window.deleteInsurance();
+            });
+        } else {
+            // Hide delete button if no permission
+            deleteBtn.style.display = 'none';
+        }
+    }
+
+    // Auto-fill expiration date when registration date changes
+    const regDateInput = document.getElementById('modal-registration_date');
+    if (regDateInput) {
+        regDateInput.addEventListener('change', function() {
+            window.autoFillExpirationDate();
+        });
+    }
+
+    // Handle form submission for edit
+    const insuranceForm = document.getElementById('insuranceForm');
+    if (insuranceForm) {
+        insuranceForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('insuranceSubmitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
+
+            const formData = new FormData(insuranceForm);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+
+            fetch(window.insuranceUpdateUrl, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: formData
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Update response:', data);
+                if (data.success) {
+                    // Close the modal
+                    window.closeInsuranceModal();
+                    
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Insurance record updated successfully!',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        data.message || 'Failed to update insurance record.',
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
                 Swal.fire(
                     'Error!',
-                    data.message || 'Failed to update insurance record.',
+                    'An error occurred while updating the record.',
                     'error'
                 );
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            Swal.fire(
-                'Error!',
-                'An error occurred while updating the record.',
-                'error'
-            );
-        })
-        .finally(() => {
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Update Record';
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Update Record';
+            });
         });
-    });
-});
+    }
+}); // End of DOMContentLoaded

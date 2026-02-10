@@ -305,57 +305,118 @@
     @apply justify-end;
   }
 
-  /* Modal Styles */
+  /* Modal Styles - Client Style with Landscape Two Column */
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 z-[1999] hidden;
+  }
+
+  .modal-overlay.active {
+    @apply block;
+  }
 
   .modal {
-    @apply fixed top-0 left-0 z-[1050] hidden w-full h-full overflow-hidden outline-none;
+    @apply fixed inset-0 hidden items-center justify-center z-[2000] p-5;
   }
 
-  .insurance-form-modal {
-    @apply hidden items-center justify-center;
-    background: rgba(0, 0, 0, 0.5);
+  .modal.active {
+    @apply flex;
   }
 
-  .modal-content {
-    @apply relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding border border-black/20 rounded-md outline-none;
-    max-width: 800px;
-    margin: 1.75rem auto;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.5);
+  /* Landscape Modal Content - Wider for two columns */
+  .landscape-modal-content {
+    @apply bg-white rounded-2xl shadow-xl w-full overflow-hidden flex flex-col;
+    max-width: 900px;
+    max-height: 85vh;
+    animation: modalFadeIn 0.3s ease;
+  }
+
+  @keyframes modalFadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
   }
 
   .modal-header {
-    @apply flex items-start justify-between p-4 border-b border-gray-200 rounded-t-md;
+    @apply px-6 py-5 border-b border-gray-200 flex justify-between items-center;
   }
 
   .modal-header h2 {
-    @apply m-0 text-2xl font-medium leading-tight;
+    @apply m-0 text-xl font-semibold text-gray-800;
   }
 
   .modal-close {
-    @apply p-0 bg-transparent border-0 text-2xl font-bold leading-none text-black opacity-50 cursor-pointer;
-    text-shadow: 0 1px 0 #fff;
-  }
-  .modal-close:hover {
-    @apply opacity-75;
+    @apply bg-none border-none cursor-pointer text-xl text-gray-500 transition-colors hover:text-gray-800;
   }
 
   .modal-body {
-    @apply relative flex-1 p-4;
+    @apply p-6 overflow-y-auto flex-1;
   }
-
 
   .modal-actions {
-    @apply flex justify-end p-4 border-t border-gray-200 gap-2;
+    @apply px-6 py-5 border-t border-gray-200 flex gap-3 justify-end;
   }
 
-  .modal-overlay {
-    @apply fixed top-0 left-0 w-full h-full z-[1040];
-    background: rgba(0, 0, 0, 0.5);
+  /* Two Column Form Layout */
+  .form-row {
+    @apply flex gap-6;
+  }
+
+  .form-col {
+    @apply flex-1;
+    min-width: 0;
+  }
+
+  /* Floating Label - Client Style */
+  .floating-label {
+    @apply relative mb-5;
+  }
+
+  .floating-label input,
+  .floating-label select,
+  .floating-label textarea {
+    @apply px-3 py-3 text-[15px] border border-gray-300 rounded-lg w-full transition-all duration-200 bg-white font-[inherit] box-border;
+  }
+
+  .floating-label input,
+  .floating-label select {
+    @apply h-[50px];
+  }
+
+  /* Ensure native select matches height */
+  .floating-label select.form-control {
+    @apply h-[50px] py-0 px-3;
+    line-height: 50px;
+  }
+
+  .floating-label textarea {
+    @apply min-h-[80px] resize-y;
+  }
+
+  .floating-label input:focus,
+  .floating-label select:focus,
+  .floating-label textarea:focus {
+    @apply border-blue-400 outline-none ring-2 ring-blue-200;
+  }
+
+  .floating-label label {
+    @apply absolute top-1/2 left-3 -translate-y-1/2 text-gray-500 pointer-events-none transition-all duration-200 bg-white px-1.5 text-sm font-medium;
+  }
+
+  .floating-label textarea ~ label {
+    @apply top-6 -translate-y-1/2;
+  }
+
+  .floating-label input:focus ~ label,
+  .floating-label input:not(:placeholder-shown) ~ label,
+  .floating-label select:focus ~ label,
+  .floating-label select:valid ~ label,
+  .floating-label textarea:focus ~ label,
+  .floating-label textarea:not(:placeholder-shown) ~ label {
+    @apply top-0 -translate-y-1/2 scale-[0.85] text-blue-600 font-semibold;
   }
 
   /* Control Buttons */
   .control-btn {
-    @apply inline-flex items-center gap-2 px-4 py-2 text-base font-normal leading-normal text-center whitespace-nowrap align-middle select-none border border-transparent rounded transition-all cursor-pointer no-underline;
+    @apply inline-flex items-center gap-2 px-4 py-2 text-base font-normal leading-normal text-center whitespace-nowrap align-middle select-none border border-transparent rounded transition-all cursor-pointer no-underline rounded-lg;
     transition: all 0.15s ease-in-out;
   }
 
@@ -371,29 +432,6 @@
   }
   .control-btn.secondary:hover {
     @apply bg-gray-600 border-gray-600;
-  }
-
-  /* Floating Label */
-  .floating-label {
-    @apply relative mb-4;
-  }
-
-  .floating-label input,
-  .floating-label select,
-  .floating-label textarea {
-    @apply block w-full px-3 py-2 text-base leading-normal text-gray-700 bg-white bg-clip-padding border border-gray-300 rounded transition-all;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  }
-
-  .floating-label input:focus,
-  .floating-label select:focus,
-  .floating-label textarea:focus {
-    @apply text-gray-700 bg-white border-blue-400 outline-none;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  }
-
-  .floating-label label {
-    @apply inline-block mb-2 font-medium;
   }
 
   /* Form Control */
@@ -599,6 +637,169 @@
   #nblock {
     @apply hidden p-2.5 mt-5;
   }
+
+  /* ============================================
+     SELECT2 SEARCH STYLES - From select2search.css
+     ============================================ */
+  
+  /* Select2 Container - Single Selection - FORCE 50px HEIGHT */
+  .select2-container {
+    height: 50px !important;
+  }
+  
+  .select2-container .select2-selection--single {
+    @apply h-[50px] min-h-[50px] max-h-[50px] border border-gray-300 rounded-lg bg-white text-base text-gray-800;
+    font-family: inherit;
+    box-sizing: border-box !important;
+  }
+
+  .select2-container .select2-selection--single .select2-selection__rendered {
+    @apply pl-3 pr-8 text-sm font-semibold;
+    height: 50px !important;
+    line-height: 50px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Arrow Styling */
+  .select2-container .select2-selection--single .select2-selection__arrow {
+    @apply w-8 right-2 flex items-center justify-center;
+    height: 50px !important;
+    top: 0 !important;
+  }
+
+  .select2-container .select2-selection--single .select2-selection__arrow b {
+    @apply relative top-0 left-0 m-0;
+    border-color: #6c757d transparent transparent transparent;
+    border-width: 5px 4px 0 4px;
+    margin-top: -2px !important;
+  }
+
+  /* Focus State */
+  .select2-container.select2-container--focus .select2-selection--single,
+  .select2-container.select2-container--open .select2-selection--single {
+    @apply border-blue-400 outline-0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
+
+  /* Open State Arrow */
+  .select2-container.select2-container--open .select2-selection--single .select2-selection__arrow b {
+    @apply -mt-0.5;
+    border-color: transparent transparent #6c757d transparent;
+    border-width: 0 4px 5px 4px;
+  }
+
+  /* Floating Label Positioning for Select2 */
+  .floating-label .select2-container {
+    @apply w-full;
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+  }
+
+  .floating-label .select2-container .select2-selection--single {
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+  }
+
+  .floating-label .select2-container ~ label {
+    @apply z-[1];
+  }
+
+  /* Label Active State for Select2 */
+  .select2-container--open ~ label,
+  .select2-container--focus ~ label,
+  .select2-container.select2-container--filled ~ label,
+  .floating-label:has(.select2-container--open) label,
+  .floating-label:has(.select2-container--focus) label,
+  .floating-label:has(.select2-container.select2-container--filled) label {
+    @apply top-0 -translate-y-1/2 scale-[0.85] text-blue-600 bg-white z-[5] font-semibold;
+    font-size: 12px;
+  }
+
+  /* Required Asterisk */
+  .floating-label label span {
+    @apply text-red-500;
+  }
+
+  /* Dropdown Styling */
+  .select2-dropdown {
+    @apply border border-gray-300 rounded-lg shadow-md mt-1;
+    z-index: 2001;
+  }
+
+  .select2-results__option {
+    @apply px-3 py-2 text-sm;
+  }
+
+  .select2-results__option--highlighted {
+    @apply bg-blue-600 text-white;
+  }
+
+  .select2-container--open .select2-dropdown {
+    z-index: 2001;
+  }
+
+  /* Remove Select2 Container Padding */
+  .select2-container {
+    @apply p-0;
+  }
+
+  /* Ensure it matches other form controls */
+  .form-control.select2-container {
+    @apply block w-full text-base font-normal leading-normal bg-clip-padding;
+    font-family: inherit;
+  }
+
+  /* Select2 Multiple Selection */
+  .select2-container .select2-selection--multiple {
+    @apply min-h-[50px] border border-gray-300 rounded-lg bg-white;
+    font-family: inherit;
+  }
+
+  .select2-container .select2-selection--multiple .select2-selection__rendered {
+    @apply px-2 py-1;
+  }
+
+  .select2-container .select2-selection--multiple .select2-selection__choice {
+    @apply bg-blue-100 text-blue-800 border border-blue-200 rounded px-2 py-0.5 text-sm mr-1 mt-1;
+  }
+
+  .select2-container .select2-selection--multiple .select2-selection__choice__remove {
+    @apply text-blue-600 mr-1 cursor-pointer;
+  }
+
+  .select2-container .select2-selection--multiple .select2-selection__choice__remove:hover {
+    @apply text-red-500;
+  }
+
+  /* Search Field in Dropdown */
+  .select2-container .select2-search--inline .select2-search__field {
+    @apply mt-1;
+  }
+
+  /* Loading State */
+  .select2-container .select2-selection__clear {
+    @apply text-gray-400 text-lg mr-4;
+  }
+
+  .select2-container .select2-selection__clear:hover {
+    @apply text-red-500;
+  }
+
+  /* Disabled State */
+  .select2-container.select2-container--disabled .select2-selection--single {
+    @apply bg-gray-100 cursor-not-allowed;
+  }
+
+  /* Error State */
+  .select2-container.has-error .select2-selection--single {
+    @apply border-red-500;
+  }
+
+  .select2-container.has-error.select2-container--focus .select2-selection--single {
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+  }
 }
 
 /* Responsive */
@@ -629,6 +830,29 @@
     .card-tools {
       @apply justify-start;
     }
+
+    /* Modal responsive - switch to single column on mobile */
+    .form-row {
+      @apply flex-col;
+    }
+    
+    .landscape-modal-content {
+      max-width: 95vw;
+      max-height: 90vh;
+    }
+
+    /* Select2 responsive */
+    .select2-container .select2-selection--single {
+      @apply h-[40px];
+    }
+
+    .select2-container .select2-selection--single .select2-selection__rendered {
+      @apply leading-[40px] text-xs;
+    }
+
+    .select2-results__option {
+      @apply px-2 py-1.5 text-xs;
+    }
   }
 
   @media (max-width: 576px) {
@@ -638,6 +862,26 @@
     
     .px-3 {
       @apply px-2;
+    }
+
+    .modal {
+      @apply p-2.5;
+    }
+
+    .modal-content {
+      @apply max-w-[95vw] max-h-[95vh];
+    }
+
+    .modal-header h2 {
+      @apply text-xl;
+    }
+
+    .modal-body {
+      @apply p-4;
+    }
+
+    .control-btn {
+      @apply px-4 py-2.5 text-[13px] rounded-lg;
     }
   }
 }
