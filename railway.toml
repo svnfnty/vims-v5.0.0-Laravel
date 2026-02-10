@@ -5,11 +5,15 @@ buildCommand = """
   COMPOSER_ALLOW_SUPERUSER=1 composer install --ignore-platform-reqs --no-scripts --no-autoloader && \
   COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize --no-dev && \
   npm ci && \
-  npm run build && \
-  php artisan config:cache && \
-  php artisan route:cache && \
-  php artisan view:cache
+  npm run build
 """
 
 [start]
-command = "php artisan migrate --force && php artisan event:cache && php-fpm"
+command = """
+  php artisan migrate --force && \
+  php artisan config:cache && \
+  php artisan route:cache && \
+  php artisan view:cache && \
+  php artisan event:cache && \
+  php-fpm
+"""
