@@ -434,6 +434,27 @@
     </div>
 </div>
 
+<!-- Floating Notification for MV File Found -->
+<div id="mvfileNotification" class="floating-notification" style="display: none;">
+    <div class="notification-content">
+        <div class="notification-icon">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="notification-text">
+            <h4>MV File Found in Your Office</h4>
+            <p>Some old clients may have transferred their name/vehicle. Would you like to edit the client information first?</p>
+        </div>
+        <div class="notification-actions">
+            <button class="notification-btn skip" onclick="skipClientEdit()">
+                <i class="fas fa-forward"></i> Skip
+            </button>
+            <button class="notification-btn transfer" onclick="transferClientEdit()">
+                <i class="fas fa-user-edit"></i> Transfer Owner
+            </button>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Overlays -->
 <div id="insuranceModalOverlay" class="modal-overlay" style="display: none;" onclick="closeInsuranceModal()"></div>
 <div id="clientEditModalOverlay" class="modal-overlay" style="display: none;" onclick="closeClientEditModal()"></div>

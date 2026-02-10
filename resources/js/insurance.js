@@ -663,15 +663,18 @@ async function showMvFileInputDialog() {
 
                         if (data.exists) {
                             if (data.sameOffice) {
-                                // Record exists in user's own office - allow editing
+                                // Record exists in user's own office - show floating notification immediately
                                 statusIndicator.className = 'status-indicator valid';
-                                statusMessage.textContent = 'MV File found in your office records - you can edit this record';
+                                statusMessage.textContent = 'MV File found in your office records';
                                 statusMessage.className = 'status-message valid';
 
                                 lastMvFileRecord = data.record;
                                 isCopyFromOtherOffice = false;
                                 recordDetails.innerHTML = createRecordDetailsHTML(data.record, false);
                                 recordDetails.style.display = 'block';
+
+                                // Show floating notification immediately when MV file is found
+                                showMvFileNotification(data.record);
                             } else {
                                 // Record exists in another office - allow copying
                                 statusIndicator.className = 'status-indicator valid';
@@ -682,6 +685,9 @@ async function showMvFileInputDialog() {
                                 isCopyFromOtherOffice = true;
                                 recordDetails.innerHTML = createRecordDetailsHTML(data.record, true);
                                 recordDetails.style.display = 'block';
+
+                                // Hide notification if it was shown for a different record
+                                hideMvFileNotification();
                             }
                         } else {
                             // Not found - will create new record
@@ -691,6 +697,16 @@ async function showMvFileInputDialog() {
                             recordDetails.style.display = 'none';
                             lastMvFileRecord = null;
                             isCopyFromOtherOffice = false;
+
+                            // Hide notification if it was shown
+                            hideMvFileNotification();
+                            const confirmButton = document.querySelector('.swal2-confirm');
+
+                                if (confirmButton) {
+                                    confirmButton.disabled = false;
+                                    confirmButton.style.opacity = '1';
+                                    confirmButton.style.cursor = 'pointer';
+                                }
                         }
 
                     } catch (error) {
@@ -715,7 +731,7 @@ async function showMvFileInputDialog() {
                 if (!validationComplete) {
                     statusIndicator.className = 'status-indicator checking';
                     statusMessage.textContent = 'Validating...';
-                    
+
                     try {
                         const response = await fetch(insuranceValidateMvFileUrl, {
                             method: 'POST',
@@ -827,7 +843,7 @@ window.closeClientEditModal = function() {
 }
 
 
-window.submitClientEdit = function() {
+window.submitClientEdit = async function() {
 
     // Prevent multiple submissions
     if (isSubmitting) {
@@ -836,7 +852,7 @@ window.submitClientEdit = function() {
     isSubmitting = true;
 
     // Disable submit button immediately to prevent multiple submissions
-    const submitBtn = document.getElementById('editClientSubmitBtn');
+    const submitBtn = document.getElementById('clientEditContinueBtn');
     if (submitBtn) {
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Updating...';
@@ -851,7 +867,7 @@ window.submitClientEdit = function() {
     if (!firstname) {
         if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Client';
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Continue to Insurance Form';
         }
         isSubmitting = false; // Reset flag on validation error
         Swal.fire({
@@ -865,7 +881,7 @@ window.submitClientEdit = function() {
     if (!lastname) {
         if (submitBtn) {
             submitBtn.disabled = false;
-            submitBtn.innerHTML = '<i class="fas fa-save"></i> Update Client';
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Continue to Insurance Form';
         }
         isSubmitting = false; // Reset flag on validation error
         Swal.fire({
@@ -884,28 +900,111 @@ window.submitClientEdit = function() {
         email: document.getElementById('edit-email').value.trim(),
         contact: document.getElementById('edit-contact').value.trim(),
         dob: document.getElementById('edit-dob').value,
-        markup: document.getElementById('edit-markup').value.trim(),
-        address: document.getElementById('edit-address').value.trim()
+        walkin_list: document.getElementById('edit-markup').value.trim() || 'Walk-in',
+        address: document.getElementById('edit-address').value.trim() || 'N/A',
+        status: '1' // Required field - 1 = active
     };
 
-    // Store the pending results locally before closing modal (closeClientEditModal clears them)
-    const localMvfileResult = pendingMvfileResult;
-    const localCocResult = pendingCocResult;
+    // Get the original client ID
+    const originalClientId = document.getElementById('edit-client-original-id').value;
 
-    // Close the client edit modal
-    closeClientEditModal();
-
-    // Continue to insurance form with edited data
-    if (localMvfileResult && localCocResult) {
-        updateProgressStep(4);
-        showManageInsuranceModal({
-            mvfile_no: localMvfileResult.mvfile_no,
-            coc_no: localCocResult.cocNumber,
-            or_no: localCocResult.orNumber || localCocResult.cocNumber,
-            policy_no: localCocResult.policyNumber || localCocResult.cocNumber
-        }, localMvfileResult.existingRecord || null, localMvfileResult.isCopy || false, editedClientData);
+    if (!originalClientId) {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Continue to Insurance Form';
+        }
+        isSubmitting = false;
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Client ID not found!'
+        });
+        return;
     }
-    isSubmitting = false; // Reset flag after processing
+
+    try {
+        // Update client via API
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+        const response = await fetch(`/clients/${originalClientId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken,
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify(editedClientData)
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to update client');
+        }
+
+        console.log('Client updated successfully:', data);
+
+        // Update the client dropdown option with the new name
+        const updatedClient = data.data || data.client;
+        if (updatedClient) {
+            const newClientName = `${updatedClient.lastname}, ${updatedClient.firstname}${updatedClient.middlename ? ' ' + updatedClient.middlename : ''}`;
+            const clientSelect = $('#modal-client_id');
+
+            // Find and update the existing option
+            const existingOption = clientSelect.find(`option[value="${updatedClient.id}"]`);
+            if (existingOption.length > 0) {
+                existingOption.text(newClientName);
+            } else {
+                // If option doesn't exist, add it
+                const newOption = new Option(newClientName, updatedClient.id, true, true);
+                clientSelect.append(newOption);
+            }
+
+            // Trigger change to update Select2 display
+            clientSelect.trigger('change');
+        }
+
+        // Re-enable the Swal confirm button since client has been updated
+        const confirmButton = document.querySelector('.swal2-confirm');
+        if (confirmButton) {
+            confirmButton.disabled = false;
+            confirmButton.style.opacity = '1';
+            confirmButton.style.cursor = 'pointer';
+        }
+
+        // Store the pending results locally before closing modal (closeClientEditModal clears them)
+        const localMvfileResult = pendingMvfileResult;
+        const localCocResult = pendingCocResult;
+
+        // Close the client edit modal
+        closeClientEditModal();
+
+        // Continue to insurance form with updated client data
+        if (localMvfileResult && localCocResult) {
+            updateProgressStep(4);
+            showManageInsuranceModal({
+                mvfile_no: localMvfileResult.mvfile_no,
+                coc_no: localCocResult.cocNumber,
+                or_no: localCocResult.orNumber || localCocResult.cocNumber,
+                policy_no: localCocResult.policyNumber || localCocResult.cocNumber
+            }, localMvfileResult.existingRecord || null, localMvfileResult.isCopy || false, editedClientData);
+        }
+    } catch (error) {
+        console.error('Error updating client:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'Failed to update client. Please try again.'
+        });
+
+        // Re-enable submit button on error
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Continue to Insurance Form';
+        }
+    } finally {
+        isSubmitting = false; // Reset flag after processing
+    }
 }
 
 // Create Client Modal Functions
@@ -1878,6 +1977,76 @@ $(document).ready(function() {
     });
 });
 
+// Show floating notification for MV File found
+function showMvFileNotification(existingRecord) {
+    const notification = document.getElementById('mvfileNotification');
+    if (!notification) return;
+
+    // Store the record for later use
+    notification.dataset.record = JSON.stringify(existingRecord);
+
+    // Show the notification
+    notification.classList.remove('hidden');
+    notification.style.display = 'block';
+
+    // Disable the Swal confirm button while notification is shown
+    const confirmButton = document.querySelector('.swal2-confirm');
+    if (confirmButton) {
+        confirmButton.disabled = true;
+        confirmButton.style.opacity = '0.5';
+        confirmButton.style.cursor = 'not-allowed';
+    }
+
+    // Notification sticks - no auto-hide
+}
+
+// Hide floating notification
+function hideMvFileNotification() {
+    const notification = document.getElementById('mvfileNotification');
+    if (notification) {
+        notification.classList.add('hidden');
+        setTimeout(() => {
+            notification.style.display = 'none';
+        }, 300); // Match transition duration
+    }
+}
+
+// Skip client edit - continue with normal flow
+window.skipClientEdit = function() {
+    // Hide the notification
+    hideMvFileNotification();
+
+    // Re-enable the Swal confirm button
+    const confirmButton = document.querySelector('.swal2-confirm');
+    if (confirmButton) {
+        confirmButton.disabled = false;
+        confirmButton.style.opacity = '1';
+        confirmButton.style.cursor = 'pointer';
+    }
+
+    // Keep the MV file input and record details as they are
+    // User can now click "Bind & Continue" to proceed with existing record
+}
+
+// Transfer client edit - open client edit modal
+window.transferClientEdit = function() {
+    const notification = document.getElementById('mvfileNotification');
+    if (!notification) return;
+
+    const recordData = notification.dataset.record;
+    if (!recordData) return;
+
+    try {
+        const existingRecord = JSON.parse(recordData);
+        hideMvFileNotification();
+
+        // Open client edit modal with the existing record
+        openClientEditModal(existingRecord, null, { mvfile_no: existingRecord.mvfile_no, existingRecord: existingRecord, isCopy: false });
+    } catch (error) {
+        console.error('Error parsing record data:', error);
+    }
+}
+
 // Explicitly expose all functions to window for inline onclick handlers
 window.closeInsuranceModal = window.closeInsuranceModal || closeInsuranceModal;
 window.closeClientEditModal = window.closeClientEditModal || closeClientEditModal;
@@ -1887,3 +2056,5 @@ window.submitCreateClient = window.submitCreateClient || submitCreateClient;
 window.deleteInsurance = window.deleteInsurance || deleteInsurance;
 window.viewInsuranceDetails = window.viewInsuranceDetails || viewInsuranceDetails;
 window.editInsuranceDetails = window.editInsuranceDetails || editInsuranceDetails;
+window.skipClientEdit = window.skipClientEdit || skipClientEdit;
+window.transferClientEdit = window.transferClientEdit || transferClientEdit;
