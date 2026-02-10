@@ -800,6 +800,348 @@
   .select2-container.has-error.select2-container--focus .select2-selection--single {
     box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
   }
+
+  /* ============================================
+     SWEETALERT AUTHENTICATION DIALOG STYLES
+     ============================================ */
+  
+  /* Progress Container */
+  .progress-container {
+    width: 100%;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+
+  #progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 3px;
+  }
+
+  /* Loading Messages */
+  .loading-message {
+    padding: 0.5rem 0;
+    font-size: 0.9rem;
+    color: #4b5563;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .loading-message:last-child {
+    border-bottom: none;
+  }
+
+  /* Client Detail Animation */
+  .client-detail {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    padding: 0.75rem;
+    background: #f9fafb;
+    border-radius: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-left: 3px solid #667eea;
+  }
+
+  .client-detail strong {
+    color: #4f46e5;
+    display: inline-block;
+    min-width: 120px;
+  }
+
+  /* Checkbox Container for Bypass Mode */
+  .checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: #fef3c7;
+    border-radius: 0.5rem;
+    border: 1px solid #f59e0b;
+  }
+
+  .checkbox-container input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #f59e0b;
+  }
+
+  .checkbox-container label {
+    font-weight: 600;
+    color: #92400e;
+    cursor: pointer;
+  }
+
+  /* Form Fields in SweetAlert */
+  #formFields {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  #formFields.visible {
+    max-height: 500px;
+  }
+
+  .form-field {
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  .form-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+  }
+
+  .form-field input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  .form-field input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  /* Authentication Check Dialog Progress Bar */
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: #e5e7eb;
+    border-radius: 4px;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+
+  .progress-bar .progress {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    transition: width 1s linear;
+    border-radius: 4px;
+  }
+
+  /* Policy Check Dialog Styles */
+  .swal-policy-check-popup {
+    border-radius: 1rem !important;
+    padding: 2rem !important;
+  }
+
+  .swal-policy-check-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+  }
+
+  .swal-policy-check-container {
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  .swal-policy-check-spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 1.5rem;
+  }
+
+  .swal-policy-check-spinner-outer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 4px solid #e5e7eb;
+    border-top-color: #3b82f6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .swal-policy-check-spinner-inner {
+    position: absolute;
+    top: 15%;
+    left: 15%;
+    width: 70%;
+    height: 70%;
+    border: 3px solid #e5e7eb;
+    border-bottom-color: #10b981;
+    border-radius: 50%;
+    animation: spin-reverse 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes spin-reverse {
+    to { transform: rotate(-360deg); }
+  }
+
+  .swal-policy-check-progress-container {
+    width: 100%;
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    margin: 1rem 0;
+    overflow: hidden;
+  }
+
+  .swal-policy-check-progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6 0%, #10b981 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 3px;
+  }
+
+  .swal-policy-check-message {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+  }
+
+  /* Policy Result Dialog Styles */
+  .swal-policy-result-popup {
+    border-radius: 1rem !important;
+  }
+
+  .swal-policy-result-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1f2937;
+  }
+
+  .swal-policy-result-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1rem 0;
+  }
+
+  .swal-policy-result-logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  .swal-policy-result-logo img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+  }
+
+  .swal-policy-result-details {
+    text-align: center;
+    width: 100%;
+  }
+
+  .swal-policy-result-company {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .swal-policy-result-coc,
+  .swal-policy-result-date {
+    font-size: 1rem;
+    color: #4b5563;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+
+  .swal-policy-result-confirm-btn {
+    padding: 0.75rem 2rem !important;
+    font-size: 1rem !important;
+    border-radius: 0.5rem !important;
+  }
+
+  /* Animation classes */
+  .swal-policy-result-show {
+    animation: slideInUp 0.4s ease;
+  }
+
+  .swal-policy-result-hide {
+    animation: slideOutDown 0.3s ease;
+  }
+
+  @keyframes slideInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideOutDown {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+  }
+
+  /* Error confirm button */
+  .swal2-confirm-error {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+  }
+
+  .swal2-confirm-error:hover {
+    background: #dc2626 !important;
+    border-color: #dc2626 !important;
+  }
+
+  /* Sleek popup styling */
+  .sleek-popup {
+    border-radius: 1rem !important;
+    padding: 2rem !important;
+  }
+
+  .popup-title {
+    font-size: 1.5rem !important;
+    font-weight: 700 !important;
+  }
+
+  .popup-content {
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+  }
 }
 
 /* Responsive */
