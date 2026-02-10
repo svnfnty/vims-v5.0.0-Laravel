@@ -2085,6 +2085,17 @@ function showMvFileNotification(existingRecord) {
     // Store the record for later use
     notification.dataset.record = JSON.stringify(existingRecord);
 
+    // Update notification text with walkin name
+    const walkinName = existingRecord.walkin_list || existingRecord.markup || 'N/A';
+    const textDiv = notification.querySelector('.notification-text');
+    if (textDiv) {
+        textDiv.innerHTML = `
+            <h4>Vehicle Found in Your Office</h4>
+            <p style="font-weight: bold; color: #007bff; margin-bottom: 8px;">Previous Liaison: <span style="font-weight: normal; color: #dc3545;">${walkinName}</span></p>
+            <p style="margin-top: 0;">Some old clients may have transferred their name/vehicle. Would you like to edit the client information first?</p>
+            `;
+    }
+
     // Show the notification
     notification.classList.remove('hidden');
     notification.style.display = 'block';
