@@ -452,7 +452,13 @@
     // Insurance data for button functions module
     window.insuranceData = {
         cost: {{ $insurance->policy->cost ?? 0 }},
-        markup: "{{ $insurance->client->markup ?? '' }}"
+        markup: "{{ $insurance->client->markup ?? '' }}",
+        thirdPartyLiability: "{{ $insurance->policy->third_party_liability ?? '' }}",
+        personalAccident: "{{ $insurance->policy->personal_accident ?? '' }}",
+        tppd: {{ $insurance->policy->tppd ?? 0 }},
+        documentaryStamps: "{{ $insurance->policy->documentary_stamps ?? '' }}",
+        valueAddedTax: "{{ $insurance->policy->value_added_tax ?? '' }}",
+        localGovTax: "{{ $insurance->policy->local_gov_tax ?? '' }}"
     };
     window.insuranceId = "{{ $insurance->id }}";
 </script>
