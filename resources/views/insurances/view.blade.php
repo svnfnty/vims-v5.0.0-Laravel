@@ -458,7 +458,21 @@
         tppd: {{ $insurance->policy->tppd ?? 0 }},
         documentaryStamps: "{{ $insurance->policy->documentary_stamps ?? '' }}",
         valueAddedTax: "{{ $insurance->policy->value_added_tax ?? '' }}",
-        localGovTax: "{{ $insurance->policy->local_gov_tax ?? '' }}"
+        localGovTax: "{{ $insurance->policy->local_gov_tax ?? '' }}",
+        policyNo: "{{ $insurance->policy_no ?? '' }}",
+        orNo: "{{ $insurance->or_no ?? '' }}",
+        cocNo: "{{ $insurance->coc_no ?? '' }}",
+        vehicleModel: "{{ $insurance->vehicle_model ?? '' }}",
+        make: "{{ $insurance->make ?? '' }}",
+        category: "{{ $insurance->category->name ?? '' }}",
+        vehicleColor: "{{ $insurance->vehicle_color ?? '' }}",
+        registrationNo: "{{ $insurance->registration_no ?? '' }}",
+        chassisNo: "{{ $insurance->chassis_no ?? '' }}",
+        engineNo: "{{ $insurance->engine_no ?? '' }}",
+        registrationDate: "{{ $insurance->registration_date ?? '' }}",
+        expirationDate: "{{ $insurance->expiration_date ?? '' }}",
+        authRenewal: "{{ $insurance->auth_renewal ?? '' }}",
+        code: "{{ $insurance->code ?? '' }}"
     };
     window.insuranceId = "{{ $insurance->id }}";
 </script>

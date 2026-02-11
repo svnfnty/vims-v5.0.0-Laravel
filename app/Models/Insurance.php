@@ -41,6 +41,12 @@ class Insurance extends Model
         return $this->belongsTo(Policy::class, 'policy_id', 'id');
     }
 
+    // Define the relationship with the Category model
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'auth_no', 'id');
+    }
+
     public function applications()
     {
         return $this->hasMany(Application::class);
