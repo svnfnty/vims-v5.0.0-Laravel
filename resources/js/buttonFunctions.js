@@ -319,6 +319,79 @@ function showDocumentSelection(options) {
     });
 }
 
+// Helper function to convert number to words
+function numberToWords(number) {
+    const words = {
+        0: 'Zero',
+        1: 'One',
+        2: 'Two',
+        3: 'Three',
+        4: 'Four',
+        5: 'Five',
+        6: 'Six',
+        7: 'Seven',
+        8: 'Eight',
+        9: 'Nine',
+        10: 'Ten',
+        11: 'Eleven',
+        12: 'Twelve',
+        13: 'Thirteen',
+        14: 'Fourteen',
+        15: 'Fifteen',
+        16: 'Sixteen',
+        17: 'Seventeen',
+        18: 'Eighteen',
+        19: 'Nineteen',
+        20: 'Twenty',
+        30: 'Thirty',
+        40: 'Forty',
+        50: 'Fifty',
+        60: 'Sixty',
+        70: 'Seventy',
+        80: 'Eighty',
+        90: 'Ninety',
+    };
+    if (typeof number !== 'number' || isNaN(number)) {
+        return false;
+    }
+    if (number < 0) {
+        return 'minus ' + numberToWords(Math.abs(number));
+    }
+    let string = '';
+    if (number < 21) {
+        string = words[number];
+    } else if (number < 100) {
+        const tens = Math.floor(number / 10) * 10;
+        const units = number % 10;
+        string = words[tens];
+        if (units) {
+            string += '-' + words[units];
+        }
+    } else if (number < 1000) {
+        const hundreds = Math.floor(number / 100);
+        const remainder = number % 100;
+        string = words[hundreds] + ' Hundred';
+        if (remainder) {
+            string += ' and ' + numberToWords(remainder);
+        }
+    } else if (number < 1000000) {
+        const thousands = Math.floor(number / 1000);
+        const remainder = number % 1000;
+        string = numberToWords(thousands) + ' Thousand';
+        if (remainder) {
+            string += ' ' + numberToWords(remainder);
+        }
+    } else {
+        const millions = Math.floor(number / 1000000);
+        const remainder = number % 1000000;
+        string = numberToWords(millions) + ' Million';
+        if (remainder) {
+            string += ' ' + numberToWords(remainder);
+        }
+    }
+    return string.trim();
+}
+
 // Helper function to generate print content based on selected template
 function generatePrintContent(value, label, documentType) {
     const clientName = window.authData?.clientName || "Client Name";
@@ -351,15 +424,80 @@ function generatePrintContent(value, label, documentType) {
     switch(value) {
         case 'One':
             content += `
-                <div class="client-info">
-                    <div><strong>Client Name:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Plate Number:</strong> ${plateNo}</div>
-                    <div><strong>MV File Number:</strong> ${mvFileNo}</div>
-                    <div><strong>Date:</strong> ${currentDate}</div>
+                <br><br><br><br><br><br><br><br><br>
+                <div class="row-fluid body">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <td class="tbl" style="text-align:left;">&emsp;&emsp;&emsp;&emsp;<b>${clientName}</b></td>
+                                <td style="text-align:left;">&emsp;<b>${currentDate}</b></td>
+                            </tr>
+                            <tr>
+                                <td class="list" style="text-align:left;">&emsp;&emsp;&emsp;&emsp;<b>${clientAddress}</b></td>
+                                <td class="tbl center" rowspan="2"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <br><br><br>
+                    <table class="table" style="width: 906px;">
+                        <tbody>
+                            <tr style="height: 25px;">
+                                <td class="center tbl" colspan="2" style="text-align:left;padding-top:2px;padding-bottom:2px;">
+                                    &emsp;&emsp;<b>${numberToWords(cost)} Pesos Only</b>
+                                </td>
+                                <td class="" colspan="2" style="text-align: left;padding-top: 2px;padding-bottom: 2px;">
+                                    <b>${window.insuranceData?.third_party_liability || 'Third Party Liability'}</b>
+                                </td>
+                            </tr>
+                            ${window.insuranceData?.personal_accident ? `
+                            <tr style="height: 25px;">
+                                <td class="center tbl"><b></b></td>
+                                <td class="center tbl"><b></b></td>
+                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
+                                    <b>${window.insuranceData.personal_accident}</b>
+                                </td>
+                            </tr>
+                            ` : ''}
+                            ${window.insuranceData?.tppd && window.insuranceData.tppd != 0 ? `
+                            <tr style="height: 25px;">
+                                <td class="center tbl"><b></b></td>
+                                <td class="center tbl"><b></b></td>
+                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
+                                    <b>TPPD ${window.insuranceData.tppd}</b>
+                                </td>
+                            </tr>
+                            ` : ''}
+                            <tr style="height: 25px;">
+                                <td class="center tbl"><b></b></td>
+                                <td class="center tbl"><b></b></td>
+                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
+                                    &emsp;&emsp;<b>${window.insuranceData?.documentary_stamps || 'Documentary Stamps'}</b>
+                                </td>
+                            </tr>
+                            <tr style="height: 25px;">
+                                <td class="center tbl"><b></b></td>
+                                <td class="center tbl"><b></b></td>
+                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
+                                    <b>&emsp;&emsp;${window.insuranceData?.value_added_tax || 'Value Added Tax'}</b>
+                                </td>
+                            </tr>
+                            <tr style="height: 25px;">
+                                <td class="center tbl"><b></b></td>
+                                <td class="center tbl"><b></b></td>
+                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
+                                    &emsp;&emsp;<b>${window.insuranceData?.local_gov_tax || 'Local Gov Tax'}</b>
+                                </td>
+                            </tr>
+                            <tr style="height: 25px;">
+                                <td class="center tbl"><b></b></td>
+                                <td class="center tbl"><b></b></td>
+                                <td class=" tbl" colspan="1" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
+                                    &emsp;&emsp;<b>${cost}.00</b>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-                <div class="amount">Amount: ₱${cost}.00</div>
-                <div class="footer">Liberty Insurance Corporation - Official Receipt</div>
             `;
             break;
 
