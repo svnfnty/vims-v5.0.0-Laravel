@@ -4,7 +4,7 @@
 @section('content')
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-@vite(['resources/css/view.css', 'resources/js/view.js'])
+@vite(['resources/css/view.css', 'resources/js/view.js', 'resources/js/buttonFunctions.js'])
 <div class="content py-3">
 
     <div class="card card-outline card-primary rounded-0 shadow">
@@ -431,7 +431,7 @@
     window.insuranceDestroyUrl = "/insurances/{{ $insurance->id }}";
     window.insurancesIndexUrl = "{{ route('insurances.index') }}";
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
-    
+
     // Authentication flow data
     window.authData = {
         clientName: "{{ $insurance->client->firstname ?? '' }} {{ $insurance->client->middlename ?? '' }} {{ $insurance->client->lastname ?? '' }}",
@@ -448,6 +448,13 @@
         userCredit: {{ auth()->user()->credit ?? 0 }},
         userFullname: "{{ auth()->user()->firstname ?? '' }} {{ auth()->user()->lastname ?? '' }}"
     };
+
+    // Insurance data for button functions module
+    window.insuranceData = {
+        cost: {{ $insurance->policy->cost ?? 0 }},
+        markup: "{{ $insurance->client->markup ?? '' }}"
+    };
+    window.insuranceId = "{{ $insurance->id }}";
 </script>
 
 <script>
