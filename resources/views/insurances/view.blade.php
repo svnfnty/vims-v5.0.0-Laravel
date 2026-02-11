@@ -4,7 +4,7 @@
 @section('content')
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-@vite(['resources/css/view.css', 'resources/js/view.js', 'resources/js/buttonFunctions.js'])
+@vite(['resources/css/view.css', 'resources/js/view.js', 'resources/js/buttonConfirmation.js', 'resources/js/buttonReceipt.js', 'resources/js/buttonPolicy.js'])
 <div class="content py-3">
 
     <div class="card card-outline card-primary rounded-0 shadow">
