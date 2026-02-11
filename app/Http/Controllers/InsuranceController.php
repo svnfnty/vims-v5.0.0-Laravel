@@ -547,7 +547,7 @@ class InsuranceController extends Controller
         $isSuperAdmin = ($user->id == 1 && $user->office_id == 0);
         $officeId = $user->office_id ?? null;
         
-        $insuranceQuery = Insurance::with('client', 'policy')->where('id', $id);
+        $insuranceQuery = Insurance::with('client', 'policy', 'category')->where('id', $id);
         
         if (!$isSuperAdmin) {
             $insuranceQuery->where('office_id', $officeId);

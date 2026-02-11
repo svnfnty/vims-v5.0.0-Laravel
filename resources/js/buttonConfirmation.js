@@ -212,6 +212,25 @@ function generatePrintContent(value, label, documentType) {
     const mvFileNo = window.authData?.mvFileNo || "MV File Number";
     const cost = window.insuranceData?.cost || 0;
     const currentDate = new Date().toLocaleDateString();
+    const policyNo = window.insuranceData?.policyNo || "";
+    const orNo = window.insuranceData?.orNo || "";
+    const cocNo = window.insuranceData?.cocNo || "";
+    const vehicleModel = window.insuranceData?.vehicleModel || "";
+    const make = window.insuranceData?.make || "";
+    const category = window.insuranceData?.category || "";
+    const vehicleColor = window.insuranceData?.vehicleColor || "";
+    const registrationNo = window.insuranceData?.registrationNo || "";
+    const chassisNo = window.insuranceData?.chassisNo || "";
+    const engineNo = window.insuranceData?.engineNo || "";
+    const registrationDate = window.insuranceData?.registrationDate ? new Date(window.insuranceData.registrationDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "";
+    const expirationDate = window.insuranceData?.expirationDate ? new Date(window.insuranceData.expirationDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "";
+    const authRenewal = window.insuranceData?.authRenewal || "";
+    const code = window.insuranceData?.code || "";
+
+    // Determine colors based on coc_no and policy_no
+    const cocColor = (cocNo >= 1 && cocNo <= 500) ? "white" : "inherit";
+    const policyColor = (policyNo >= 1 && policyNo <= 200) ? "white" : "inherit";
+    const orColor = (orNo >= 1 && orNo <= 200) ? "white" : "inherit";
 
     let content = `
         <!DOCTYPE html>
@@ -219,13 +238,15 @@ function generatePrintContent(value, label, documentType) {
         <head>
             <title>${label} - ${documentType}</title>
             <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                .header { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
-                .company-name { color: #2563eb; margin-bottom: 10px; }
-                .client-info { margin: 20px 0; }
-                .client-info div { margin-bottom: 5px; }
-                .amount { font-size: 18px; font-weight: bold; margin: 20px 0; }
-                .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; }
+                body { font-family: Arial, sans-serif; margin: 20px; font-size: 25px; line-height: 1.5; font-weight: normal; color: #1c1e21; }
+                .container { font-size: 15px; line-height: 1.5; font-weight: normal; color: #1c1e21; }
+                .center { text-align: left !important; }
+                .title { height: 18px; background-color: #fdfdfd; border: 2px solid transparent; color: #000000; position: relative; top: -10px; }
+                .header, .body { border: 1px solid transparent; }
+                .tbl { width: 1200px; }
+                table, th, td { border: 3px solid transparent; font-size: 12px; }
+                .list { width: 300px; }
+                .table { position: relative; top: -20px; margin-bottom: -10px; }
             </style>
         </head>
         <body>
@@ -234,61 +255,347 @@ function generatePrintContent(value, label, documentType) {
     switch(value) {
         case 'One':
             content += `
-                <div class="header">${label}</div>
-                <div class="client-info">
-                    <div><strong>Client:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Plate No:</strong> ${plateNo}</div>
-                    <div><strong>MV File No:</strong> ${mvFileNo}</div>
-                    <div><strong>Issue Date:</strong> ${currentDate}</div>
+                <div id="showOne" class="content py-3 myDiv" style="font-size:25px;">
+                    <div class="card card-outline card-primary rounded-0 shadow" style="font-size:25px;">
+                       
+                        <div class="card-body" style="font-size:25px;">
+                            <div class="container-fluid" id="outprint" style="font-size:25px;">
+                                <br><br><br>
+                                <div class="row-fluid body" style="font-size:25px;">
+                                    <h5 class="title" style="font-size:25px;"><b>
+                                        ${authRenewal ? `<h4 style="text-align:right;font-size:25px;">${authRenewal}</h4>` : '<h4 style="text-align:right;font-size:25px; color:#ffffff;">&nbsp;</h4>'}
+                                    </b></h5>
+                                    <table class="table" style="font-size:25px;">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list" rowspan="2" style="text-align:right; font-size:25px;">
+                                                    <h4 style="font-size:25px;"></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl center" rowspan="2" style="font-size:25px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl" style="text-align: right; font-size:25px;"></td>
+                                                <td class="tbl" style="text-align:center; font-size:25px;">
+                                                    <b style="color:${cocColor};font-size:25px;">046${cocNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl center" colspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl center" rowspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl" rowspan="2" style="text-align:center; font-size:25px;">
+                                                    <b style="color: ${policyColor}; font-size:25px;">${policyNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl" style="text-align:center; font-size:25px;">
+                                                    <b style="font-size:25px;"></b>
+                                                </td>
+                                                <td class="tbl" style="font-size:25px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:25px;"></td>
+                                                <td class="tbl" style="text-align:center; font-size:25px;">
+                                                    <b style="font-size:23px;">${clientName}</b>
+                                                </td>
+                                                <td class="tbl" style="font-size:25px;"></td>
+                                                <td style="text-align:right; font-size:25px;">
+                                                    <b style="font-size:25px;"></b>
+                                                </td>
+                                                <td style="text-align:center; font-size:25px;">
+                                                    <b style="color: ${orColor}; font-size:25px;">${orNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl center" rowspan="2" style="font-size:23px;"><b style="font-size:23px;">${clientAddress}</b>
+                                                </td>
+                                                <td class="tbl center" rowspan="2" style="font-size:25px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl" style="text-align: right; font-size:20px;"><b style="font-size:20px;">${registrationDate}</b></td>
+                                                <td class="tbl" style="font-size:25px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:25px;"></td>
+                                                <td style="font-size:25px;"></td>
+                                                <td style="font-size:25px;"></td>
+                                                <td style="text-align:right; font-size:25px;">
+                                                    <b style="font-size:20px;">${registrationDate}</b>
+                                                </td>
+                                                <td style="text-align:center; font-size:25px;">
+                                                    <b style="font-size:20px;">${expirationDate}</b>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="table" style="font-size:25px;">
+                                        <tbody>
+                                            <tr style="height: 25px;">
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${vehicleModel}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${make}</b></td>
+                                                <td class="center tbl" style="font-size:15px;"><b style="font-size:18px;">${category}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:18px;">${vehicleColor}</b></td>
+                                                <td style="text-align: center; font-size:25px;"><b style="font-size:20px;">${mvFileNo}</b></td>
+                                            </tr>
+                                            <tr style="height: 25px;">
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${registrationNo}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${chassisNo}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${engineNo}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"></td>
+                                                <td class="center tbl" style="font-size:25px;"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Certificate of Coverage Issued</div>
-                <div class="footer">${label} - Official Certificate</div>
             `;
             break;
 
         case 'Two':
             content += `
-                <div class="header">${label}</div>
-                <div class="client-info">
-                    <div><strong>Policy Owner:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Plate No:</strong> ${plateNo}</div>
-                    <div><strong>MV File No:</strong> ${mvFileNo}</div>
-                    <div><strong>Issue Date:</strong> ${currentDate}</div>
+                <div id="showTwo" class="content py-3  myDiv">
+                    <div class="card card-outline card-primary rounded-0 shadow">
+                       
+                        <div class="card-body">
+                            <div class="container-fluid" id="outprint_pup">
+                                <br><br><br><br><br><br>
+                                <div class="row-fluid body">
+                                    <h5 class="title"></h5>
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list " rowspan="2" style="text-align:right;">
+                                                    <h4></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2">
+                                                    <h4></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align: right;"></td>
+                                                <td class="tbl " style="text-align:center;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl center" colspan="2"></td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                                <td class="tbl" rowspan="2" style="text-align: center;">
+                                                    <b style="color: ${policyColor};">${policyNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;"></td>
+                                                <td class="tbl " style="color: white;">a</td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="tbl " style="text-align:center;"><b>${clientName}</b></td>
+                                                <td class="tbl "></td>
+                                                <td style="text-align:left;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;">
+                                                    <b style="color: ${orColor};">${orNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="tbl" style="text-align:center;"><b>${clientAddress}</b></td>
+                                                <td></td>
+                                                <td style="text-align:left;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;"><b>${expirationDate}</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table><br>
+                                    <table class="table">
+                                        <tbody>
+                                            <tr style="height: 25px;">
+                                                <td class="tbl" style="text-align:center;"><b>${vehicleModel}</b></td>
+                                                <td class="tbl" style="text-align:center;"><b>${make}</b></td>
+                                                <td class='center tbl'><b>${category}</b></td>
+                                                <td class="tbl"><b>${vehicleColor}</b></td>
+                                                <td class="" style="text-align: center;"><b>${mvFileNo}</b></td>
+                                            </tr>
+                                            <tr style="height: 25px;">
+                                                <td class="tbl" style="text-align:center;"><b>${registrationNo}</b></td>
+                                                <td class="tbl" style="text-align:center;"><b>${chassisNo}</b></td>
+                                                <td class="tbl" style="text-align:center;"><b>${engineNo}</b></td>
+                                                <td class="center tbl"></td>
+                                                <td class="center tbl"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Certificate of Coverage Issued</div>
-                <div class="footer">${label} - Official Certificate</div>
             `;
             break;
 
         case 'Three':
             content += `
-                <div class="header">${label}</div>
-                <div class="client-info">
-                    <div><strong>Client:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Plate No:</strong> ${plateNo}</div>
-                    <div><strong>MV File No:</strong> ${mvFileNo}</div>
-                    <div><strong>Issue Date:</strong> ${currentDate}</div>
+                <div id="showThree" class="content py-3  myDiv">
+                    <div class="card card-outline card-primary rounded-0 shadow">
+                        
+                        <div class="card-body">
+                            <div class="container-fluid" id="outprint_mil">
+                                <br><br><br><br><br><br><br>
+                                <div class="row-fluid body">
+                                    <h5 class="title"></h5>
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list " rowspan="2" style="text-align:right;">
+                                                    <h4></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2">
+                                                    <h4></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align: right;"></td>
+                                                <td class="tbl " style="text-align:center;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl center" colspan="2"></td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                                <td class="tbl" rowspan="2" style="text-align: center;">
+                                                    <b style="color: ${policyColor};">${policyNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;"></td>
+                                                <td class="tbl " style="color: white;">a</td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="tbl " style="text-align:center;"><b>${clientName}</b></td>
+                                                <td class="tbl "></td>
+                                                <td style="text-align:left;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;">
+                                                    <b style="color: ${orColor};">${orNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="tbl" style="text-align:center;"><b>${clientAddress}</b></td>
+                                                <td></td>
+                                                <td style="text-align:left;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;"><b>${expirationDate}</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table><br>
+                                    <table class="table">
+                                        <tbody>
+                                            <tr style="height: 25px;">
+                                                <td class="tbl" style="text-align:center;"><b>${vehicleModel}</b></td>
+                                                <td class="tbl" style="text-align:center;"><b>${make}</b></td>
+                                                <td class='center tbl'><b>${category}</b></td>
+                                                <td class="tbl"><b>${vehicleColor}</b></td>
+                                                <td class="" style="text-align: center;"><b>${mvFileNo}</b></td>
+                                            </tr>
+                                            <tr style="height: 25px;">
+                                                <td class="tbl" style="text-align:center;"><b>${registrationNo}</b></td>
+                                                <td class="tbl" style="text-align:center;"><b>${chassisNo}</b></td>
+                                                <td class="tbl" style="text-align:center;"><b>${engineNo}</b></td>
+                                                <td class="center tbl"></td>
+                                                <td class="center tbl"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Certificate of Coverage Issued</div>
-                <div class="footer">${label} - Official Certificate</div>
             `;
             break;
 
         case 'Four':
             content += `
-                <div class="header">${label}</div>
-                <div class="client-info">
-                    <div><strong>Policy Owner:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Plate No:</strong> ${plateNo}</div>
-                    <div><strong>MV File No:</strong> ${mvFileNo}</div>
-                    <div><strong>Issue Date:</strong> ${currentDate}</div>
+                <div id="showFour" class="content py-3  myDiv">
+                    <div class="card card-outline card-primary rounded-0 shadow">
+                      
+                        <div class="card-body">
+                            <div class="container-fluid" id="outprint_strong">
+                                <br><br><br><br><br><br><br><br><br><br>  <br><br>
+                                <div class="row-fluid body">
+                                    <h5 class="title"></h5>
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list " rowspan="2" style="text-align:right;">
+                                                    <h4></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2">
+                                                    <h4></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align: right;"></td>
+                                                <td class="tbl " style="text-align:center;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl center" colspan="2"></td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                                <td class="tbl" rowspan="2" style="text-align: center;font-size:20px;">
+                                                    <b style="color: ${policyColor};font-size:20px;">${policyNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;"></td>
+                                                <td class="tbl " style="color: white;">a</td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="tbl " style="text-align:center;font-size:20px;"><b>${clientName}</b></td>
+                                                <td class="tbl "></td>
+                                                <td style="text-align:left;font-size:20px;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;">
+                                                    <b style="color: ${orColor};font-size:20px;">${orNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="tbl" style="text-align:center;font-size:20px;"><b>${clientAddress}</b></td>
+                                                <td></td>
+                                                <td style="text-align:left;font-size:20px;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;font-size:20px;"><b>${expirationDate}</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table><br>
+                                    <table class="table">
+                                        <tbody>
+                                            <tr style="height: 25px;">
+                                                <td class="tbl" style="text-align:center;font-size:20px;"><b>${vehicleModel}</b></td>
+                                                <td class="tbl" style="text-align:center;font-size:20px;"><b>${make}</b></td>
+                                                <td class='center tbl'><b style="text-align:center;font-size:20px;">${category}</b></td>
+                                                <td class="tbl"><b style="text-align:center;font-size:20px;">${vehicleColor}</b></td>
+                                                <td class="" style="text-align: center;font-size:20px;"><b>${mvFileNo}</b></td>
+                                            </tr>
+                                            <tr style="height: 25px;">
+                                                <td class="tbl" style="text-align:center;font-size:20px;"><b>${registrationNo}</b></td>
+                                                <td class="tbl" style="text-align:center;font-size:20px;"><b>${chassisNo}</b></td>
+                                                <td class="tbl" style="text-align:center;font-size:20px;"><b>${engineNo}</b></td>
+                                                <td class="center tbl"></td>
+                                                <td class="center tbl"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Certificate of Coverage Issued</div>
-                <div class="footer">${label} - Official Certificate</div>
             `;
             break;
 
