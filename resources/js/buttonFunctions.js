@@ -417,89 +417,82 @@ function generatePrintContent(value, label, documentType) {
             </style>
         </head>
         <body>
-            <div class="header">${documentType.toUpperCase()}</div>
-            <div class="company-name">${label}</div>
     `;
 
     switch(value) {
+
+
         case 'One':
+            const costInWords = numberToWords(cost);
             content += `
-                <br><br><br><br><br><br><br><br><br>
-                <div class="row-fluid body">
-                    <table class="table">
-                        <tbody>
-                            <tr>
-                                <td class="tbl" style="text-align:left;">&emsp;&emsp;&emsp;&emsp;<b>${clientName}</b></td>
-                                <td style="text-align:left;">&emsp;<b>${currentDate}</b></td>
-                            </tr>
-                            <tr>
-                                <td class="list" style="text-align:left;">&emsp;&emsp;&emsp;&emsp;<b>${clientAddress}</b></td>
-                                <td class="tbl center" rowspan="2"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <br><br><br>
-                    <table class="table" style="width: 906px;">
-                        <tbody>
-                            <tr style="height: 25px;">
-                                <td class="center tbl" colspan="2" style="text-align:left;padding-top:2px;padding-bottom:2px;">
-                                    &emsp;&emsp;<b>${numberToWords(cost)} Pesos Only</b>
-                                </td>
-                                <td class="" colspan="2" style="text-align: left;padding-top: 2px;padding-bottom: 2px;">
-                                    <b>${window.insuranceData?.third_party_liability || 'Third Party Liability'}</b>
-                                </td>
-                            </tr>
-                            ${window.insuranceData?.personal_accident ? `
-                            <tr style="height: 25px;">
-                                <td class="center tbl"><b></b></td>
-                                <td class="center tbl"><b></b></td>
-                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
-                                    <b>${window.insuranceData.personal_accident}</b>
-                                </td>
-                            </tr>
-                            ` : ''}
-                            ${window.insuranceData?.tppd && window.insuranceData.tppd != 0 ? `
-                            <tr style="height: 25px;">
-                                <td class="center tbl"><b></b></td>
-                                <td class="center tbl"><b></b></td>
-                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
-                                    <b>TPPD ${window.insuranceData.tppd}</b>
-                                </td>
-                            </tr>
-                            ` : ''}
-                            <tr style="height: 25px;">
-                                <td class="center tbl"><b></b></td>
-                                <td class="center tbl"><b></b></td>
-                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
-                                    &emsp;&emsp;<b>${window.insuranceData?.documentary_stamps || 'Documentary Stamps'}</b>
-                                </td>
-                            </tr>
-                            <tr style="height: 25px;">
-                                <td class="center tbl"><b></b></td>
-                                <td class="center tbl"><b></b></td>
-                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
-                                    <b>&emsp;&emsp;${window.insuranceData?.value_added_tax || 'Value Added Tax'}</b>
-                                </td>
-                            </tr>
-                            <tr style="height: 25px;">
-                                <td class="center tbl"><b></b></td>
-                                <td class="center tbl"><b></b></td>
-                                <td class=" tbl" colspan="2" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
-                                    &emsp;&emsp;<b>${window.insuranceData?.local_gov_tax || 'Local Gov Tax'}</b>
-                                </td>
-                            </tr>
-                            <tr style="height: 25px;">
-                                <td class="center tbl"><b></b></td>
-                                <td class="center tbl"><b></b></td>
-                                <td class=" tbl" colspan="1" style="text-align:left;padding-top: 2px;padding-bottom: 2px;">
-                                    &emsp;&emsp;<b>${cost}.00</b>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="showOne" style="padding: 1rem 0; font-family: Arial, sans-serif;">
+                    <div style="padding: 1.25rem;">
+                        <div style="width: 100%;" id="outprint">
+                            <br><br><br><br>
+                            <div style="width: 100%;">
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+                                    <tbody>
+                                        <tr>
+                                            <td style="text-align:left; padding: 0.75rem; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;<b>${clientName}</b></td>
+                                            <td style="text-align:left; padding: 0.75rem; border: 1px solid transparent;">&emsp;<b>${currentDate}</b></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:left; padding: 0.75rem; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;<b>${clientAddress}</b></td>
+                                            <td style="text-align:center; padding: 0.75rem; border: 1px solid transparent;" rowspan="2"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br><br><br>
+                                <table style="width: 906px; border-collapse: collapse; margin-bottom: 1rem;">
+                                    <tbody>
+                                        <tr style="height: 25px;">
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;<b>${costInWords} Pesos Only</b></td>
+                                            <td colspan="2" style="text-align: left; padding: 2px; border: 1px solid transparent;"><b>${window.insuranceData.thirdPartyLiability || ''}</b></td>
+                                        </tr>
+                                        ${window.insuranceData.personalAccident ? `
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;"><b>${window.insuranceData.personalAccident}</b></td>
+                                        </tr>
+                                        ` : ''}
+                                        ${window.insuranceData.tppd && window.insuranceData.tppd != 0 ? `
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;"><b>TPPD ${window.insuranceData.tppd}</b></td>
+                                        </tr>
+                                        ` : ''}
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;<b>${window.insuranceData.documentaryStamps || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;"><b>&emsp;&emsp;${window.insuranceData.valueAddedTax || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;<b>${window.insuranceData.localGovTax || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="1" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;<b>${cost}.00</b></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
             break;
+
+
 
         case 'OneV2':
             content += `
@@ -590,6 +583,7 @@ function generatePrintContent(value, label, documentType) {
 }
 
 // Helper function to get color class (assuming it's defined elsewhere)
+
 function getColorClass(markup) {
     // This should match the PHP function in view_insurance.php
     // For now, return a default or implement logic
