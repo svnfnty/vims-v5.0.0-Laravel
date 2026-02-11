@@ -28,58 +28,6 @@ window.selectReceipt = function() {
     });
 }
 
-window.selectCertificateOfCoverage = function() {
-//if (typeof isLocked !== 'undefined' && isLocked) {
-//    showLockedAlert();
-//    return;
-//}
-
-    showDocumentSelection({
-        title: 'Certificate of Coverage',
-        documentType: 'Certificate',
-        optionsList: [
-            { value: 'One', label: 'Liberty Insurance Corporation' },
-            { value: 'Two', label: 'Pacific Union Insurance Corporation' },
-            { value: 'Three', label: 'Milestone Insurance Corporation' },
-            {
-                value: 'Four',
-                label: 'Stronghold Insurance Company'},
-            {
-                value: 'Five',
-                label: 'Western Guaranty Corporation', isNew: true}
-        ]
-    });
-}
-
-window.selectPolicyofCover = function() {
-    if (typeof isLocked !== 'undefined' && isLocked) {
-        showLockedAlert();
-        return;
-    }
-
-    showDocumentSelection({
-        title: 'Policy of Cover',
-        documentType: 'Policy',
-        optionsList: [
-            { value: 'One', label: 'Liberty Insurance Corporation' },
-            { value: 'Two', label: 'Pacific Union Insurance Corporation' },
-            { value: 'Three', label: 'Milestone Insurance Corporation' },
-              {
-                value: 'Four',
-                label: 'Stronghold Insurance Company'},
-            {
-                value: 'Five',
-                label: 'Western Guaranty Corporation', isNew: true}
-        ],
-        cost: window.insuranceData?.cost || 0,
-        markup: window.insuranceData?.markup || ''
-    });
-}
-
-// ============================================
-// HELPER FUNCTIONS
-// ============================================
-
 // 🔒 Premium Locked State UI (reusable function)
 function showLockedAlert() {
     Swal.fire({
@@ -319,6 +267,13 @@ function showDocumentSelection(options) {
     });
 }
 
+// Helper function to get color class
+function getColorClass(markup) {
+    // This should match the PHP function in view_insurance.php
+    // For now, return a default or implement logic
+    return '#2575fc'; // Default color
+}
+
 // Helper function to convert number to words
 function numberToWords(number) {
     const words = {
@@ -391,6 +346,8 @@ function numberToWords(number) {
     }
     return string.trim();
 }
+
+
 
 // Helper function to generate print content based on selected template
 function generatePrintContent(value, label, documentType) {
@@ -813,12 +770,4 @@ function generatePrintContent(value, label, documentType) {
     `;
 
     return content;
-}
-
-// Helper function to get color class (assuming it's defined elsewhere)
-
-function getColorClass(markup) {
-    // This should match the PHP function in view_insurance.php
-    // For now, return a default or implement logic
-    return '#2575fc'; // Default color
 }
