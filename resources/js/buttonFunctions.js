@@ -575,45 +575,213 @@ function generatePrintContent(value, label, documentType) {
 
         case 'Two':
             content += `
-                <div class="client-info">
-                    <div><strong>Policy Holder:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Vehicle Plate:</strong> ${plateNo}</div>
-                    <div><strong>MV File:</strong> ${mvFileNo}</div>
-                    <div><strong>Issue Date:</strong> ${currentDate}</div>
+                <div id="showTwo" style="padding: 1rem 0; font-family: Arial, sans-serif;">
+                    <div style="padding: 1.25rem;">
+                        <div style="width: 100%;" id="outprint_pup">
+                            <br><br><br><br><br><br>
+                            <div style="width: 100%;">
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2" style="text-align:left; padding: 0.75rem; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;<b>${clientName}&emsp;&emsp;&emsp;&emsp;&emsp;<span style="color:white;">***************</span><b>${currentDate}</b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 0.75rem; border: 1px solid transparent;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="text-align:left; padding: 0.75rem; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;<b>${clientAddress}</b></td>
+                                            <td colspan="2" style="text-align:center; padding: 0.75rem; border: 1px solid transparent;" rowspan="2"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br><br>
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+                                    <tbody>
+                                        <tr style="height: 25px;">
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;</td>
+                                            <td colspan="2" style="text-align: left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.thirdPartyLiability || ''}</b></td>
+                                        </tr>
+                                        ${window.insuranceData.personalAccident ? `
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.personalAccident}</b></td>
+                                        </tr>
+                                        ` : ''}
+                                        ${window.insuranceData.tppd && window.insuranceData.tppd != 0 ? `
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>TPPD ${window.insuranceData.tppd}</b></td>
+                                        </tr>
+                                        ` : ''}
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.documentaryStamps || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>&emsp;&emsp;${window.insuranceData.valueAddedTax || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.localGovTax || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="1" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b> Total ${cost}.00</b></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Premium Amount: ₱${cost}.00</div>
-                <div class="footer">Pacific Union Insurance Corporation - Official Receipt</div>
             `;
             break;
+
 
         case 'Three':
             content += `
-                <div class="client-info">
-                    <div><strong>Insured Name:</strong> ${clientName}</div>
-                    <div><strong>Location:</strong> ${clientAddress}</div>
-                    <div><strong>Plate Number:</strong> ${plateNo}</div>
-                    <div><strong>MV File Number:</strong> ${mvFileNo}</div>
-                    <div><strong>Effective Date:</strong> ${currentDate}</div>
+                <div id="showThree" style="padding: 1rem 0; font-family: Arial, sans-serif;">
+                    <div style="padding: 1.25rem;">
+                        <div style="width: 100%;" id="outprint_mil">
+                            <br><br><br><br><br><br><br><br>
+                            <div style="width: 100%;">
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2" style="text-align:left; padding: 0.75rem; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;<b>${clientName}&emsp;&emsp;&emsp;&emsp;&emsp;<span style="color:white;">***************</span><b>${currentDate}</b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 0.75rem; border: 1px solid transparent;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="text-align:left; padding: 0.75rem; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;<b>${clientAddress}</b></td>
+                                            <td colspan="2" style="text-align:center; padding: 0.75rem; border: 1px solid transparent;" rowspan="2"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br><br>
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+                                    <tbody>
+                                        <tr style="height: 25px;">
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;</td>
+                                            <td colspan="2" style="text-align: left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.thirdPartyLiability || ''}</b></td>
+                                        </tr>
+                                        ${window.insuranceData.personalAccident ? `
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.personalAccident}</b></td>
+                                        </tr>
+                                        ` : ''}
+                                        ${window.insuranceData.tppd && window.insuranceData.tppd != 0 ? `
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>TPPD ${window.insuranceData.tppd}</b></td>
+                                        </tr>
+                                        ` : ''}
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.documentaryStamps || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>&emsp;&emsp;${window.insuranceData.valueAddedTax || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.localGovTax || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="1" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b> Total ${cost}.00</b></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Coverage Amount: ₱${cost}.00</div>
-                <div class="footer">Milestone Insurance Corporation - Official Receipt</div>
             `;
             break;
 
+
         case 'Four':
             content += `
-                <div class="client-info">
-                    <div><strong>Client:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Vehicle Plate:</strong> ${plateNo}</div>
-                    <div><strong>MV File:</strong> ${mvFileNo}</div>
-                    <div><strong>Receipt Date:</strong> ${currentDate}</div>
+                <div id="showFour" style="padding: 1rem 0; font-family: Arial, sans-serif;">
+                    <div style="padding: 1.25rem;">
+                        <div style="width: 100%;" id="outprint_strong">
+                            <br><br><br><br><br><br><br><br><br><br>
+                            <div style="width: 100%;">
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2" style="text-align:left; padding: 0.75rem; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;<b>${clientName}&emsp;&emsp;&emsp;&emsp;&emsp;<span style="color:white;">******</span><b>${currentDate}</b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 0.75rem; border: 1px solid transparent;"></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="text-align:left; padding: 0.75rem; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;<b>${clientAddress}</b></td>
+                                            <td colspan="2" style="text-align:center; padding: 0.75rem; border: 1px solid transparent;" rowspan="2"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <br><br><br><br><br><br><br><br><br><br>
+                                <table style="width: 100%; border-collapse: collapse; margin-bottom: 1rem;">
+                                    <tbody>
+                                        <tr style="height: 25px;">
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;</td>
+                                            <td colspan="2" style="text-align: left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.thirdPartyLiability || ''}</b></td>
+                                        </tr>
+                                        ${window.insuranceData.personalAccident ? `
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.personalAccident}</b></td>
+                                        </tr>
+                                        ` : ''}
+                                        ${window.insuranceData.tppd && window.insuranceData.tppd != 0 ? `
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>TPPD ${window.insuranceData.tppd}</b></td>
+                                        </tr>
+                                        ` : ''}
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.documentaryStamps || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>&emsp;&emsp;${window.insuranceData.valueAddedTax || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="2" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b>${window.insuranceData.localGovTax || ''}</b></td>
+                                        </tr>
+                                        <tr style="height: 25px;">
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td style="text-align:center; padding: 2px; border: 1px solid transparent;"><b></b></td>
+                                            <td colspan="1" style="text-align:left; padding: 2px; border: 1px solid transparent;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<b> Total ${cost}.00</b></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Total Amount: ₱${cost}.00</div>
-                <div class="footer">Stronghold Insurance Company - Official Receipt</div>
             `;
             break;
+
 
         case 'Five':
             content += `
