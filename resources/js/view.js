@@ -904,74 +904,10 @@ function resetStatusButton(element) {
 }
 
 // ============================================
-// DOCUMENT SELECTION FUNCTIONS
+// DOCUMENT SELECTION FUNCTIONS - MOVED TO MODULE
 // ============================================
 
-window.selectReceipt = function() {
-    Swal.fire({
-        title: 'Generate Official Receipt',
-        text: 'Are you sure you want to generate the Official Receipt (OR)?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#17a2b8',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, generate OR!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: 'OR Generated',
-                text: 'Official Receipt has been generated successfully.',
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false
-            });
-        }
-    });
-}
-
-window.selectCertificateOfCoverage = function() {
-    Swal.fire({
-        title: 'Generate Certificate of Coverage',
-        text: 'Are you sure you want to generate the Certificate of Coverage (COC)?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#ffc107',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, generate COC!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: 'COC Generated',
-                text: 'Certificate of Coverage has been generated successfully.',
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false
-            });
-        }
-    });
-}
-
-window.selectPolicyofCover = function() {
-    Swal.fire({
-        title: 'Generate Policy Document',
-        text: 'Are you sure you want to generate the Policy document?',
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#6f42c1',
-        cancelButtonColor: '#6c757d',
-        confirmButtonText: 'Yes, generate Policy!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            Swal.fire({
-                title: 'Policy Generated',
-                text: 'Policy document has been generated successfully.',
-                icon: 'success',
-                timer: 2000,
-                showConfirmButton: false
-            });
-        }
-    });
-}
+// These functions are now in buttonFunctions.js module
 
 // ============================================
 // MODAL FUNCTIONS
