@@ -1,9 +1,0 @@
-let o=!1,a=!1;function l(){const t=document.getElementById("chatWindow"),e=document.getElementById("notificationCount");o?(t.style.display="none",o=!1):(t.style.display="flex",o=!0,e&&(e.textContent="0",e.style.display="none"))}function m(){const t=document.getElementById("chatWindow"),e=document.getElementById("maximizeBtn");a?(t.classList.remove("maximized"),e&&(e.innerHTML='<i class="fas fa-expand"></i>'),a=!1):(t.classList.add("maximized"),e&&(e.innerHTML='<i class="fas fa-compress"></i>'),a=!0)}function r(t){t.key==="Enter"&&d()}function d(){const t=document.getElementById("userInput"),e=document.getElementById("chatBox"),s=t.value.trim();if(s==="")return;const n=document.createElement("div");n.className="chat-message user-message",n.innerHTML=`
-        <div class="user-tag" style="font-weight: 600; margin-bottom: 5px; color: #3b5998;">You</div>
-        ${u(s)}
-        <div class="message-time" style="font-size: 12px; color: #999; margin-top: 5px; text-align: right;">${c()}</div>
-    `,e.appendChild(n),t.value="",e.scrollTop=e.scrollHeight,setTimeout(()=>{const i=document.createElement("div");i.className="chat-message ai-message",i.innerHTML=`
-            <div class="ai-tag">VIMSYS AI</div>
-            Thank you for your message. I'm currently in demo mode. In production, I would provide helpful responses about system features, account issues, or server top-up instructions.
-            <div class="message-time">${c()}</div>
-        `,e.appendChild(i),e.scrollTop=e.scrollHeight},1e3)}function u(t){const e=document.createElement("div");return e.textContent=t,e.innerHTML}function c(){const t=new Date;let e=t.getHours();const s=t.getMinutes().toString().padStart(2,"0"),n=e>=12?"PM":"AM";return e=e%12,e=e||12,`${e}:${s} ${n}`}window.toggleChatWindow=l;window.toggleMaximize=m;window.handleKeyPress=r;window.sendMessage=d;document.addEventListener("DOMContentLoaded",function(){console.log("Login page loaded")});

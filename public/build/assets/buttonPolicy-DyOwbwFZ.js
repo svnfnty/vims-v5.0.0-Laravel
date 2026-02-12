@@ -14,7 +14,7 @@ window.selectPolicyofCover=function(){var a,i;if(typeof isLocked<"u"&&isLocked){
             <div style="max-width:500px; margin:0 auto;">
                 <div style="background:#f8f9fa; border-radius:12px; padding:20px; margin-bottom:20px;">
                     <div style="display:flex; align-items:center; margin-bottom:15px;">
-                        <img src="https://www.documation.com/assets/printAnimation.gif" alt="Printer Loading" style="width:60px; height:60px; margin-right:15px; border-radius:6px;">
+                        <img src="https://i.gifer.com/ISSh.gif" alt="Printer Loading" style="width:60px; height:60px; margin-right:15px; border-radius:6px;">
                         <div>
                             <p style="font-weight:500; margin-bottom:5px; color:#212529;">Printer Preparation</p>
                             <p style="font-size:0.9rem; color:#868e96; margin:0;">Load official document paper into the printer</p>
@@ -96,7 +96,7 @@ window.selectPolicyofCover=function(){var a,i;if(typeof isLocked<"u"&&isLocked){
                 </div>
                 <p style="font-size:0.9rem; color:#868e96;">Please contact administration for emergency access</p>
             </div>
-        `,confirmButtonText:"Understood",confirmButtonColor:"#dc3545",customClass:{container:"swal-premium-container",popup:"swal-premium-popup"}})}function ut(a,i,n){var A,L,M,O,F,I,E,j,R,U,G,V,W,H,_,K,Y,q,J,Q,X,Z,tt,et,st,lt,nt,dt,at,it,rt,ot,ct,bt,pt,xt,gt;const r=((A=window.authData)==null?void 0:A.clientName)||"Client Name",o=((L=window.authData)==null?void 0:L.clientAddress)||"Client Address",x=((M=window.authData)==null?void 0:M.plateNo)||"Plate Number",t=((O=window.authData)==null?void 0:O.mvFileNo)||"MV File Number",l=((F=window.insuranceData)==null?void 0:F.cost)||0,B=new Date().toLocaleDateString(),e=((I=window.insuranceData)==null?void 0:I.policyNo)||"",d=((E=window.insuranceData)==null?void 0:E.orNo)||"",g=((j=window.insuranceData)==null?void 0:j.cocNo)||"",y=((R=window.insuranceData)==null?void 0:R.vehicleModel)||"",h=((U=window.insuranceData)==null?void 0:U.make)||"",m=((G=window.insuranceData)==null?void 0:G.category)||"",P=((V=window.insuranceData)==null?void 0:V.vehicleColor)||"",f=((W=window.insuranceData)==null?void 0:W.registrationNo)||"",w=((H=window.insuranceData)==null?void 0:H.chassisNo)||"",u=((_=window.insuranceData)==null?void 0:_.engineNo)||"",c=(K=window.insuranceData)!=null&&K.registrationDate?new Date(window.insuranceData.registrationDate).toLocaleDateString("en-US",{month:"short",day:"2-digit",year:"numeric"}):"",v=(Y=window.insuranceData)!=null&&Y.expirationDate?new Date(window.insuranceData.expirationDate).toLocaleDateString("en-US",{month:"short",day:"2-digit",year:"numeric"}):"",N=((q=window.insuranceData)==null?void 0:q.authRenewal)||"",S=((J=window.insuranceData)==null?void 0:J.code)||"",$=((Q=window.insuranceData)==null?void 0:Q.thirdPartyLiability)||"",b=((X=window.insuranceData)==null?void 0:X.personalAccident)||"",s=((Z=window.insuranceData)==null?void 0:Z.tppd)||"",z=((tt=window.insuranceData)==null?void 0:tt.documentaryStamps)||"",D=((et=window.insuranceData)==null?void 0:et.valueAddedTax)||"",k=((st=window.insuranceData)==null?void 0:st.localGovTax)||"",yt=g>=1&&g<=500?"white":"inherit",C=e>=1&&e<=200?"white":"inherit",T=d>=1&&d<=200?"white":"inherit";let p=`
+        `,confirmButtonText:"Understood",confirmButtonColor:"#dc3545",customClass:{container:"swal-premium-container",popup:"swal-premium-popup"}})}function ut(a,i,n){var L,A,M,I,O,F,E,j,R,U,G,V,W,H,_,K,Y,q,J,Q,X,Z,tt,et,st,lt,nt,dt,at,it,rt,ot,ct,bt,pt,xt,gt;const r=((L=window.authData)==null?void 0:L.clientName)||"Client Name",o=((A=window.authData)==null?void 0:A.clientAddress)||"Client Address",x=((M=window.authData)==null?void 0:M.plateNo)||"Plate Number",t=((I=window.authData)==null?void 0:I.mvFileNo)||"MV File Number",l=((O=window.insuranceData)==null?void 0:O.cost)||0,B=new Date().toLocaleDateString(),e=((F=window.insuranceData)==null?void 0:F.policyNo)||"",d=((E=window.insuranceData)==null?void 0:E.orNo)||"",g=((j=window.insuranceData)==null?void 0:j.cocNo)||"",y=((R=window.insuranceData)==null?void 0:R.vehicleModel)||"",h=((U=window.insuranceData)==null?void 0:U.make)||"",m=((G=window.insuranceData)==null?void 0:G.category)||"",P=((V=window.insuranceData)==null?void 0:V.vehicleColor)||"",f=((W=window.insuranceData)==null?void 0:W.registrationNo)||"",w=((H=window.insuranceData)==null?void 0:H.chassisNo)||"",u=((_=window.insuranceData)==null?void 0:_.engineNo)||"",c=(K=window.insuranceData)!=null&&K.registrationDate?new Date(window.insuranceData.registrationDate).toLocaleDateString("en-US",{month:"short",day:"2-digit",year:"numeric"}):"",v=(Y=window.insuranceData)!=null&&Y.expirationDate?new Date(window.insuranceData.expirationDate).toLocaleDateString("en-US",{month:"short",day:"2-digit",year:"numeric"}):"",S=((q=window.insuranceData)==null?void 0:q.authRenewal)||"",N=((J=window.insuranceData)==null?void 0:J.code)||"",$=((Q=window.insuranceData)==null?void 0:Q.thirdPartyLiability)||"",b=((X=window.insuranceData)==null?void 0:X.personalAccident)||"",s=((Z=window.insuranceData)==null?void 0:Z.tppd)||"",z=((tt=window.insuranceData)==null?void 0:tt.documentaryStamps)||"",D=((et=window.insuranceData)==null?void 0:et.valueAddedTax)||"",k=((st=window.insuranceData)==null?void 0:st.localGovTax)||"",yt=g>=1&&g<=500?"white":"inherit",C=e>=1&&e<=200?"white":"inherit",T=d>=1&&d<=200?"white":"inherit";let p=`
         <!DOCTYPE html>
         <html>
         <head>
@@ -125,7 +125,7 @@ window.selectPolicyofCover=function(){var a,i;if(typeof isLocked<"u"&&isLocked){
                                 <div class="row-fluid body" style="font-size:25px;">
                                     <h5 class="title" style="font-size:25px;">
                                         <b>
-                                            ${N?`<h4 style="text-align:right;font-size:25px;">${N}</h4>`:'<h4 style="text-align:right;font-size:25px; color:#ffffff;">&nbsp;</h4>'}
+                                            ${S?`<h4 style="text-align:right;font-size:25px;">${S}</h4>`:'<h4 style="text-align:right;font-size:25px; color:#ffffff;">&nbsp;</h4>'}
                                         </b>
                                     </h5>
                                     <table class="table" style="font-size:25px;">
@@ -300,7 +300,7 @@ window.selectPolicyofCover=function(){var a,i;if(typeof isLocked<"u"&&isLocked){
                             <div class="container-fluid" id="outprint_pup">
                                 <br><br><br><br><br><br><br><br>
                                 <div class="row-fluid body">
-                                    <h5 class="title">Insurance Ref. Code :${S}</h5>
+                                    <h5 class="title">Insurance Ref. Code :${N}</h5>
                                     <table class="table" style="width: 956px;>">
                                         <tbody>
                                             <tr>
@@ -457,7 +457,7 @@ window.selectPolicyofCover=function(){var a,i;if(typeof isLocked<"u"&&isLocked){
                             <div class="container-fluid" id="outprint_mil">
                                 <br><br><br><br><br><br><br><br>
                                 <div class="row-fluid body">
-                                    <h5 class="title">Insurance Ref. Code :${S}</h5>
+                                    <h5 class="title">Insurance Ref. Code :${N}</h5>
                                     <table class="table" style="width: 956px;>">
                                         <tbody>
                                             <tr>
