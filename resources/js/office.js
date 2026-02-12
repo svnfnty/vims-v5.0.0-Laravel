@@ -214,7 +214,7 @@ function renderCards(data) {
 
                 <div class="card-footer">
                     <div class="action-buttons">
-                        <button disabled class="action-btn-small view view_data" data-id="${office.id}">
+                        <button class="action-btn-small view view_data" data-id="${office.id}">
                             <i class="fas fa-eye"></i>
                             View
                         </button>
@@ -475,28 +475,19 @@ window.openViewModal = function(id) {
     if (!office) return;
 
     elements.modalTitle.textContent = 'View Office Details';
-    elements.submitBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
-    elements.submitBtn.setAttribute('type', 'button');
-    elements.submitBtn.onclick = function() {
-        // Close current modal
-        gsap.to(elements.officeModal, {
-            opacity: 0,
-            scale: 0.9,
-            y: -50,
-            duration: 0.3,
-            ease: 'back.in',
-            onComplete: function() {
-                openEditModal(id);
-            }
-        });
-    };
+    
+    // Hide submit button in view mode - only show Close button
+    elements.submitBtn.style.display = 'none';
 
     elements.officeName.value = office.office_name;
     elements.officeName.setAttribute('readonly', true);
+    elements.officeName.classList.add('view-only-field');
     elements.officeAddress.value = office.office_address;
     elements.officeAddress.setAttribute('readonly', true);
+    elements.officeAddress.classList.add('view-only-field');
     elements.status.value = office.status;
     elements.status.setAttribute('disabled', true);
+    elements.status.classList.add('view-only-select');
 
     elements.createdDateDisplay.textContent = new Date(office.created_at).toLocaleString();
 
@@ -556,8 +547,13 @@ window.closeOfficeModal = function() {
             document.querySelectorAll('.form-control').forEach(el => {
                 el.removeAttribute('readonly');
                 el.removeAttribute('disabled');
+                el.classList.remove('view-only-field', 'view-only-select');
             });
             document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            // Show submit button again for create/edit modes
+            elements.submitBtn.style.display = 'inline-block';
+            elements.submitBtn.setAttribute('type', 'submit');
+            elements.submitBtn.onclick = null;
             elements.submitBtn.disabled = false;
         }
     });
