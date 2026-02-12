@@ -503,6 +503,43 @@
         @apply text-rose-500 text-xs mt-1 block;
     }
 
+    /* View-Only Mode Styles */
+    .view-only-field {
+        @apply bg-gray-100 text-gray-600 cursor-not-allowed border-gray-300;
+        background-color: #f3f4f6 !important;
+        color: #6b7280 !important;
+        cursor: not-allowed !important;
+        border-color: #d1d5db !important;
+    }
+
+    .view-only-field:focus {
+        @apply border-gray-300;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    .view-only-select {
+        @apply bg-gray-100 text-gray-600 cursor-not-allowed border-gray-300;
+        background-color: #f3f4f6 !important;
+        color: #6b7280 !important;
+        cursor: not-allowed !important;
+        border-color: #d1d5db !important;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .view-only-select:focus {
+        @apply border-gray-300;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    /* Style for disabled select dropdown arrow */
+    .view-only-select::-ms-expand {
+        display: none;
+    }
+
     /* Filter Controls */
     .filter-controls {
         @apply flex gap-3;

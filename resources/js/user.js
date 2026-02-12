@@ -255,7 +255,7 @@ function renderCards(data) {
 
                 <div class="card-footer">
                     <div class="action-buttons">
-                        <button disabled class="action-btn-small view view_data" data-id="${user.id}">
+                        <button class="action-btn-small view view_data" data-id="${user.id}">
                             <i class="fas fa-eye"></i>
                             View
                         </button>
@@ -532,44 +532,46 @@ window.openViewModal = function(id) {
     if (!user) return;
 
     elements.modalTitle.textContent = 'View User Details';
-    elements.submitBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
-    elements.submitBtn.setAttribute('type', 'button');
-    elements.submitBtn.onclick = function() {
-        // Close current modal
-        gsap.to(elements.userModal, {
-            opacity: 0,
-            scale: 0.9,
-            y: -50,
-            duration: 0.3,
-            ease: 'back.in',
-            onComplete: function() {
-                openEditModal(id);
-            }
-        });
-    };
+    
+    // Hide submit button in view mode - only show Close button
+    elements.submitBtn.style.display = 'none';
 
     elements.firstname.value = user.firstname;
     elements.firstname.setAttribute('readonly', true);
+    elements.firstname.classList.add('view-only-field');
     elements.middlename.value = user.middlename;
     elements.middlename.setAttribute('readonly', true);
+    elements.middlename.classList.add('view-only-field');
     elements.lastname.value = user.lastname;
     elements.lastname.setAttribute('readonly', true);
+    elements.lastname.classList.add('view-only-field');
     elements.username.value = user.username;
     elements.username.setAttribute('readonly', true);
+    elements.username.classList.add('view-only-field');
     elements.email.value = user.email;
     elements.email.setAttribute('readonly', true);
+    elements.email.classList.add('view-only-field');
     elements.password.value = '';
     elements.password.setAttribute('readonly', true);
+    elements.password.classList.add('view-only-field');
     elements.avatar.value = user.avatar;
     elements.avatar.setAttribute('readonly', true);
+    elements.avatar.classList.add('view-only-field');
     elements.type.value = user.type;
-    elements.type.setAttribute('readonly', true);
+    elements.type.setAttribute('disabled', true);
+    elements.type.classList.add('view-only-select');
     elements.status.value = user.status;
     elements.status.setAttribute('disabled', true);
+    elements.status.classList.add('view-only-select');
     elements.permissions.value = user.permissions;
     elements.permissions.setAttribute('disabled', true);
+    elements.permissions.classList.add('view-only-select');
     elements.credit.value = user.credit;
     elements.credit.setAttribute('readonly', true);
+    elements.credit.classList.add('view-only-field');
+    elements.office.value = user.office_id;
+    elements.office.setAttribute('disabled', true);
+    elements.office.classList.add('view-only-select');
 
     elements.createdDateDisplay.textContent = new Date(user.created_at).toLocaleString();
 
@@ -629,8 +631,13 @@ window.closeUserModal = function() {
             document.querySelectorAll('.form-control').forEach(el => {
                 el.removeAttribute('readonly');
                 el.removeAttribute('disabled');
+                el.classList.remove('view-only-field', 'view-only-select');
             });
             document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            // Show submit button again for create/edit modes
+            elements.submitBtn.style.display = 'inline-block';
+            elements.submitBtn.setAttribute('type', 'submit');
+            elements.submitBtn.onclick = null;
             elements.submitBtn.disabled = false;
         }
     });
