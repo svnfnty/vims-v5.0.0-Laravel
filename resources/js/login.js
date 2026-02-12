@@ -144,4 +144,23 @@ window.sendMessage = sendMessage;
 document.addEventListener('DOMContentLoaded', function() {
     // Add any initialization logic here
     console.log('Login page loaded');
+
+    // Password toggle functionality
+    const passwordToggle = document.getElementById('password-toggle');
+    const passwordInput = document.getElementById('password');
+    const passwordIcon = document.getElementById('password-icon');
+
+    if (passwordToggle && passwordInput && passwordIcon) {
+        passwordToggle.addEventListener('click', function() {
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                passwordIcon.classList.remove('fa-eye');
+                passwordIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                passwordIcon.classList.remove('fa-eye-slash');
+                passwordIcon.classList.add('fa-eye');
+            }
+        });
+    }
 });

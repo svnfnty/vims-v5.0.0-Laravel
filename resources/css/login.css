@@ -247,6 +247,28 @@ body::before {
     color: #4e73df;
 }
 
+/* Password toggle button */
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 5px;
+    z-index: 10;
+}
+
+.password-toggle:hover {
+    color: #4e73df;
+}
+
+.password-input {
+    padding-right: 40px;
+}
+
 /* Error message - Exact from original */
 .error-msg {
     color: #dc3545;
