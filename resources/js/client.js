@@ -652,15 +652,13 @@ window.openViewModal = function(id) {
     const createdDateDisplay = document.getElementById('createdDateDisplay');
 
     if (modalTitle) modalTitle.textContent = 'View Client Details';
+    
+    // Hide submit button in view mode - only show Cancel/Close button
     if (submitBtn) {
         submitBtn.style.display = 'none';
     }
-    const modalActions = document.querySelector('.modal-actions');
-    if (modalActions) {
-        modalActions.style.display = 'none';
-    }
 
-    // Set form values (readonly)
+    // Set form values (readonly) with view-only styling
     const firstname = document.getElementById('firstname');
     const middlename = document.getElementById('middlename');
     const lastname = document.getElementById('lastname');
@@ -672,44 +670,37 @@ window.openViewModal = function(id) {
     if (firstname) {
         firstname.value = client.firstname || '';
         firstname.setAttribute('readonly', true);
-        firstname.style.backgroundColor = '#f5f5f5';
-        firstname.style.color = '#6c757d';
+        firstname.classList.add('view-only-field');
     }
     if (middlename) {
         middlename.value = client.middlename || '';
         middlename.setAttribute('readonly', true);
-        middlename.style.backgroundColor = '#f5f5f5';
-        middlename.style.color = '#6c757d';
+        middlename.classList.add('view-only-field');
     }
     if (lastname) {
         lastname.value = client.lastname || '';
         lastname.setAttribute('readonly', true);
-        lastname.style.backgroundColor = '#f5f5f5';
-        lastname.style.color = '#6c757d';
+        lastname.classList.add('view-only-field');
     }
     if (email) {
         email.value = client.email || '';
         email.setAttribute('readonly', true);
-        email.style.backgroundColor = '#f5f5f5';
-        email.style.color = '#6c757d';
+        email.classList.add('view-only-field');
     }
     if (address) {
         address.value = client.address || '';
         address.setAttribute('readonly', true);
-        address.style.backgroundColor = '#f5f5f5';
-        address.style.color = '#6c757d';
+        address.classList.add('view-only-field');
     }
     if (walkinList) {
         walkinList.value = client.markup || '';
         walkinList.setAttribute('disabled', true);
-        walkinList.style.backgroundColor = '#f5f5f5';
-        walkinList.style.color = '#6c757d';
+        walkinList.classList.add('view-only-select');
     }
     if (status) {
         status.value = client.status || '';
         status.setAttribute('disabled', true);
-        status.style.backgroundColor = '#f5f5f5';
-        status.style.color = '#6c757d';
+        status.classList.add('view-only-select');
     }
 
     if (createdDateDisplay) {
@@ -761,6 +752,7 @@ window.closeClientModal = function() {
     const clientModal = document.getElementById('clientModal');
     const modalOverlay = document.getElementById('modalOverlay');
     const clientForm = document.getElementById('clientForm');
+    const submitBtn = document.getElementById('submitBtn');
 
     const closeComplete = function() {
         if (clientModal) clientModal.style.display = 'none';
@@ -770,8 +762,19 @@ window.closeClientModal = function() {
             document.querySelectorAll('.form-control').forEach(el => {
                 el.removeAttribute('readonly');
                 el.removeAttribute('disabled');
+                el.classList.remove('view-only-field', 'view-only-select');
+                // Reset inline styles
+                el.style.backgroundColor = '';
+                el.style.color = '';
             });
             document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+        }
+        // Show submit button again for create/edit modes
+        if (submitBtn) {
+            submitBtn.style.display = 'inline-block';
+            submitBtn.setAttribute('type', 'submit');
+            submitBtn.onclick = null;
+            submitBtn.disabled = false;
         }
     };
 
