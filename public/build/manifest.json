@@ -18,12 +18,12 @@
     "isEntry": true
   },
   "resources/css/category.css": {
-    "file": "assets/category-BTBNmyYT.css",
+    "file": "assets/category-YEkFaCju.css",
     "src": "resources/css/category.css",
     "isEntry": true
   },
   "resources/css/client.css": {
-    "file": "assets/client-BeHYkzz-.css",
+    "file": "assets/client-C7FPg9Dv.css",
     "src": "resources/css/client.css",
     "isEntry": true
   },
@@ -33,17 +33,17 @@
     "isEntry": true
   },
   "resources/css/login.css": {
-    "file": "assets/login-BSGCDSsH.css",
+    "file": "assets/login-Do6Ch5np.css",
     "src": "resources/css/login.css",
     "isEntry": true
   },
   "resources/css/office.css": {
-    "file": "assets/office-EZsCImLz.css",
+    "file": "assets/office-BBfk7wco.css",
     "src": "resources/css/office.css",
     "isEntry": true
   },
   "resources/css/policies.css": {
-    "file": "assets/policies-C_zvMMkL.css",
+    "file": "assets/policies-aXLd6fuV.css",
     "src": "resources/css/policies.css",
     "isEntry": true
   },
@@ -53,7 +53,7 @@
     "isEntry": true
   },
   "resources/css/series.css": {
-    "file": "assets/series-DBRihG2q.css",
+    "file": "assets/series-B7iL8CBq.css",
     "src": "resources/css/series.css",
     "isEntry": true
   },
@@ -68,7 +68,7 @@
     "isEntry": true
   },
   "resources/css/user.css": {
-    "file": "assets/user-C7uQ_EEw.css",
+    "file": "assets/user-C0Cy4gx5.css",
     "src": "resources/css/user.css",
     "isEntry": true
   },
@@ -78,7 +78,7 @@
     "isEntry": true
   },
   "resources/css/walkin.css": {
-    "file": "assets/walkin-BN1JMx-3.css",
+    "file": "assets/walkin-BhNXgsUN.css",
     "src": "resources/css/walkin.css",
     "isEntry": true
   },
@@ -98,25 +98,25 @@
     "isEntry": true
   },
   "resources/js/buttonConfirmation.js": {
-    "file": "assets/buttonConfirmation-BFeM8jxa.js",
+    "file": "assets/buttonConfirmation-DZsk_loT.js",
     "name": "buttonConfirmation",
     "src": "resources/js/buttonConfirmation.js",
     "isEntry": true
   },
   "resources/js/buttonPolicy.js": {
-    "file": "assets/buttonPolicy-Dliyv7C2.js",
+    "file": "assets/buttonPolicy-DyOwbwFZ.js",
     "name": "buttonPolicy",
     "src": "resources/js/buttonPolicy.js",
     "isEntry": true
   },
   "resources/js/buttonReceipt.js": {
-    "file": "assets/buttonReceipt-hgUumAaa.js",
+    "file": "assets/buttonReceipt-DutV22_6.js",
     "name": "buttonReceipt",
     "src": "resources/js/buttonReceipt.js",
     "isEntry": true
   },
   "resources/js/category.js": {
-    "file": "assets/category-OvgLGUQV.js",
+    "file": "assets/category-JXXoxPVB.js",
     "name": "category",
     "src": "resources/js/category.js",
     "isEntry": true,
@@ -126,25 +126,25 @@
     ]
   },
   "resources/js/client.js": {
-    "file": "assets/client-Bj7xteO-.js",
+    "file": "assets/client-Bl6J9n4T.js",
     "name": "client",
     "src": "resources/js/client.js",
     "isEntry": true
   },
   "resources/js/insurance.js": {
-    "file": "assets/insurance-Bndoc4Zo.js",
+    "file": "assets/insurance-BEUVTkjb.js",
     "name": "insurance",
     "src": "resources/js/insurance.js",
     "isEntry": true
   },
   "resources/js/login.js": {
-    "file": "assets/login-BF1sWNUq.js",
+    "file": "assets/login-DW9c4kYz.js",
     "name": "login",
     "src": "resources/js/login.js",
     "isEntry": true
   },
   "resources/js/office.js": {
-    "file": "assets/office-BFd1ICMr.js",
+    "file": "assets/office-CF0XZsOq.js",
     "name": "office",
     "src": "resources/js/office.js",
     "isEntry": true,
@@ -154,7 +154,7 @@
     ]
   },
   "resources/js/policies.js": {
-    "file": "assets/policies-C9GoH1vJ.js",
+    "file": "assets/policies-V_3W68Qj.js",
     "name": "policies",
     "src": "resources/js/policies.js",
     "isEntry": true,
@@ -164,7 +164,7 @@
     ]
   },
   "resources/js/series.js": {
-    "file": "assets/series-Dm453oKR.js",
+    "file": "assets/series-BHPPMvdk.js",
     "name": "series",
     "src": "resources/js/series.js",
     "isEntry": true,
@@ -189,7 +189,7 @@
     ]
   },
   "resources/js/user.js": {
-    "file": "assets/user-DMSKe0_f.js",
+    "file": "assets/user-CvxFYBRh.js",
     "name": "user",
     "src": "resources/js/user.js",
     "isEntry": true,
@@ -205,7 +205,7 @@
     "isEntry": true
   },
   "resources/js/walkin.js": {
-    "file": "assets/walkin-CvRfmJNQ.js",
+    "file": "assets/walkin-D63IXTjd.js",
     "name": "walkin",
     "src": "resources/js/walkin.js",
     "isEntry": true,

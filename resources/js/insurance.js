@@ -610,7 +610,7 @@ async function showMvFileInputDialog() {
                 <span><strong>Tip:</strong> MV File Number links this insurance to a specific vehicle. If the vehicle exists in another office, you can copy its data.</span>
             </div>
             <div class="input-wrapper">
-                <input type="text" id="mvfile-input" class="modern-input" placeholder="Enter MV File Number" data-tutorial="mvfile-input">
+                <input type="text" id="mvfile-input" class="modern-input" placeholder="Enter MV File Number (14 digits + 1 letter/number)" maxlength="15" pattern="[0-9]{14}[A-Za-z0-9]" data-tutorial="mvfile-input">
                 <div class="status-indicator" id="status-indicator"></div>
             </div>
             <div class="status-message" id="status-message"></div>
@@ -656,6 +656,19 @@ async function showMvFileInputDialog() {
                         lastMvFileRecord = null;
                         isCopyFromOtherOffice = false;
                         validationComplete = true;
+                        hideMvFileNotification();
+                        return;
+                    }
+
+                    // Validate 14 digits + 1 alphanumeric format
+                    if (!/^[0-9]{14}[A-Za-z0-9]$/.test(value)) {
+                        statusIndicator.className = 'status-indicator invalid';
+                        statusMessage.textContent = 'Invalid format. Use 14 digits followed by 1 letter or number';
+                        statusMessage.className = 'status-message error';
+                        recordDetails.style.display = 'none';
+                        lastMvFileRecord = null;
+                        isCopyFromOtherOffice = false;
+                        validationComplete = false;
                         hideMvFileNotification();
                         return;
                     }
@@ -774,6 +787,11 @@ async function showMvFileInputDialog() {
 
                 if (!value) {
                     Swal.showValidationMessage('MV File number is required!');
+                    return false;
+                }
+
+                if (!/^[0-9]{14}[A-Za-z0-9]$/.test(value)) {
+                    Swal.showValidationMessage('Invalid format. Use 14 digits followed by 1 letter or number');
                     return false;
                 }
 

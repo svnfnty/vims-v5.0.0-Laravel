@@ -50,11 +50,11 @@
                 <i class="bi bi-card-list mr-2"></i> <span class="nav-text">Policy Series</span>
             </a>
             <div class="mt-6 mb-2 text-xs uppercase text-gray-400 px-2 font-semibold tracking-wider">Maintenance</div>
-            <a class="nav-link {{ request()->routeIs('category.index') ? 'active' : '' }}" href="{{ route('category.index') }}">
-                <i class="bi bi-tags mr-2"></i> <span class="nav-text">Category List</span>
-            </a>
             <a class="nav-link {{ request()->routeIs('policies.index') ? 'active' : '' }}" href="{{ route('policies.index') }}">
                 <i class="bi bi-list-check mr-2"></i> <span class="nav-text">Policies List</span>
+            </a>
+            <a class="nav-link {{ request()->routeIs('category.index') ? 'active' : '' }}" href="{{ route('category.index') }}">
+                <i class="bi bi-tags mr-2"></i> <span class="nav-text">Category List</span>
             </a>
             <a class="nav-link {{ request()->routeIs('walkin.index') ? 'active' : '' }}" href="{{ route('walkin.index') }}">
                 <i class="bi bi-person-lines-fill mr-2"></i> <span class="nav-text">Walkin List</span>
