@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
@@ -12,11 +13,55 @@ use App\Models\Office;
 class AppServiceProvider extends ServiceProvider
 {
     /**
+     * Default system values when database is not available
+     */
+    private const DEFAULT_SYSTEM_NAME = 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
+    private const DEFAULT_SYSTEM_SHORTNAME = 'VIMSYS SAAS 2026';
+    private const DEFAULT_LOGO = '';
+    private const DEFAULT_COVER = '';
+
+    /**
      * Register any application services.
      */
     public function register(): void
     {
         //
+    }
+
+    /**
+     * Check if database connection is available and SystemInfo table exists
+     */
+    private function isDatabaseAvailable(): bool
+    {
+        try {
+            // Check if we can connect to database
+            DB::connection()->getPdo();
+            
+            // Check if SystemInfo table exists
+            if (!Schema::hasTable('system_info')) {
+                return false;
+            }
+            
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get system config safely with fallback to defaults
+     */
+    private function getSystemConfig(string $field, string $default): string
+    {
+        if (!$this->isDatabaseAvailable()) {
+            return $default;
+        }
+
+        try {
+            return SystemInfo::where('meta_field', $field)->value('meta_value') ?? $default;
+        } catch (\Exception $e) {
+            return $default;
+        }
     }
 
     /**
@@ -27,27 +72,11 @@ class AppServiceProvider extends ServiceProvider
         // Always set forceScheme
         URL::forceScheme('https');
         
-        // Skip during console commands that don't need DB
-        if (app()->runningInConsole()) {
-            $command = $_SERVER['argv'][1] ?? '';
-            $skipCommands = ['package:discover', 'config:cache', 'event:cache', 'route:cache', 'view:cache'];
-            
-            if (in_array($command, $skipCommands)) {
-                // Still set default view shares for console
-                View::share('systemName', 'VEHICLE INSURANCE MANAGEMENT SYSTEM');
-                View::share('systemShortName', 'VIMSYS SAAS 2026');
-                View::share('systemLogo', '');
-                View::share('systemCover', '');
-                return;
-            }
-        }
-        
-        // Get system info from database - only if not in console
-        // OR if it's a console command that needs DB (like migrate)
-        $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
-        $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'VIMSYS SAAS 2026';
-        $systemLogo = SystemInfo::where('meta_field', 'logo')->value('meta_value') ?? '';
-        $systemCover = SystemInfo::where('meta_field', 'cover')->value('meta_value') ?? '';
+        // Get system info safely - works even when database is not available
+        $systemName = $this->getSystemConfig('system_name', self::DEFAULT_SYSTEM_NAME);
+        $systemShortName = $this->getSystemConfig('system_shortname', self::DEFAULT_SYSTEM_SHORTNAME);
+        $systemLogo = $this->getSystemConfig('logo', self::DEFAULT_LOGO);
+        $systemCover = $this->getSystemConfig('cover', self::DEFAULT_COVER);
         
         View::share('systemName', $systemName);
         View::share('systemShortName', $systemShortName);
@@ -55,14 +84,17 @@ class AppServiceProvider extends ServiceProvider
         View::share('systemCover', $systemCover);
         
         View::composer('layouts.app', function ($view) {
-            $officeName = 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
+            $officeName = self::DEFAULT_SYSTEM_NAME;
             
-            // Only query if user is logged in AND we're not in a console command
+            // Only query if user is logged in AND database is available
             if (!app()->runningInConsole() && auth()->check() && auth()->user()->office_id) {
                 try {
-                    $office = Office::find(auth()->user()->office_id);
-                    if ($office) {
-                        $officeName = $office->office_name;
+                    // Check database availability before querying
+                    if (Schema::hasTable('offices')) {
+                        $office = Office::find(auth()->user()->office_id);
+                        if ($office) {
+                            $officeName = $office->office_name;
+                        }
                     }
                 } catch (\Exception $e) {
                     // Keep default

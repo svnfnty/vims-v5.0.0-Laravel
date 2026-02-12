@@ -4,19 +4,65 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use App\Models\SystemInfo;
 use App\Models\MaintenanceMode;
 use Illuminate\Support\Facades\Auth;
 
 class SettingsController extends Controller
 {
+    /**
+     * Default system values when database is not available
+     */
+    private const DEFAULT_SYSTEM_NAME = 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
+    private const DEFAULT_SYSTEM_SHORTNAME = 'VIMSYS SAAS 2026';
+    private const DEFAULT_LOGO = '';
+    private const DEFAULT_COVER = '';
+
+    /**
+     * Check if database connection is available and SystemInfo table exists
+     */
+    private function isDatabaseAvailable(): bool
+    {
+        try {
+            // Check if we can connect to database
+            DB::connection()->getPdo();
+            
+            // Check if SystemInfo table exists
+            if (!Schema::hasTable('system_info')) {
+                return false;
+            }
+            
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Get system config safely with fallback to defaults
+     */
+    private function getSystemConfigSafe(string $field, string $default): string
+    {
+        if (!$this->isDatabaseAvailable()) {
+            return $default;
+        }
+
+        try {
+            return SystemInfo::where('meta_field', $field)->value('meta_value') ?? $default;
+        } catch (\Exception $e) {
+            return $default;
+        }
+    }
+
     public function index()
     {
-        // Get system info from database
-        $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
-        $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'VIMSYS SAAS 2026';
-        $logo = SystemInfo::where('meta_field', 'logo')->value('meta_value') ?? '';
-        $cover = SystemInfo::where('meta_field', 'cover')->value('meta_value') ?? '';
+        // Get system info safely - works even when database is not available
+        $systemName = $this->getSystemConfigSafe('system_name', self::DEFAULT_SYSTEM_NAME);
+        $systemShortName = $this->getSystemConfigSafe('system_shortname', self::DEFAULT_SYSTEM_SHORTNAME);
+        $logo = $this->getSystemConfigSafe('logo', self::DEFAULT_LOGO);
+        $cover = $this->getSystemConfigSafe('cover', self::DEFAULT_COVER);
 
         // Get maintenance mode status
         $maintenanceStatus = MaintenanceMode::getStatus();

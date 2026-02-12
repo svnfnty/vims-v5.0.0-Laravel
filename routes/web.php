@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\DashboardController;
@@ -19,11 +21,28 @@ use App\Http\Controllers\SettingsController;
 use App\Models\SystemInfo;
 use App\Http\Middleware\MaintenanceModeMiddleware;
 
+// Helper function to safely get system config with database availability check
+function getSystemConfigSafe(string $field, string $default): string {
+    try {
+        // Check if we can connect to database
+        DB::connection()->getPdo();
+        
+        // Check if SystemInfo table exists
+        if (!Schema::hasTable('system_info')) {
+            return $default;
+        }
+        
+        return SystemInfo::where('meta_field', $field)->value('meta_value') ?? $default;
+    } catch (\Exception $e) {
+        return $default;
+    }
+}
+
 Route::get('/login', function () {
-    $systemName = SystemInfo::where('meta_field', 'system_name')->value('meta_value') ?? 'VEHICLE INSURANCE MANAGEMENT SYSTEM';
-    $systemShortName = SystemInfo::where('meta_field', 'system_shortname')->value('meta_value') ?? 'VIMSYS SAAS 2026';
-    $systemLogo = SystemInfo::where('meta_field', 'logo')->value('meta_value') ?? '';
-    $systemCover = SystemInfo::where('meta_field', 'cover')->value('meta_value') ?? '';
+    $systemName = getSystemConfigSafe('system_name', 'VEHICLE INSURANCE MANAGEMENT SYSTEM');
+    $systemShortName = getSystemConfigSafe('system_shortname', 'VIMSYS SAAS 2026');
+    $systemLogo = getSystemConfigSafe('logo', '');
+    $systemCover = getSystemConfigSafe('cover', '');
     return view('auth.login', compact('systemName', 'systemShortName', 'systemLogo', 'systemCover'));
 })->name('login')->middleware('guest');
 
