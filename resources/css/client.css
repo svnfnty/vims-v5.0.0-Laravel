@@ -42,15 +42,31 @@
     }
 
     .control-btn {
-        @apply px-6 py-3 rounded-xl font-semibold flex items-center gap-2 cursor-pointer transition-all duration-300 border-none text-sm no-underline;
+        @apply px-6 py-3 rounded-lg text-sm font-semibold cursor-pointer transition-all duration-300 flex items-center gap-2 no-underline text-white;
+    }
+
+    .control-btn i {
+        @apply text-base transition-transform duration-200;
+    }
+
+    .control-btn:hover i {
+        @apply translate-x-0.5;
     }
 
     .control-btn.primary {
-        @apply bg-blue-600 text-white shadow-md hover:-translate-y-0.5 hover:shadow-lg;
+        @apply bg-gradient-to-br from-blue-600 to-blue-700 hover:from-purple-800 hover:to-blue-600 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0;
     }
 
     .control-btn.secondary {
-        @apply bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50;
+        @apply bg-white text-gray-500 border border-gray-300 hover:bg-gray-50 hover:text-gray-600 hover:-translate-y-0.5 hover:shadow-lg active:translate-y-0;
+    }
+
+    .control-btn.primary i {
+        @apply text-white;
+    }
+
+    .control-btn.secondary i {
+        @apply text-gray-500;
     }
 
     /* Stats Section */
