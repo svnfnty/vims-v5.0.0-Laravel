@@ -59,7 +59,10 @@
                         <label for="email">Email</label>
                     </div>
                     <div class="form-floating mb-3 animate__animated animate__fadeInUp animate-delay-2">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                        <input type="password" class="form-control password-input" id="password" name="password" placeholder="Password" required>
+                        <button type="button" class="password-toggle" id="password-toggle">
+                            <i class="fas fa-eye" id="password-icon"></i>
+                        </button>
                         <label for="password">Password</label>
                     </div>
                     <div class="terms-check form-check mb-3 animate__animated animate__fadeInUp animate-delay-3">
