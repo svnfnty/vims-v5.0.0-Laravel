@@ -253,7 +253,7 @@ function renderCards(data) {
 
                 <div class="card-footer">
                     <div class="action-buttons">
-                        <button disabled class="action-btn-small view view_data" data-id="${walkin.id}">
+                        <button class="action-btn-small view view_data" data-id="${walkin.id}">
                             <i class="fas fa-eye"></i>
                             View
                         </button>
@@ -538,38 +538,33 @@ window.openViewModal = function(id) {
     if (!walkin) return;
 
     elements.modalTitle.textContent = 'View Walkin Details';
-    elements.submitBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
-    elements.submitBtn.setAttribute('type', 'button');
-    elements.submitBtn.onclick = function() {
-        // Close current modal
-        gsap.to(elements.walkinModal, {
-            opacity: 0,
-            scale: 0.9,
-            y: -50,
-            duration: 0.3,
-            ease: 'back.in',
-            onComplete: function() {
-                openEditModal(id);
-            }
-        });
-    };
+    
+    // Hide submit button in view mode - only show Close button
+    elements.submitBtn.style.display = 'none';
 
     elements.email.value = walkin.email;
     elements.email.setAttribute('readonly', true);
+    elements.email.classList.add('view-only-field');
     elements.accountID.value = walkin.accountID;
     elements.accountID.setAttribute('readonly', true);
+    elements.accountID.classList.add('view-only-field');
     elements.name.value = walkin.name;
     elements.name.setAttribute('readonly', true);
+    elements.name.classList.add('view-only-field');
     elements.color.value = walkin.color;
     elements.color.setAttribute('readonly', true);
+    elements.color.classList.add('view-only-field');
     elements.description.value = walkin.description;
     elements.description.setAttribute('readonly', true);
+    elements.description.classList.add('view-only-field');
     if (elements.officeId) {
         elements.officeId.value = walkin.office_id;
-        elements.officeId.setAttribute('readonly', true);
+        elements.officeId.setAttribute('disabled', true);
+        elements.officeId.classList.add('view-only-select');
     }
     elements.status.value = walkin.status;
     elements.status.setAttribute('disabled', true);
+    elements.status.classList.add('view-only-select');
 
     elements.createdDateDisplay.textContent = new Date(walkin.created_at).toLocaleString();
 
@@ -629,8 +624,13 @@ window.closeWalkinModal = function() {
             document.querySelectorAll('.form-control').forEach(el => {
                 el.removeAttribute('readonly');
                 el.removeAttribute('disabled');
+                el.classList.remove('view-only-field', 'view-only-select');
             });
             document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            // Show submit button again for create/edit modes
+            elements.submitBtn.style.display = 'inline-block';
+            elements.submitBtn.setAttribute('type', 'submit');
+            elements.submitBtn.onclick = null;
             elements.submitBtn.disabled = false;
         }
     });
