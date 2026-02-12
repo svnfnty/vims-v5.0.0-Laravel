@@ -12,6 +12,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="icon" href="{{ $systemLogo ? asset('storage/' . $systemLogo) : asset('logo.png') }}" type="image/png">
     @vite(['resources/css/login.css', 'resources/js/login.js'])
+    <style>
+        :root {
+            --cover-url: url('{{ $systemCover ? asset('storage/' . $systemCover) : asset('cover.png') }}');
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
