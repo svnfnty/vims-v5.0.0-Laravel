@@ -97,6 +97,24 @@
     "src": "resources/js/app.js",
     "isEntry": true
   },
+  "resources/js/buttonConfirmation.js": {
+    "file": "assets/buttonConfirmation-BFeM8jxa.js",
+    "name": "buttonConfirmation",
+    "src": "resources/js/buttonConfirmation.js",
+    "isEntry": true
+  },
+  "resources/js/buttonPolicy.js": {
+    "file": "assets/buttonPolicy-Dliyv7C2.js",
+    "name": "buttonPolicy",
+    "src": "resources/js/buttonPolicy.js",
+    "isEntry": true
+  },
+  "resources/js/buttonReceipt.js": {
+    "file": "assets/buttonReceipt-hgUumAaa.js",
+    "name": "buttonReceipt",
+    "src": "resources/js/buttonReceipt.js",
+    "isEntry": true
+  },
   "resources/js/category.js": {
     "file": "assets/category-OvgLGUQV.js",
     "name": "category",
@@ -181,7 +199,7 @@
     ]
   },
   "resources/js/view.js": {
-    "file": "assets/view-CwH0MpZW.js",
+    "file": "assets/view-Bow4BQd4.js",
     "name": "view",
     "src": "resources/js/view.js",
     "isEntry": true
