@@ -27,6 +27,20 @@ class AppServiceProvider extends ServiceProvider
         // Always set forceScheme
         URL::forceScheme('https');
         
+        // Skip during console commands that don't need DB
+        if (app()->runningInConsole()) {
+            $command = $_SERVER['argv'][1] ?? '';
+            $skipCommands = ['package:discover', 'config:cache', 'event:cache', 'route:cache', 'view:cache'];
+            
+            if (in_array($command, $skipCommands)) {
+                // Still set default view shares for console
+                View::share('systemName', 'VEHICLE INSURANCE MANAGEMENT SYSTEM');
+                View::share('systemShortName', 'VIMSYS SAAS 2026');
+                View::share('systemLogo', '');
+                View::share('systemCover', '');
+                return;
+            }
+        }
         
         // Get system info from database - only if not in console
         // OR if it's a console command that needs DB (like migrate)
