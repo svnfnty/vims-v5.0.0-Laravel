@@ -1,4 +1,3 @@
-
 window.selectPolicyofCover = function() {
     if (typeof isLocked !== 'undefined' && isLocked) {
         showLockedAlert();
@@ -278,6 +277,32 @@ function generatePrintContent(value, label, documentType) {
     const mvFileNo = window.authData?.mvFileNo || "MV File Number";
     const cost = window.insuranceData?.cost || 0;
     const currentDate = new Date().toLocaleDateString();
+    const policyNo = window.insuranceData?.policyNo || "";
+    const orNo = window.insuranceData?.orNo || "";
+    const cocNo = window.insuranceData?.cocNo || "";
+    const vehicleModel = window.insuranceData?.vehicleModel || "";
+    const make = window.insuranceData?.make || "";
+    const category = window.insuranceData?.category || "";
+    const vehicleColor = window.insuranceData?.vehicleColor || "";
+    const registrationNo = window.insuranceData?.registrationNo || "";
+    const chassisNo = window.insuranceData?.chassisNo || "";
+    const engineNo = window.insuranceData?.engineNo || "";
+    const registrationDate = window.insuranceData?.registrationDate ? new Date(window.insuranceData.registrationDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "";
+    const expirationDate = window.insuranceData?.expirationDate ? new Date(window.insuranceData.expirationDate).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : "";
+    const authRenewal = window.insuranceData?.authRenewal || "";
+    const code = window.insuranceData?.code || "";
+    const thirdPartyLiability = window.insuranceData?.thirdPartyLiability || "";
+    const personalAccident = window.insuranceData?.personalAccident || "";
+    const tppd = window.insuranceData?.tppd || "";
+    const documentaryStamps = window.insuranceData?.documentaryStamps || "";
+    const valueAddedTax = window.insuranceData?.valueAddedTax || "";
+    const localGovTax = window.insuranceData?.localGovTax || "";
+
+    // Determine colors based on coc_no and policy_no
+
+    const cocColor = (cocNo >= 1 && cocNo <= 500) ? "white" : "inherit";
+    const policyColor = (policyNo >= 1 && policyNo <= 200) ? "white" : "inherit";
+    const orColor = (orNo >= 1 && orNo <= 200) ? "white" : "inherit";
 
     let content = `
         <!DOCTYPE html>
@@ -285,13 +310,16 @@ function generatePrintContent(value, label, documentType) {
         <head>
             <title>${label} - ${documentType}</title>
             <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
-                .header { text-align: center; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
-                .company-name { color: #2563eb; margin-bottom: 10px; }
-                .client-info { margin: 20px 0; }
-                .client-info div { margin-bottom: 5px; }
-                .amount { font-size: 18px; font-weight: bold; margin: 20px 0; }
-                .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; }
+                body { font-family: Arial, sans-serif; margin: 20px; font-size: 25px; line-height: 1.5; font-weight: normal; color: #1c1e21; }
+                .container { font-size: 15px; line-height: 1.5; font-weight: normal; color: #1c1e21; }
+                .center { text-align: left !important; }
+                .title { height: 18px; background-color: #fdfdfd; border: 2px solid transparent; color: #000000; position: relative; top: -10px; }
+                .header, .body { border: 1px solid transparent; }
+                .tbl { width: 1200px; }
+                .tbl { width: 1200px; }
+                table, th, td { border: 3px solid transparent; font-size: 12px; }
+                .list { width: 300px; }
+                .table { position: relative; top: -20px; margin-bottom: -10px; }
             </style>
         </head>
         <body>
@@ -300,61 +328,668 @@ function generatePrintContent(value, label, documentType) {
     switch(value) {
         case 'One':
             content += `
-                <div class="header">${label}</div>
-                <div class="client-info">
-                    <div><strong>Policy Owner:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Plate No:</strong> ${plateNo}</div>
-                    <div><strong>MV File No:</strong> ${mvFileNo}</div>
-                    <div><strong>Issue Date:</strong> ${currentDate}</div>
+                <div id="showOne" class="content py-3 myDiv" style="font-size:25px;">
+                    <div class="card card-outline card-primary rounded-0 shadow" style="font-size:25px;">
+                       
+                        <div class="card-body" style="font-size:25px;">
+                            <div class="container-fluid" id="outprint" style="font-size:25px;">
+                                <br><br><br><br>
+                                <div class="row-fluid body" style="font-size:25px;">
+                                    <h5 class="title" style="font-size:25px;">
+                                        <b>
+                                            ${authRenewal ? `<h4 style="text-align:right;font-size:25px;">${authRenewal}</h4>` : '<h4 style="text-align:right;font-size:25px; color:#ffffff;">&nbsp;</h4>'}
+                                        </b>
+                                    </h5>
+                                    <table class="table" style="font-size:25px;">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list" rowspan="2" style="text-align:right; font-size:25px;">
+                                                    <h4 style="font-size:25px;"></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl center" rowspan="2" style="font-size:25px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl" style="text-align: right; font-size:25px;"></td>
+                                                <td class="tbl" style="text-align:center; font-size:25px;">
+                                                    <b style="color:${cocColor};font-size:25px;">046${cocNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl center" colspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl center" rowspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl" rowspan="2" style="text-align:center; font-size:25px;">
+                                                    <b style="color: ${policyColor}; font-size:25px;">${policyNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl" style="text-align:center; font-size:25px;">
+                                                    <b style="font-size:25px;"></b>
+                                                </td>
+                                                <td class="tbl" style="font-size:25px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:25px;"></td>
+                                                <td class="tbl" style="text-align:center; font-size:25px;">
+                                                    <b style="font-size:23px;">${clientName}</b>
+                                                </td>
+                                                <td class="tbl" style="font-size:25px;"></td>
+                                                <td style="text-align:right; font-size:25px;">
+                                                    <b style="font-size:25px;"></b>
+                                                </td>
+                                                <td style="text-align:center; font-size:25px;">
+                                                    <b style="color: ${orColor}; font-size:25px;">${orNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2" style="font-size:25px;"></td>
+                                                <td class="tbl center" rowspan="2" style="font-size:23px;"><b style="font-size:23px;">${clientAddress}</b>
+                                                </td>
+                                                <td class="tbl center" rowspan="2" style="font-size:25px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl" style="text-align: right; font-size:20px;"><b style="font-size:20px;">${registrationDate}</b></td>
+                                                <td class="tbl" style="font-size:25px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="font-size:25px;"></td>
+                                                <td style="font-size:25px;"></td>
+                                                <td style="font-size:25px;"></td>
+                                                <td style="text-align:right; font-size:25px;">
+                                                    <b style="font-size:20px;">${registrationDate}</b>
+                                                </td>
+                                                <td style="text-align:center; font-size:25px;">
+                                                    <b style="font-size:20px;">${expirationDate}</b>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="table" style="font-size:25px;">
+                                        <tbody>
+                                            <tr style="height: 25px;">
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${vehicleModel}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${make}</b></td>
+                                                <td class="center tbl" style="font-size:15px;"><b style="font-size:18px;">${category}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:18px;">${vehicleColor}</b></td>
+                                                <td style="text-align: center; font-size:25px;"><b style="font-size:20px;">${mvFileNo}</b></td>
+                                            </tr>
+                                            <tr style="height: 25px;">
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${registrationNo}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${chassisNo}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"><b style="font-size:20px;">${engineNo}</b></td>
+                                                <td class="center tbl" style="font-size:25px;"></td>
+                                                <td class="center tbl" style="font-size:25px;"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <table class="">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl " rowspan="2" style="text-align:center;"></td>
+                                                <td class="tbl center" rowspan="5" style="width: 90px; height: 20px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<font color="red" style="text-align:right"></font>
+                                                </tD>
+                                                <td class="tbl ">
+                                                    <font color="red" style="text-align:left;font-size: 20px;"></font>
+                                                </tD>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td style="text-align:center;font-size: 10px;"></td>
+                                                <td style="text-align:center;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<font color="red" style="text-align:right"></font>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <table class='table' style='width: 956px;'>
+                                        <tbody>
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='' style='text-align: right;padding-top: 2px;padding-bottom: 2px;'><b>${thirdPartyLiability}</b></td>
+                                            </tr>
+                                            ${personalAccident ? `
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${personalAccident}</b></td>
+                                            </tr>
+                                            ` : ''}
+                                            ${tppd && tppd != 0 ? `
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>TPPD ${tppd}</b></td>
+                                            </tr>
+                                            ` : ''}
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b>${window.insuranceData?.description || ''}</b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${documentaryStamps}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b>${window.insuranceData?.description1 || ''}</b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${valueAddedTax}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b>${window.insuranceData?.description2 || ''}</b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${localGovTax}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>Total ${cost}.00</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Policy of Cover Issued</div>
-                <div class="footer">${label} - Official Policy</div>
             `;
             break;
+
 
         case 'Two':
             content += `
-                <div class="header">${label}</div>
-                <div class="client-info">
-                    <div><strong>Policy Owner:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Plate No:</strong> ${plateNo}</div>
-                    <div><strong>MV File No:</strong> ${mvFileNo}</div>
-                    <div><strong>Issue Date:</strong> ${currentDate}</div>
+                <div id="showTwo" class="content py-3 myDiv">
+                    <div class="card card-outline card-primary rounded-0 shadow">
+                       
+                        <div class="card-body">
+                            <div class="container-fluid" id="outprint_pup">
+                                <br><br><br><br><br><br><br><br>
+                                <div class="row-fluid body">
+                                    <h5 class="title">Insurance Ref. Code :${code}</h5>
+                                    <table class="table" style="width: 956px;>">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list " rowspan="2" style="text-align:right;">
+                                                    <h4>
+                                                        </h5>
+                                                </td>
+                                                <td class="tbl center" rowspan="2">
+                                                    <h4></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align: right;"></tD>
+                                                <td class="tbl " style="text-align:center;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl center" colspan="2" style="color: white;">A</td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                                <td class="tbl" rowspan="2" style="text-align:center;">
+                                                    <b style="color: ${policyColor};">${policyNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;"><b></b></td>
+                                                <td class="tbl "></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="tbl " style="text-align:center;"><b>${clientName}</b></td>
+                                                <td class="tbl "></tD>
+                                                <td style="text-align:right;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;">
+                                                    <b style="color: ${orColor};">${orNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl " style="text-align:center;"><b>${clientAddress}</b></tD>
+                                                <td class="tbl center" rowspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align: right;"></tD>
+                                                <td style="text-align:right;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;"><b>${expirationDate}</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table><br>
+                                    <table class="table" style="width: 956px;">
+                                        <tbody>
+                                            <tr style="height: 15px;">
+                                                <td class="center tbl" colspan="1.3"><b>${vehicleModel}</b></td>
+                                                <td class="center tbl"> &emsp;&emsp;&emsp;&emsp;&emsp;<b>${make}</b></td>
+                                                <td class='center tbl'>&emsp;&emsp;<b>${category}</b></td>
+                                                <td class="center tbl">&emsp;&emsp;<b>${vehicleColor}</b></td>
+                                                <td class="" style="text-align: center;"><b>${mvFileNo}</b></td>
+                                            </tr>
+                                            <tr style="height: 25px;">
+                                                <td class="center tbl"><b>${registrationNo}</b></td>
+                                                <td class="center tbl">&emsp;&emsp;&emsp;<b style="text-align:left;font-size: 16px;">${chassisNo}</b></td>
+                                                <td class="center tbl">&emsp;&emsp;<b style="text-align:left;font-size: 16px;">${engineNo}</b></td>
+                                                <td class="center tbl"></td>
+                                                <td class="center tbl"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <table class="">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl " rowspan="2" style="text-align:center;"></td>
+                                                <td class="tbl center" rowspan="5" style="width: 90px; height: 20px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<font color="red" style="text-align:right"></font>
+                                                </tD>
+                                                <td class="tbl ">
+                                                    <font color="red" style="text-align:left;font-size: 20px;"></font>
+                                                </tD>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td style="text-align:center;font-size: 10px;"></td>
+                                                <td style="text-align:center;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<font color="red" style="text-align:right"></font>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <table class='table' style='width: 956px;'>
+                                        <tbody>
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='' style='text-align: right;padding-top: 2px;padding-bottom: 2px;'><b>${thirdPartyLiability}</b></td>
+                                            </tr>
+                                            ${personalAccident ? `
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${personalAccident}</b></td>
+                                            </tr>
+                                            ` : ''}
+                                            ${tppd && tppd != 0 ? `
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>TPPD ${tppd}</b></td>
+                                            </tr>
+                                            ` : ''}
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b>${window.insuranceData?.description || ''}</b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${documentaryStamps}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b>${window.insuranceData?.description1 || ''}</b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${valueAddedTax}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b>${window.insuranceData?.description2 || ''}</b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${localGovTax}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>Total ${cost}.00</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Policy of Cover Issued</div>
-                <div class="footer">${label} - Official Policy</div>
             `;
             break;
 
+
         case 'Three':
             content += `
-                <div class="header">${label}</div>
-                <div class="client-info">
-                    <div><strong>Policy Owner:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Plate No:</strong> ${plateNo}</div>
-                    <div><strong>MV File No:</strong> ${mvFileNo}</div>
-                    <div><strong>Issue Date:</strong> ${currentDate}</div>
+                <div id="showThree" class="content py-3 myDiv">
+                    <div class="card card-outline card-primary rounded-0 shadow">
+                        
+                        <div class="card-body">
+                            <div class="container-fluid" id="outprint_mil">
+                                <br><br><br><br><br><br><br><br>
+                                <div class="row-fluid body">
+                                    <h5 class="title">Insurance Ref. Code :${code}</h5>
+                                    <table class="table" style="width: 956px;>">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list " rowspan="2" style="text-align:right;">
+                                                    <h4>
+                                                        </h5>
+                                                </td>
+                                                <td class="tbl center" rowspan="2">
+                                                    <h4></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align: right;"></tD>
+                                                <td class="tbl " style="text-align:center;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl center" colspan="2" style="color: white;">A</td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                                <td class="tbl" rowspan="2" style="text-align:center;">
+                                                    <b style="color: ${policyColor};">${policyNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;"><b></b></td>
+                                                <td class="tbl "></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="tbl " style="text-align:center;"><b>${clientName}</b></td>
+                                                <td class="tbl "></tD>
+                                                <td style="text-align:right;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;">
+                                                    <b style="color: ${orColor};">${orNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl " style="text-align:center;"><b>${clientAddress}</b></tD>
+                                                <td class="tbl center" rowspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align: right;"></tD>
+                                                <td style="text-align:right;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;"><b>${expirationDate}</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="table" style="width: 956px;">
+                                        <tbody>
+                                            <tr style="height: 15px;">
+                                                <td class="center tbl" colspan="1.3"><b>${vehicleModel}</b></td>
+                                                <td class="center tbl"> &emsp;&emsp;&emsp;&emsp;&emsp;<b>${make}</b></td>
+                                                <td class='center tbl'>&emsp;&emsp;<b style="font-size:12px;">${category}</b></td>
+                                                <td class="center tbl">&emsp;&emsp;<b style="font-size:12px;">${vehicleColor}</b></td>
+                                                <td class="" style="text-align: center;"><b>${mvFileNo}</b></td>
+                                            </tr>
+                                            <tr style="height: 25px;">
+                                                <td class="center tbl"><b>${registrationNo}</b></td>
+                                                <td class="center tbl">&emsp;&emsp;&emsp;<b style="text-align:left;font-size: 16px;">${chassisNo}</b></td>
+                                                <td class="center tbl">&emsp;&emsp;<b style="text-align:left;font-size: 16px;">${engineNo}</b></td>
+                                                <td class="center tbl"></td>
+                                                <td class="center tbl"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <table class="">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl " rowspan="2" style="text-align:center;"></td>
+                                                <td class="tbl center" rowspan="5" style="width: 90px; height: 20px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<font color="red" style="text-align:right"></font>
+                                                </tD>
+                                                <td class="tbl ">
+                                                    <font color="red" style="text-align:left;font-size: 20px;"></font>
+                                                </tD>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td style="text-align:center;font-size: 10px;"></td>
+                                                <td style="text-align:center;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<font color="red" style="text-align:right"></font>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <table class='table' style='width: 956px;'>
+                                        <tbody>
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='' style='text-align: right;padding-top: 2px;padding-bottom: 2px;'><b>${thirdPartyLiability}</b></td>
+                                            </tr>
+                                            ${personalAccident ? `
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${personalAccident}</b></td>
+                                            </tr>
+                                            ` : ''}
+                                            ${tppd && tppd != 0 ? `
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>TPPD ${tppd}</b></td>
+                                            </tr>
+                                            ` : ''}
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b>${window.insuranceData?.description || ''}</b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${documentaryStamps}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b>${window.insuranceData?.description1 || ''}</b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${valueAddedTax}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b>${window.insuranceData?.description2 || ''}</b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${localGovTax}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>Total ${cost}.00</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Policy of Cover Issued</div>
-                <div class="footer">${label} - Official Policy</div>
             `;
             break;
 
         case 'Four':
             content += `
-                <div class="header">${label}</div>
-                <div class="client-info">
-                    <div><strong>Policy Owner:</strong> ${clientName}</div>
-                    <div><strong>Address:</strong> ${clientAddress}</div>
-                    <div><strong>Plate No:</strong> ${plateNo}</div>
-                    <div><strong>MV File No:</strong> ${mvFileNo}</div>
-                    <div><strong>Issue Date:</strong> ${currentDate}</div>
+                <div id="showFour" class="content py-3 myDiv">
+                    <div class="card card-outline card-primary rounded-0 shadow">
+                       
+                        <div class="card-body">
+                            <div class="container-fluid" id="outprint_strong">
+                                <br><br><br><br><br><br>
+                                <div class="row-fluid body">
+                                    <h5 class="title">-</h5>
+                                    <table class="table" style="width: 956px;>">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list " rowspan="2" style="text-align:right;">
+                                                    <h4>
+                                                        </h5>
+                                                </td>
+                                                <td class="tbl center" rowspan="2">
+                                                    <h4></h4>
+                                                </td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align: right;"></tD>
+                                                <td class="tbl " style="text-align:right;"><b></b></tD>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl center" colspan="2" style="color: white;">A</td>
+                                                <td class="tbl center" rowspan="2"></td>
+                                                <td class="tbl" rowspan="2" style="text-align:center;">
+                                                    <b style="color: ${policyColor};font-size: 20px;">${policyNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;"><b></b></td>
+                                                <td class="tbl "></td>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td class="tbl " style="text-align:center;font-size: 20px;"><b>${clientName}</b></td>
+                                                <td class="tbl "></tD>
+                                                <td style="text-align:right;font-size: 20px;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;">
+                                                    <b style="color: ${orColor};">${orNo}</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl " style="text-align:center;font-size: 20px;"><b>${clientAddress}</b></tD>
+                                                <td class="tbl center" rowspan="2"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align: right;"></tD>
+                                                <td style="text-align:right;font-size: 20px;"><b>${registrationDate}</b></td>
+                                                <td style="text-align:center;font-size: 20px;"><b>${expirationDate}</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <table class="table">
+                                        <tbody>
+                                            <tr style="height: 13px;font-size: 20px;">
+                                                <td class="center tbl" colspan="1.3"><b>${vehicleModel}</b></td>
+                                                <td class="center tbl"> &emsp;&emsp;&emsp;&emsp;&emsp;<b>${make}</b></td>
+                                                <td class='center tbl'>&emsp;&emsp;<b style="font-size: 20px;">${category}</b></td>
+                                                <td class="center tbl">&emsp;&emsp;<b  style="font-size: 16px;">-</b></td>
+                                                <td class="" style="text-align: center;"><b>${mvFileNo}</b></td>
+                                            </tr>
+                                            <tr style="height: 25px;font-size: 20px;">
+                                                <td class="center tbl"><b>${registrationNo}</b></td>
+                                                <td class="center tbl">&emsp;&emsp;&emsp;<b style="text-align:left;font-size: 20px;">${chassisNo}</b></td>
+                                                <td class="center tbl">&emsp;&emsp;<b style="text-align:left;font-size: 20px;">${engineNo}</b></td>
+                                                <td class="center tbl"></td>
+                                                <td class="center tbl"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br>
+                                    <table class="">
+                                        <tbody>
+                                            <tr>
+                                                <td class="list center" rowspan="2"></td>
+                                                <td class="tbl " rowspan="2" style="text-align:center;"></td>
+                                                <td class="tbl center" rowspan="5" style="width: 90px; height: 20px;"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="tbl " style="text-align:center;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<font color="red" style="text-align:right"></font>
+                                                </tD>
+                                                <td class="tbl ">
+                                                    <font color="red" style="text-align:left;font-size: 20px;"></font>
+                                                </tD>
+                                            </tr>
+                                            <tr>
+                                                <td></td>
+                                                <td style="text-align:center;font-size: 10px;"></td>
+                                                <td style="text-align:center;">&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;<font color="red" style="text-align:right"></font>
+                                                </td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br><br><br><br><br>
+                                    <table class='table' style='width: 956px;'>
+                                        <tbody>
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='' style='text-align: right;padding-top: 2px;padding-bottom: 2px;'><b>${thirdPartyLiability}</b></td>
+                                            </tr>
+                                            ${personalAccident ? `
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${personalAccident}</b></td>
+                                            </tr>
+                                            ` : ''}
+                                            ${tppd && tppd != 0 ? `
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>TPPD ${tppd}</b></td>
+                                            </tr>
+                                            ` : ''}
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b></b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${documentaryStamps}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b></b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${valueAddedTax}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='tbl' style='text-align:center;padding-top: 2px;padding-bottom: 2px;' colspan='3'><a style='font-size: 15px;'><center><b></b></center></a></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>${localGovTax}</b></td>
+                                            </tr>
+                                            <tr style='height: 25px;'>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class='center tbl'><b></b></td>
+                                                <td class=' tbl' style='text-align:right;padding-top: 2px;padding-bottom: 2px;'><b>Total ${cost}.00</b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <br><br><br><br><br><b>${window.insuranceData?.description || ''}&emsp;${window.insuranceData?.description1 || ''}&emsp;${window.insuranceData?.description2 || ''}</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="amount">Policy of Cover Issued</div>
-                <div class="footer">${label} - Official Policy</div>
             `;
             break;
 
