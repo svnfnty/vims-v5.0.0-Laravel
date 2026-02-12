@@ -63,7 +63,7 @@ function showDocumentSelection(options) {
             <div style="max-width:500px; margin:0 auto;">
                 <div style="background:#f8f9fa; border-radius:12px; padding:20px; margin-bottom:20px;">
                     <div style="display:flex; align-items:center; margin-bottom:15px;">
-                        <img src="https://www.documation.com/assets/printAnimation.gif" alt="Printer Loading" style="width:60px; height:60px; margin-right:15px; border-radius:6px;">
+                        <img src="https://i.gifer.com/ISSh.gif" alt="Printer Loading" style="width:60px; height:60px; margin-right:15px; border-radius:6px;">
                         <div>
                             <p style="font-weight:500; margin-bottom:5px; color:#212529;">Printer Preparation</p>
                             <p style="font-size:0.9rem; color:#868e96; margin:0;">Load official document paper into the printer</p>
