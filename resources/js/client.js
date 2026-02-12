@@ -270,7 +270,7 @@ function renderCards(data) {
 
                 <div class="card-footer">
                     <div class="action-buttons">
-                        <button disabled class="action-btn-small view view_data" data-id="${client.id}">
+                        <button class="action-btn-small view view_data" data-id="${client.id}">
                             <i class="fas fa-eye"></i>
                             View
                         </button>
@@ -650,27 +650,14 @@ window.openViewModal = function(id) {
     const submitBtn = document.getElementById('submitBtn');
     const viewOnlyGroup = document.getElementById('viewOnlyGroup');
     const createdDateDisplay = document.getElementById('createdDateDisplay');
-    
+
     if (modalTitle) modalTitle.textContent = 'View Client Details';
     if (submitBtn) {
-        submitBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
-        submitBtn.setAttribute('type', 'button');
-        submitBtn.onclick = function() {
-            if (typeof gsap !== 'undefined') {
-                gsap.to('#clientModal', {
-                    opacity: 0,
-                    scale: 0.9,
-                    y: -50,
-                    duration: 0.3,
-                    ease: 'back.in',
-                    onComplete: function() {
-                        openEditModal(id);
-                    }
-                });
-            } else {
-                openEditModal(id);
-            }
-        };
+        submitBtn.style.display = 'none';
+    }
+    const modalActions = document.querySelector('.modal-actions');
+    if (modalActions) {
+        modalActions.style.display = 'none';
     }
 
     // Set form values (readonly)
@@ -679,31 +666,50 @@ window.openViewModal = function(id) {
     const lastname = document.getElementById('lastname');
     const email = document.getElementById('email');
     const address = document.getElementById('address');
+    const walkinList = document.getElementById('walkin_list');
     const status = document.getElementById('status');
-    
+
     if (firstname) {
         firstname.value = client.firstname || '';
         firstname.setAttribute('readonly', true);
+        firstname.style.backgroundColor = '#f5f5f5';
+        firstname.style.color = '#6c757d';
     }
     if (middlename) {
         middlename.value = client.middlename || '';
         middlename.setAttribute('readonly', true);
+        middlename.style.backgroundColor = '#f5f5f5';
+        middlename.style.color = '#6c757d';
     }
     if (lastname) {
         lastname.value = client.lastname || '';
         lastname.setAttribute('readonly', true);
+        lastname.style.backgroundColor = '#f5f5f5';
+        lastname.style.color = '#6c757d';
     }
     if (email) {
         email.value = client.email || '';
         email.setAttribute('readonly', true);
+        email.style.backgroundColor = '#f5f5f5';
+        email.style.color = '#6c757d';
     }
     if (address) {
         address.value = client.address || '';
         address.setAttribute('readonly', true);
+        address.style.backgroundColor = '#f5f5f5';
+        address.style.color = '#6c757d';
+    }
+    if (walkinList) {
+        walkinList.value = client.markup || '';
+        walkinList.setAttribute('disabled', true);
+        walkinList.style.backgroundColor = '#f5f5f5';
+        walkinList.style.color = '#6c757d';
     }
     if (status) {
         status.value = client.status || '';
         status.setAttribute('disabled', true);
+        status.style.backgroundColor = '#f5f5f5';
+        status.style.color = '#6c757d';
     }
 
     if (createdDateDisplay) {
