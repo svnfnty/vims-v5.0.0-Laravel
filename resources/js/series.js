@@ -491,26 +491,16 @@ $(document).ready(function() {
         if (!series) return;
 
         $('#modalTitle').text('View Series Details');
-        $('#submitBtn').html('<i class="fas fa-edit"></i> Edit').attr('type', 'button');
-        $('#submitBtn').off().on('click', function() {
-            // Close current modal
-            gsap.to('#seriesModal', {
-                opacity: 0,
-                scale: 0.9,
-                y: -50,
-                duration: 0.3,
-                ease: 'back.in',
-                onComplete: function() {
-                    openEditModal(id);
-                }
-            });
-        });
+        
+        // Hide submit button in view mode - only show Close button
+        $('#submitBtn').hide();
 
-        $('#name').val(series.name).attr('readonly', true);
-        $('#range_start').val(series.range_start).attr('readonly', true);
-        $('#range_stop').val(series.range_stop).attr('readonly', true);
-        $('#type').val(series.type).attr('disabled', true);
-        $('#status').val(series.status).attr('disabled', true);
+        // Add view-only styling to all form fields
+        $('#name').val(series.name).attr('readonly', true).addClass('view-only-field');
+        $('#range_start').val(series.range_start).attr('readonly', true).addClass('view-only-field');
+        $('#range_stop').val(series.range_stop).attr('readonly', true).addClass('view-only-field');
+        $('#type').val(series.type).attr('disabled', true).addClass('view-only-select');
+        $('#status').val(series.status).attr('disabled', true).addClass('view-only-select');
 
         $('#createdDateDisplay').text(new Date(series.created_at).toLocaleString());
 
@@ -567,7 +557,10 @@ $(document).ready(function() {
                 $('#seriesModal').hide();
                 $('#seriesForm')[0].reset();
                 $('.form-control').removeAttr('readonly').removeAttr('disabled');
+                $('.form-control').removeClass('view-only-field view-only-select');
                 $('.error-message').text('');
+                // Show submit button again for create/edit modes
+                $('#submitBtn').show().attr('type', 'submit').off('click');
             }
         });
     };
