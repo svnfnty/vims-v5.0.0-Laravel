@@ -260,7 +260,7 @@ function renderCards(data) {
 
                 <div class="card-footer">
                     <div class="action-buttons">
-                        <button disabled class="action-btn-small view view_data" data-id="${policy.id}">
+                        <button class="action-btn-small view view_data" data-id="${policy.id}">
                             <i class="fas fa-eye"></i>
                             View
                         </button>
@@ -578,54 +578,59 @@ window.openViewModal = function(id) {
     if (!policy) return;
 
     elements.modalTitle.textContent = 'View Policy Details';
-    elements.submitBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
-    elements.submitBtn.setAttribute('type', 'button');
-    elements.submitBtn.onclick = function() {
-        // Close current modal
-        gsap.to(elements.policyModal, {
-            opacity: 0,
-            scale: 0.9,
-            y: -50,
-            duration: 0.3,
-            ease: 'back.in',
-            onComplete: function() {
-                openEditModal(id);
-            }
-        });
-    };
+    
+    // Hide submit button in view mode - only show Close button
+    elements.submitBtn.style.display = 'none';
 
+    // Set form values (readonly) with view-only styling
     elements.categoryId.value = policy.category_id;
     elements.categoryId.setAttribute('disabled', true);
+    elements.categoryId.classList.add('view-only-select');
     elements.code.value = policy.code;
     elements.code.setAttribute('readonly', true);
+    elements.code.classList.add('view-only-field');
     elements.name.value = policy.name;
     elements.name.setAttribute('readonly', true);
+    elements.name.classList.add('view-only-field');
     elements.description.value = policy.description;
     elements.description.setAttribute('readonly', true);
+    elements.description.classList.add('view-only-field');
     elements.description1.value = policy.description1;
     elements.description1.setAttribute('readonly', true);
+    elements.description1.classList.add('view-only-field');
     elements.description2.value = policy.description2;
     elements.description2.setAttribute('readonly', true);
+    elements.description2.classList.add('view-only-field');
     elements.duration.value = policy.duration;
     elements.duration.setAttribute('readonly', true);
+    elements.duration.classList.add('view-only-field');
     elements.thirdPartyLiability.value = policy.third_party_liability;
     elements.thirdPartyLiability.setAttribute('readonly', true);
+    elements.thirdPartyLiability.classList.add('view-only-field');
     elements.personalAccident.value = policy.personal_accident;
     elements.personalAccident.setAttribute('readonly', true);
+    elements.personalAccident.classList.add('view-only-field');
     elements.tppd.value = policy.tppd;
     elements.tppd.setAttribute('readonly', true);
+    elements.tppd.classList.add('view-only-field');
     elements.documentaryStamps.value = policy.documentary_stamps;
     elements.documentaryStamps.setAttribute('readonly', true);
+    elements.documentaryStamps.classList.add('view-only-field');
     elements.valueAddedTax.value = policy.value_added_tax;
     elements.valueAddedTax.setAttribute('readonly', true);
+    elements.valueAddedTax.classList.add('view-only-field');
     elements.localGovTax.value = policy.local_gov_tax;
     elements.localGovTax.setAttribute('readonly', true);
+    elements.localGovTax.classList.add('view-only-field');
     elements.cost.value = policy.cost;
     elements.cost.setAttribute('readonly', true);
+    elements.cost.classList.add('view-only-field');
     elements.docPath.value = policy.doc_path;
     elements.docPath.setAttribute('readonly', true);
+    elements.docPath.classList.add('view-only-field');
     elements.status.value = policy.status;
     elements.status.setAttribute('disabled', true);
+    elements.status.classList.add('view-only-select');
 
     elements.createdDateDisplay.textContent = new Date(policy.date_created).toLocaleString();
 
@@ -685,8 +690,13 @@ window.closePolicyModal = function() {
             document.querySelectorAll('.form-control').forEach(el => {
                 el.removeAttribute('readonly');
                 el.removeAttribute('disabled');
+                el.classList.remove('view-only-field', 'view-only-select');
             });
             document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+            // Show submit button again for create/edit modes
+            elements.submitBtn.style.display = 'inline-block';
+            elements.submitBtn.setAttribute('type', 'submit');
+            elements.submitBtn.onclick = null;
             elements.submitBtn.disabled = false;
         }
     });
