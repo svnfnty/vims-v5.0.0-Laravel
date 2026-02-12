@@ -547,25 +547,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const createdDateDisplay = document.getElementById('createdDateDisplay');
         
         if (modalTitle) modalTitle.textContent = 'View Category Details';
-        if (submitBtn) {
-            submitBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
-            submitBtn.setAttribute('type', 'button');
-            submitBtn.onclick = function() {
-                // Close current modal
-                gsap.to('#categoryModal', {
-                    opacity: 0,
-                    scale: 0.9,
-                    y: -50,
-                    duration: 0.3,
-                    ease: 'back.in',
-                    onComplete: function() {
-                        openEditModal(id);
-                    }
-                });
-            };
-        }
+        
+        // Hide submit button in view mode - only show Close button
+        if (submitBtn) submitBtn.style.display = 'none';
 
-        // Set form values (readonly)
+        // Set form values (readonly) with view-only styling
         const nameInput = document.getElementById('name');
         const descriptionInput = document.getElementById('description');
         const statusInput = document.getElementById('status');
@@ -573,14 +559,17 @@ document.addEventListener('DOMContentLoaded', function() {
         if (nameInput) {
             nameInput.value = category.name;
             nameInput.setAttribute('readonly', true);
+            nameInput.classList.add('view-only-field');
         }
         if (descriptionInput) {
             descriptionInput.value = category.description || '';
             descriptionInput.setAttribute('readonly', true);
+            descriptionInput.classList.add('view-only-field');
         }
         if (statusInput) {
             statusInput.value = category.status;
             statusInput.setAttribute('disabled', true);
+            statusInput.classList.add('view-only-select');
         }
 
         if (createdDateDisplay) {
@@ -645,6 +634,7 @@ document.addEventListener('DOMContentLoaded', function() {
             onComplete: function() {
                 const modal = document.getElementById('categoryModal');
                 const categoryForm = document.getElementById('categoryForm');
+                const submitBtn = document.getElementById('submitBtn');
                 
                 if (modal) modal.style.display = 'none';
                 if (categoryForm) categoryForm.reset();
@@ -653,10 +643,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelectorAll('.form-control').forEach(el => {
                     el.removeAttribute('readonly');
                     el.removeAttribute('disabled');
+                    el.classList.remove('view-only-field', 'view-only-select');
                 });
                 
                 // Clear errors
                 document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+                
+                // Show submit button again for create/edit modes
+                if (submitBtn) {
+                    submitBtn.style.display = 'inline-block';
+                    submitBtn.setAttribute('type', 'submit');
+                    submitBtn.onclick = null;
+                }
             }
         });
     };
