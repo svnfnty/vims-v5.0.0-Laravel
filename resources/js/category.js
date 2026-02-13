@@ -4,6 +4,30 @@ import Swal from 'sweetalert2';
 // Get CSRF token from meta tag
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
+// Check if user has subscription permissions
+function checkSubscriptionPermission(actionName = 'perform this action') {
+    if (window.userPermissions === 0) {
+        Swal.fire({
+            title: 'Subscription Required!',
+            text: `Your subscription has expired or you don't have permission to ${actionName}. Please renew your subscription to continue using this feature.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Renew Subscription',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to account settings or payment page
+                window.location.href = '/account/setting';
+            }
+        });
+        return false;
+    }
+    return true;
+}
+
 // Set default headers for fetch
 const defaultHeaders = {
     'X-CSRF-TOKEN': csrfToken,
@@ -28,7 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Create New Category
-    document.getElementById('create_new')?.addEventListener('click', function() {
+    document.getElementById('create_new')?.addEventListener('click', function(e) {
+        if (!checkSubscriptionPermission('create new categories')) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
         openCreateModal();
     });
 
@@ -329,14 +358,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         document.querySelectorAll('.edit_data').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function(e) {
+                if (!checkSubscriptionPermission('edit categories')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
                 const id = this.dataset.id;
                 openEditModal(id);
             });
         });
 
         document.querySelectorAll('.delete_data').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function(e) {
+                if (!checkSubscriptionPermission('delete categories')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
                 const id = this.dataset.id;
                 Swal.fire({
                     title: 'Are you sure?',
@@ -381,14 +420,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         document.querySelectorAll('.edit_data').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function(e) {
+                if (!checkSubscriptionPermission('edit categories')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
                 const id = this.dataset.id;
                 openEditModal(id);
             });
         });
 
         document.querySelectorAll('.delete_data').forEach(btn => {
-            btn.addEventListener('click', function() {
+            btn.addEventListener('click', function(e) {
+                if (!checkSubscriptionPermission('delete categories')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
                 const id = this.dataset.id;
                 Swal.fire({
                     title: 'Are you sure?',

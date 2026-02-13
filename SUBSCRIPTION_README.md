@@ -172,6 +172,39 @@ Users see notifications when:
 2. **Persistent Banner** - on all pages
 3. **Console Command** - logs notifications
 
+### Popup When Clicking Action Buttons (permissions=0)
+When a user with `permissions = 0` tries to click **Create**, **Edit**, or **Delete** buttons, they will see a popup:
+
+```
+┌─────────────────────────────────────────┐
+│  ⚠️ Subscription Required!              │
+│                                         │
+│  Your subscription has expired or you    │
+│  don't have permission to [action].      │
+│  Please renew your subscription to      │
+│  continue using this feature.           │
+│                                         │
+│  [  Renew Subscription  ]  [ Cancel ]     │
+└─────────────────────────────────────────┘
+```
+
+**What happens:**
+- Clicking **"Renew Subscription"** → Redirects to `/account/setting`
+- Clicking **"Cancel"** → Closes popup, stays on current page
+- **View** button still works (read-only access allowed)
+
+### Backend Protection
+The middleware also blocks API requests from users with `permissions = 0`:
+```json
+{
+  "success": false,
+  "subscription_expired": true,
+  "message": "Your subscription has expired...",
+  "renewal_url": "/account/setting"
+}
+```
+
+
 ---
 
 ## API Endpoints

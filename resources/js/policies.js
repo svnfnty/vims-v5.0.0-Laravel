@@ -4,6 +4,30 @@ import Swal from 'sweetalert2';
 // Set default CSRF token for all fetch requests
 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
 
+// Check if user has subscription permissions
+function checkSubscriptionPermission(actionName = 'perform this action') {
+    if (window.userPermissions === 0) {
+        Swal.fire({
+            title: 'Subscription Required!',
+            text: `Your subscription has expired or you don't have permission to ${actionName}. Please renew your subscription to continue using this feature.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Renew Subscription',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to account settings or payment page
+                window.location.href = '/account/setting';
+            }
+        });
+        return false;
+    }
+    return true;
+}
+
 // State management
 let policiesData = [];
 let filteredData = [];
@@ -56,7 +80,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Event Listeners
     document.getElementById('loadDataBtn')?.addEventListener('click', loadPolicies);
-    document.getElementById('create_new')?.addEventListener('click', openCreateModal);
+    document.getElementById('create_new')?.addEventListener('click', function(e) {
+        if (!checkSubscriptionPermission('create new policies')) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+        openCreateModal();
+    });
     document.getElementById('resetFilters')?.addEventListener('click', resetFilters);
 
     // View Toggle Buttons
@@ -375,14 +406,24 @@ function attachCardEventListeners() {
     });
 
     document.querySelectorAll('.edit_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('edit policies')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             openEditModal(id);
         });
     });
 
     document.querySelectorAll('.delete_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('delete policies')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             Swal.fire({
                 title: 'Are you sure?',
@@ -430,14 +471,24 @@ function attachTableEventListeners() {
     });
 
     document.querySelectorAll('.edit_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('edit policies')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             openEditModal(id);
         });
     });
 
     document.querySelectorAll('.delete_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('delete policies')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             Swal.fire({
                 title: 'Are you sure?',

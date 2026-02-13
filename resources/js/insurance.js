@@ -4,6 +4,29 @@ let currentGridView = 'cards';
 let isSubmitting = false;
 let currentMode = null;
 
+// Check if user has subscription permissions
+function checkSubscriptionPermission(actionName = 'perform this action') {
+    if (window.userPermissions === 0) {
+        Swal.fire({
+            title: 'Subscription Required!',
+            text: `Your subscription has expired or you don't have permission to ${actionName}. Please renew your subscription to continue using this feature.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Renew Subscription',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to account settings or payment page
+                window.location.href = '/account/setting';
+            }
+        });
+        return false;
+    }
+    return true;
+}
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
@@ -17,12 +40,26 @@ function initializeEventListeners() {
     // Add Insurance Button
     const addInsuranceBtn = document.getElementById('addInsuranceBtn');
     if (addInsuranceBtn) {
-        addInsuranceBtn.addEventListener('click', handleNewInsurance);
+        addInsuranceBtn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('create new insurance records')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+            handleNewInsurance();
+        });
     }
 
     const addInsuranceEmptyBtn = document.getElementById('addInsuranceEmptyBtn');
     if (addInsuranceEmptyBtn) {
-        addInsuranceEmptyBtn.addEventListener('click', handleNewInsurance);
+        addInsuranceEmptyBtn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('create new insurance records')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+            handleNewInsurance();
+        });
     }
 
     // Load Data Button
@@ -138,7 +175,14 @@ function renderPolicies(insurances) {
             
             const emptyBtn = document.getElementById('addInsuranceEmptyBtn');
             if (emptyBtn) {
-                emptyBtn.addEventListener('click', handleNewInsurance);
+                emptyBtn.addEventListener('click', function(e) {
+                    if (!checkSubscriptionPermission('create new insurance records')) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        return;
+                    }
+                    handleNewInsurance();
+                });
             }
         }
         return;
@@ -392,6 +436,11 @@ function updateStatistics(stats) {
 
 // Handle new insurance
 async function handleNewInsurance() {
+    // Check subscription permission first
+    if (!checkSubscriptionPermission('create new insurance records')) {
+        return;
+    }
+    
     updateProgressStep(1);
     
     // COC Input Dialog
@@ -1931,6 +1980,11 @@ function openViewInsuranceModal(id) {
 
 // Open Edit Insurance Modal
 function openEditInsuranceModal(id) {
+    // Check subscription permission first
+    if (!checkSubscriptionPermission('edit insurance records')) {
+        return;
+    }
+    
     currentMode = 'edit';
     const modal = document.getElementById('manageInsuranceModal');
     const overlay = document.getElementById('insuranceModalOverlay');
@@ -2024,6 +2078,10 @@ function openEditInsuranceModal(id) {
 
 // Delete Insurance
 window.deleteInsurance = function(id) {
+    // Check subscription permission first
+    if (!checkSubscriptionPermission('delete insurance records')) {
+        return;
+    }
 
     Swal.fire({
         title: 'Are you sure?',
