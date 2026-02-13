@@ -18,6 +18,7 @@ use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\ChatbotController;
 use App\Models\SystemInfo;
 use App\Http\Middleware\MaintenanceModeMiddleware;
 
@@ -180,3 +181,10 @@ Route::get('/', function () {
     }
     return view('welcome', ['wrapperClass' => 'table-responsive']);
 })->name('welcome');
+
+// Chatbot Routes
+Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
+Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
+Route::get('/chatbot/models', [ChatbotController::class, 'getModels'])->name('chatbot.models');
+Route::get('/chatbot/history', [ChatbotController::class, 'getHistory'])->name('chatbot.history');
+Route::post('/chatbot/clear', [ChatbotController::class, 'clearHistory'])->name('chatbot.clear');
