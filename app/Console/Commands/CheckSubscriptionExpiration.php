@@ -69,24 +69,24 @@ class CheckSubscriptionExpiration extends Command
                 $expiryWithGrace = $referenceDate->copy()->addDays($graceDays);
                 
                 if ($now->greaterThan($expiryWithGrace)) {
-                    // Deactivate user subscription and remove permissions
+                    // Remove permissions only (keep status unchanged)
                     $user->update([
-                        'status' => 0,
                         'permissions' => 0
                     ]);
                     $expiryCount++;
 
                     
-                    Log::info("User subscription deactivated", [
+                    Log::info("User subscription permissions removed", [
                         'user_id' => $user->id,
                         'user_email' => $user->email,
                         'reference_date' => $referenceDate->toDateTimeString(),
-                        'deactivated_at' => $now->toDateTimeString()
+                        'permissions_removed_at' => $now->toDateTimeString()
                     ]);
                     
-                    $this->warn("Deactivated subscription for user: {$user->email}");
+                    $this->warn("Removed permissions for expired subscription: {$user->email}");
                 }
             }
+
             
             // Check if subscription is near expiry and send notification
             $expiryDate = $user->subscription_end_date 
