@@ -69,9 +69,13 @@ class CheckSubscriptionExpiration extends Command
                 $expiryWithGrace = $referenceDate->copy()->addDays($graceDays);
                 
                 if ($now->greaterThan($expiryWithGrace)) {
-                    // Deactivate user subscription
-                    $user->update(['status' => 0]);
+                    // Deactivate user subscription and remove permissions
+                    $user->update([
+                        'status' => 0,
+                        'permissions' => 0
+                    ]);
                     $expiryCount++;
+
                     
                     Log::info("User subscription deactivated", [
                         'user_id' => $user->id,
