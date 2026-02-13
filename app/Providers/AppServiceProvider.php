@@ -70,7 +70,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Always set forceScheme
-        URL::forceScheme('https');
+        //URL::forceScheme('https');
         
         // Get system info safely - works even when database is not available
         $systemName = $this->getSystemConfig('system_name', self::DEFAULT_SYSTEM_NAME);

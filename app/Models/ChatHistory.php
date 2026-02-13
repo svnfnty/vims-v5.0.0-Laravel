@@ -52,4 +52,64 @@ class ChatHistory extends Model
             ->where('session_id', $sessionId)
             ->delete();
     }
+
+    /**
+     * Get all sessions for a user with message count and last activity
+     */
+    public static function getUserSessions($userId, $limit = 10)
+    {
+        return self::where('user_id', $userId)
+            ->select('session_id')
+            ->selectRaw('COUNT(*) as message_count')
+            ->selectRaw('MAX(created_at) as last_activity')
+            ->selectRaw('MIN(created_at) as started_at')
+            ->groupBy('session_id')
+            ->orderBy('last_activity', 'desc')
+            ->limit($limit)
+            ->get();
+    }
+
+    /**
+     * Get first message of a session (for session naming)
+     */
+    public static function getSessionFirstMessage($userId, $sessionId)
+    {
+        return self::where('user_id', $userId)
+            ->where('session_id', $sessionId)
+            ->where('role', 'user')
+            ->orderBy('created_at', 'asc')
+            ->first();
+    }
+
+    /**
+     * Delete a specific session
+     */
+    public static function deleteSession($userId, $sessionId)
+    {
+        return self::where('user_id', $userId)
+            ->where('session_id', $sessionId)
+            ->delete();
+    }
+
+    /**
+     * Validate session belongs to user
+     */
+    public static function validateSessionOwnership($userId, $sessionId)
+    {
+        return self::where('user_id', $userId)
+            ->where('session_id', $sessionId)
+            ->exists();
+    }
+
+    /**
+     * Get or create session for user
+     */
+    public static function getOrCreateSession($userId, $sessionId = null)
+    {
+        if ($sessionId && self::validateSessionOwnership($userId, $sessionId)) {
+            return $sessionId;
+        }
+        
+        return \Illuminate\Support\Str::uuid()->toString();
+    }
 }

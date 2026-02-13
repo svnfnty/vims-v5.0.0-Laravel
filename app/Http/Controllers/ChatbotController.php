@@ -33,8 +33,8 @@ class ChatbotController extends Controller
         $message = $request->input('message');
         $userId = auth()->id();
         
-        // Generate or use existing session ID
-        $sessionId = $request->input('session_id') ?? Str::uuid()->toString();
+        // Validate and get session ID - ensures session belongs to user or creates new one
+        $sessionId = ChatHistory::getOrCreateSession($userId, $request->input('session_id'));
         
         // Determine provider and get configuration
         $provider = config('chatbot.provider', 'openrouter');
@@ -236,10 +236,74 @@ class ChatbotController extends Controller
         $userId = auth()->id();
         $sessionId = $request->input('session_id');
         
+        // Validate session ownership
+        if (!ChatHistory::validateSessionOwnership($userId, $sessionId)) {
+            return response()->json([
+                'error' => 'Session not found or access denied',
+                'history' => []
+            ], 403);
+        }
+        
         $history = ChatHistory::getSessionMessages($userId, $sessionId);
         
         return response()->json([
             'history' => $history,
+            'session_id' => $sessionId,
+            'message_count' => $history->count()
+        ]);
+    }
+
+    /**
+     * Get all sessions for the authenticated user
+     */
+    public function getUserSessions(Request $request)
+    {
+        $userId = auth()->id();
+        $limit = $request->input('limit', 10);
+        
+        $sessions = ChatHistory::getUserSessions($userId, $limit);
+        
+        // Enhance sessions with first message preview
+        $enhancedSessions = $sessions->map(function ($session) use ($userId) {
+            $firstMessage = ChatHistory::getSessionFirstMessage($userId, $session->session_id);
+            return [
+                'session_id' => $session->session_id,
+                'message_count' => $session->message_count,
+                'last_activity' => $session->last_activity,
+                'started_at' => $session->started_at,
+                'preview' => $firstMessage ? substr($firstMessage->content, 0, 50) . '...' : 'New Conversation'
+            ];
+        });
+        
+        return response()->json([
+            'sessions' => $enhancedSessions,
+            'current_session' => $request->input('current_session')
+        ]);
+    }
+
+    /**
+     * Delete a specific session
+     */
+    public function deleteSession(Request $request)
+    {
+        $request->validate([
+            'session_id' => 'required|string',
+        ]);
+        
+        $userId = auth()->id();
+        $sessionId = $request->input('session_id');
+        
+        // Validate session ownership before deletion
+        if (!ChatHistory::validateSessionOwnership($userId, $sessionId)) {
+            return response()->json([
+                'error' => 'Session not found or access denied'
+            ], 403);
+        }
+        
+        ChatHistory::deleteSession($userId, $sessionId);
+        
+        return response()->json([
+            'message' => 'Session deleted successfully',
             'session_id' => $sessionId
         ]);
     }
@@ -255,6 +319,13 @@ class ChatbotController extends Controller
         
         $userId = auth()->id();
         $sessionId = $request->input('session_id');
+        
+        // Validate session ownership
+        if (!ChatHistory::validateSessionOwnership($userId, $sessionId)) {
+            return response()->json([
+                'error' => 'Session not found or access denied'
+            ], 403);
+        }
         
         ChatHistory::clearSession($userId, $sessionId);
         
@@ -316,6 +387,163 @@ class ChatbotController extends Controller
         $alternatives = array_diff($freeModels, [$currentModel]);
         
         return array_values($alternatives)[0] ?? 'meta-llama/llama-3.1-8b-instruct';
+    }
+
+    /**
+     * Format AI response with enhanced HTML/markdown support
+     * Converts markdown-style formatting to HTML for better display
+     */
+    private function formatResponse($content)
+    {
+        // Convert markdown-style formatting to HTML
+        $formatted = $content;
+        
+        // Headers
+        $formatted = preg_replace('/^### (.*$)/m', '<h3>$1</h3>', $formatted);
+        $formatted = preg_replace('/^## (.*$)/m', '<h2>$1</h2>', $formatted);
+        $formatted = preg_replace('/^# (.*$)/m', '<h1>$1</h1>', $formatted);
+        
+        // Bold and Italic
+        $formatted = preg_replace('/\*\*(.*?)\*\*/', '<strong>$1</strong>', $formatted);
+        $formatted = preg_replace('/__(.*?)__/', '<strong>$1</strong>', $formatted);
+        $formatted = preg_replace('/\*(.*?)\*/', '<em>$1</em>', $formatted);
+        $formatted = preg_replace('/_(.*?)_/', '<em>$1</em>', $formatted);
+        
+        // Code blocks with language support
+        $formatted = preg_replace_callback('/```(\w+)?\n(.*?)\n```/s', function($matches) {
+            $language = $matches[1] ?? 'code';
+            $code = htmlspecialchars($matches[2]);
+            return "<div class=\"code-block-header\"><span>{$language}</span></div><pre><code>{$code}</code></pre>";
+        }, $formatted);
+        
+        // Inline code
+        $formatted = preg_replace('/`([^`]+)`/', '<code>$1</code>', $formatted);
+        
+        // Lists
+        $formatted = preg_replace('/^- (.*$)/m', '<li>$1</li>', $formatted);
+        $formatted = preg_replace('/(<li>.*<\/li>\n?)+/', '<ul>$0</ul>', $formatted);
+        
+        // Numbered lists
+        $formatted = preg_replace('/^\d+\. (.*$)/m', '<li>$1</li>', $formatted);
+        
+        // Blockquotes
+        $formatted = preg_replace('/^> (.*$)/m', '<blockquote>$1</blockquote>', $formatted);
+        
+        // Links
+        $formatted = preg_replace('/\[([^\]]+)\]\(([^)]+)\)/', '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>', $formatted);
+        
+        // Auto-link URLs
+        $formatted = preg_replace('/(https?:\/\/[^\s<]+)/', '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>', $formatted);
+        
+        // Line breaks (preserve existing HTML)
+        $formatted = nl2br($formatted);
+        
+        // Clean up - remove br tags after block elements
+        $formatted = preg_replace('/(<\/(h[1-4]|ul|ol|li|blockquote|pre)>)\s*<br\s*\/?>/', '$1', $formatted);
+        
+        return $formatted;
+    }
+
+    /**
+     * Create an info card response
+     */
+    private function createInfoCard($title, $content)
+    {
+        return [
+            'type' => 'info_card',
+            'title' => $title,
+            'content' => $content,
+            'html' => "<div class=\"info-card\"><div class=\"info-card-title\"><i class=\"bi bi-info-circle\"></i> {$title}</div>{$content}</div>"
+        ];
+    }
+
+    /**
+     * Create a warning card response
+     */
+    private function createWarningCard($title, $content)
+    {
+        return [
+            'type' => 'warning_card',
+            'title' => $title,
+            'content' => $content,
+            'html' => "<div class=\"warning-card\"><div class=\"warning-card-title\"><i class=\"bi bi-exclamation-triangle\"></i> {$title}</div>{$content}</div>"
+        ];
+    }
+
+    /**
+     * Create a success card response
+     */
+    private function createSuccessCard($title, $content)
+    {
+        return [
+            'type' => 'success_card',
+            'title' => $title,
+            'content' => $content,
+            'html' => "<div class=\"success-card\"><div class=\"success-card-title\"><i class=\"bi bi-check-circle\"></i> {$title}</div>{$content}</div>"
+        ];
+    }
+
+    /**
+     * Create a step-by-step guide response
+     */
+    private function createStepGuide($steps)
+    {
+        $html = '<div class="step-guide">';
+        foreach ($steps as $index => $step) {
+            $stepNum = $index + 1;
+            $html .= "<div class=\"step-item\"><div class=\"step-number\">{$stepNum}</div><div class=\"step-content\">{$step}</div></div>";
+        }
+        $html .= '</div>';
+        
+        return [
+            'type' => 'step_guide',
+            'steps' => $steps,
+            'html' => $html
+        ];
+    }
+
+    /**
+     * Format error message with enhanced styling
+     */
+    private function formatErrorMessage($error, $suggestion = null)
+    {
+        $formatted = "<div class=\"error-card\"><div class=\"error-card-title\"><i class=\"bi bi-exclamation-circle\"></i> Error</div>";
+        $formatted .= "<p>{$error}</p>";
+        
+        if ($suggestion) {
+            $formatted .= "<p style=\"margin-top: 8px; font-size: 13px;\"><strong>Suggestion:</strong> {$suggestion}</p>";
+        }
+        
+        $formatted .= "</div>";
+        
+        return $formatted;
+    }
+
+    /**
+     * Detect if response contains structured data and format accordingly
+     */
+    private function detectAndFormatStructure($content)
+    {
+        // Check for step-by-step instructions
+        if (preg_match('/(?:step|Step)\s*\d+[:.]/i', $content) || preg_match('/^\d+\.\s+/m', $content)) {
+            // Extract steps
+            preg_match_all('/(?:step\s*\d+[:.]?\s*|\d+\.\s*)(.+?)(?=(?:step\s*\d+[:.]?\s*|\d+\.\s*)|$)/is', $content, $matches);
+            if (!empty($matches[1])) {
+                return $this->createStepGuide(array_map('trim', $matches[1]));
+            }
+        }
+        
+        // Check for important/warning notes
+        if (preg_match('/(?:important|warning|note|alert|caution)[:!]/i', $content)) {
+            // Extract the warning section
+            if (preg_match('/(?:important|warning|note|alert|caution)[:!]\s*(.+?)(?=\n\n|\Z)/is', $content, $match)) {
+                $warningContent = $match[1];
+                $title = ucfirst(strtolower($match[0]));
+                return $this->createWarningCard($title, $warningContent);
+            }
+        }
+        
+        return null;
     }
 
 }
