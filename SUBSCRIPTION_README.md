@@ -126,7 +126,10 @@ Day 60:  Grace period ends → Status automatically set to 0 (CANNOT LOGIN)
 1. System checks `last_payment_date`
 2. Adds 1 month to get expiry date
 3. Adds 30-day grace period (courtesy time)
-4. If current date > expiry + grace → `status = 0` (locked out)
+4. If current date > expiry + grace:
+   - `status = 0` (locked out)
+   - `permissions = 0` (no access rights)
+
 
 ### To Disable Grace Period (Immediate Deactivation):
 ```bash
