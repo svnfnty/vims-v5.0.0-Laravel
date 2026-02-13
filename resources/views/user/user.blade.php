@@ -200,8 +200,8 @@
                 </div>
 
                 <div class="floating-label">
-                    <input type="password" class="form-control" id="password" name="password" placeholder=" " required>
-                    <label for="password">Password <span style="color: var(--danger);">*</span></label>
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Leave empty to keep current password">
+                    <label for="password">Password</label>
                     <span class="error-message" id="password-error"></span>
                 </div>
 

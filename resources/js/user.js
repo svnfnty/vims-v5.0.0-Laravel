@@ -67,6 +67,35 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('create_new')?.addEventListener('click', openCreateModal);
     document.getElementById('resetFilters')?.addEventListener('click', resetFilters);
 
+    // Subscription type change - auto-populate dates
+    elements.subscription_type?.addEventListener('change', function() {
+        const type = this.value;
+        if (!type) {
+            // Clear dates if no subscription type selected
+            if (elements.subscription_start_date) elements.subscription_start_date.value = '';
+            if (elements.subscription_end_date) elements.subscription_end_date.value = '';
+            return;
+        }
+
+        const today = new Date();
+        const startDate = today.toISOString().split('T')[0];
+        
+        let endDate = new Date();
+        if (type === 'monthly') {
+            endDate.setMonth(endDate.getMonth() + 1);
+        } else if (type === 'yearly') {
+            endDate.setFullYear(endDate.getFullYear() + 1);
+        } else if (type === 'free_trial') {
+            endDate.setDate(endDate.getDate() + 14); // 14 days trial
+        }
+        
+        const endDateStr = endDate.toISOString().split('T')[0];
+        
+        if (elements.subscription_start_date) elements.subscription_start_date.value = startDate;
+        if (elements.subscription_end_date) elements.subscription_end_date.value = endDateStr;
+        if (elements.last_payment_date) elements.last_payment_date.value = startDate;
+    });
+
     // View Toggle Buttons
     document.querySelectorAll('.toggle-btn').forEach(btn => {
         btn.addEventListener('click', function() {
@@ -493,6 +522,12 @@ window.openCreateModal = function() {
     document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
     elements.viewOnlyGroup.style.display = 'none';
     elements.userForm.style.display = 'block';
+    
+    // Make password required for new users
+    if (elements.password) {
+        elements.password.setAttribute('required', 'required');
+        elements.password.placeholder = ' ';
+    }
 
     // Show modal with animation
     elements.userModal.style.display = 'flex';
@@ -533,6 +568,13 @@ window.openEditModal = function(id) {
     elements.submitBtn.innerHTML = '<i class="fas fa-save"></i> Update User';
     elements.formMethod.value = 'PUT';
     elements.userForm.action = window.userRoutes.base + id;
+    
+    // Make password optional for editing (remove required)
+    if (elements.password) {
+        elements.password.removeAttribute('required');
+        elements.password.placeholder = 'Leave empty to keep current password';
+        elements.password.value = ''; // Clear any previous value
+    }
 
     elements.firstname.value = user.firstname;
     elements.middlename.value = user.middlename;
