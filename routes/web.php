@@ -109,7 +109,7 @@ Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function ()
     Route::get('/dashboard/search', [DashboardController::class, 'search'])->name('dashboard.search');
 
     // Client Routes
-    Route::group(['prefix' => 'clients'], function () {
+    Route::group(['prefix' => 'clients', 'middleware' => 'check.subscription'], function () {
         Route::get('/', [ClientController::class, 'index'])->name('clients.index');
         Route::post('/', [ClientController::class, 'store'])->name('clients.store');
         Route::get('/data', [ClientController::class, 'data'])->name('clients.data');
@@ -129,7 +129,7 @@ Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function ()
     });
 
     // Insurance Routes
-    Route::group(['prefix' => 'insurances'], function () {
+    Route::group(['prefix' => 'insurances', 'middleware' => 'check.subscription'], function () {
         Route::get('/', [InsuranceController::class, 'index'])->name('insurances.index');
         Route::get('/data', [InsuranceController::class, 'data'])->name('insurance.data');
         Route::get('/manage_insurance', [InsuranceController::class, 'manageInsurance'])->name('insurance.manageInsurance');
@@ -160,7 +160,7 @@ Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function ()
     Route::get('/series/api/getseries', [PolicySeriesController::class, 'getSeries'])->name('series.api.getseries');
     Route::get('/categories', [CategoryController::class, 'getAll'])->name('categories.all');
     // Policy Routes
-    Route::group(['prefix' => 'policies'], function () {
+    Route::group(['prefix' => 'policies', 'middleware' => 'check.subscription'], function () {
         Route::get('/', [PolicyController::class, 'index'])->name('policies.index');
         Route::post('/', [PolicyController::class, 'store'])->name('policies.store');
         Route::get('/data', [PolicyController::class, 'data'])->name('policies.data');
@@ -169,7 +169,7 @@ Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function ()
         Route::delete('/{id}', [PolicyController::class, 'destroy'])->name('policies.destroy');
     });
     // Walkin Routes
-    Route::group(['prefix' => 'walkin'], function () {
+    Route::group(['prefix' => 'walkin', 'middleware' => 'check.subscription'], function () {
         Route::get('/', [WalkinController::class, 'index'])->name('walkin.index');
         Route::post('/', [WalkinController::class, 'store'])->name('walkin.store');
         Route::get('/data', [WalkinController::class, 'data'])->name('walkin.data');
@@ -179,7 +179,7 @@ Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function ()
     });
 
     // Office Routes
-    Route::group(['prefix' => 'office'], function () {
+    Route::group(['prefix' => 'office', 'middleware' => 'check.subscription'], function () {
         Route::get('/', [OfficeController::class, 'index'])->name('office.index');
         Route::post('/', [OfficeController::class, 'store'])->name('office.store');
         Route::get('/data', [OfficeController::class, 'data'])->name('office.data');
@@ -189,7 +189,7 @@ Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function ()
         Route::delete('/{id}', [OfficeController::class, 'destroy'])->name('office.destroy');
     });
     // User Routes
-    Route::group(['prefix' => 'users'], function () {
+    Route::group(['prefix' => 'users', 'middleware' => 'check.subscription'], function () {
         Route::get('/', [UserController::class, 'index'])->name('users.index');
         Route::post('/', [UserController::class, 'store'])->name('users.store');
         Route::get('/data', [UserController::class, 'data'])->name('users.data');

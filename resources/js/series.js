@@ -5,6 +5,30 @@ import Swal from 'sweetalert2';
 // Use global jQuery and select2 from CDN (loaded in app.blade.php)
 const $ = window.jQuery;
 
+// Check if user has subscription permissions
+function checkSubscriptionPermission(actionName = 'perform this action') {
+    if (window.userPermissions === 0) {
+        Swal.fire({
+            title: 'Subscription Required!',
+            text: `Your subscription has expired or you don't have permission to ${actionName}. Please renew your subscription to continue using this feature.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Renew Subscription',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to account settings or payment page
+                window.location.href = '/account/setting';
+            }
+        });
+        return false;
+    }
+    return true;
+}
+
 // Set default CSRF token for all AJAX requests
 $.ajaxSetup({
     headers: {
@@ -40,7 +64,12 @@ $(document).ready(function() {
     });
 
     // Create New Series
-    $('#create_new').on('click', function() {
+    $('#create_new').on('click', function(e) {
+        if (!checkSubscriptionPermission('create new series')) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
         openCreateModal();
     });
 
@@ -320,12 +349,22 @@ $(document).ready(function() {
             openViewModal(id);
         });
 
-        $('.edit_data').on('click', function() {
+        $('.edit_data').on('click', function(e) {
+            if (!checkSubscriptionPermission('edit series')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = $(this).data('id');
             openEditModal(id);
         });
 
-        $('.delete_data').on('click', function() {
+        $('.delete_data').on('click', function(e) {
+            if (!checkSubscriptionPermission('delete series')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = $(this).data('id');
             Swal.fire({
                 title: 'Are you sure?',
@@ -361,12 +400,22 @@ $(document).ready(function() {
             openViewModal(id);
         });
 
-        $('.edit_data').on('click', function() {
+        $('.edit_data').on('click', function(e) {
+            if (!checkSubscriptionPermission('edit series')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = $(this).data('id');
             openEditModal(id);
         });
 
-        $('.delete_data').on('click', function() {
+        $('.delete_data').on('click', function(e) {
+            if (!checkSubscriptionPermission('delete series')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = $(this).data('id');
             Swal.fire({
                 title: 'Are you sure?',

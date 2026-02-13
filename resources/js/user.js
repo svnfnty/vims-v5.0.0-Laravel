@@ -56,6 +56,30 @@ function getOfficeName(officeId) {
     return office ? office.office_name : 'N/A';
 }
 
+// Check if user has subscription permissions
+function checkSubscriptionPermission(actionName = 'perform this action') {
+    if (window.userPermissions === 0) {
+        Swal.fire({
+            title: 'Subscription Required!',
+            text: `Your subscription has expired or you don't have permission to ${actionName}. Please renew your subscription to continue using this feature.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Renew Subscription',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to account settings or payment page
+                window.location.href = '/account/setting';
+            }
+        });
+        return false;
+    }
+    return true;
+}
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     // Load initial data
@@ -64,7 +88,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Event Listeners
     document.getElementById('loadDataBtn')?.addEventListener('click', loadUsers);
-    document.getElementById('create_new')?.addEventListener('click', openCreateModal);
+    document.getElementById('create_new')?.addEventListener('click', function(e) {
+        if (!checkSubscriptionPermission('create new users')) {
+            e.preventDefault();
+            e.stopPropagation();
+            return;
+        }
+        openCreateModal();
+    });
     document.getElementById('resetFilters')?.addEventListener('click', resetFilters);
 
     // Subscription type change - auto-populate dates
@@ -449,14 +480,24 @@ function attachCardEventListeners() {
     });
 
     document.querySelectorAll('.edit_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('edit users')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             openEditModal(id);
         });
     });
 
     document.querySelectorAll('.delete_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('delete users')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             if (confirm('Are you sure you want to delete this user?')) {
                 deleteUser(id);
@@ -494,14 +535,24 @@ function attachTableEventListeners() {
     });
 
     document.querySelectorAll('.edit_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('edit users')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             openEditModal(id);
         });
     });
 
     document.querySelectorAll('.delete_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('delete users')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             if (confirm('Are you sure you want to delete this user?')) {
                 deleteUser(id);

@@ -26,6 +26,8 @@ class RouteServiceProvider extends ServiceProvider
         // Define any route model bindings or pattern filters here.
     }
 
+
+
     /**
      * Define the routes for the application.
      */

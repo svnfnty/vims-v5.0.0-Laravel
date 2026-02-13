@@ -10,6 +10,30 @@ let filteredData = [];
 let currentView = 'cards';
 let currentMode = 'create'; // create, edit, view
 
+// Check if user has subscription permissions
+function checkSubscriptionPermission(actionName = 'perform this action') {
+    if (window.userPermissions === 0) {
+        Swal.fire({
+            title: 'Subscription Required!',
+            text: `Your subscription has expired or you don't have permission to ${actionName}. Please renew your subscription to continue using this feature.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Renew Subscription',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Redirect to account settings or payment page
+                window.location.href = '/account/setting';
+            }
+        });
+        return false;
+    }
+    return true;
+}
+
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
     loadStats();
@@ -28,7 +52,14 @@ function attachEventListeners() {
     // Create New Client
     const createNewBtn = document.getElementById('create_new');
     if (createNewBtn) {
-        createNewBtn.addEventListener('click', openCreateModal);
+        createNewBtn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('create new clients')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+            openCreateModal();
+        });
     }
 
     // View Toggle Buttons
@@ -397,7 +428,12 @@ function attachCardEventListeners() {
 
     // Edit buttons
     document.querySelectorAll('.edit_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('edit clients')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             openEditModal(id);
         });
@@ -405,7 +441,12 @@ function attachCardEventListeners() {
 
     // Delete buttons
     document.querySelectorAll('.delete_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('delete clients')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
@@ -462,7 +503,12 @@ function attachTableEventListeners() {
 
     // Edit buttons
     document.querySelectorAll('.edit_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('edit clients')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             openEditModal(id);
         });
@@ -470,7 +516,12 @@ function attachTableEventListeners() {
 
     // Delete buttons
     document.querySelectorAll('.delete_data').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function(e) {
+            if (!checkSubscriptionPermission('delete clients')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
             const id = this.dataset.id;
             if (typeof Swal !== 'undefined') {
                 Swal.fire({
