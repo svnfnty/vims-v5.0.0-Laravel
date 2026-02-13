@@ -149,5 +149,8 @@
     </script>
     
     @yield('scripts')
+    
+    <!-- AI Chatbot Integration -->
+    @include('chatbot.index')
 </body>
 </html>
