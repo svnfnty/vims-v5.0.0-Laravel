@@ -15,6 +15,7 @@ const elements = {
     totalUsers: document.getElementById('totalUsers'),
     activeUsers: document.getElementById('activeUsers'),
     inactiveUsers: document.getElementById('inactiveUsers'),
+    subscribedUsers: document.getElementById('subscribedUsers'),
     cardView: document.getElementById('cardView'),
     tableView: document.getElementById('tableView'),
     tableBody: document.getElementById('tableBody'),
@@ -40,6 +41,12 @@ const elements = {
     permissions: document.getElementById('permissions'),
     credit: document.getElementById('credit'),
     office: document.getElementById('office'),
+    // Subscription fields
+    subscription_type: document.getElementById('subscription_type'),
+    subscription_start_date: document.getElementById('subscription_start_date'),
+    subscription_end_date: document.getElementById('subscription_end_date'),
+    last_payment_date: document.getElementById('last_payment_date'),
+    subscription_amount: document.getElementById('subscription_amount'),
 };
 
 // Function to get office name by ID
@@ -135,6 +142,12 @@ async function loadStats() {
         elements.totalUsers.textContent = data.total;
         elements.activeUsers.textContent = data.active;
         elements.inactiveUsers.textContent = data.inactive;
+        
+        // Calculate subscribed users from loaded data
+        const subscribedCount = usersData.filter(u => u.subscription_type && u.subscription_type !== '').length;
+        if (elements.subscribedUsers) {
+            elements.subscribedUsers.textContent = subscribedCount;
+        }
     } catch (error) {
         console.error('Error loading stats:', error);
     }
@@ -167,6 +180,16 @@ function applyFilter(status) {
         filteredData = usersData.filter(u => u.status == 1);
     } else if (status === 'inactive') {
         filteredData = usersData.filter(u => u.status == 0);
+    } else if (status === 'subscribed') {
+        filteredData = usersData.filter(u => u.subscription_type && u.subscription_type !== '');
+    } else if (status === 'expired') {
+        const now = new Date();
+        filteredData = usersData.filter(u => {
+            if (!u.subscription_type) return false;
+            const endDate = u.subscription_end_date ? new Date(u.subscription_end_date) : 
+                           (u.last_payment_date ? new Date(new Date(u.last_payment_date).setMonth(new Date(u.last_payment_date).getMonth() + 1)) : null);
+            return endDate && endDate < now;
+        });
     }
 
     if (filteredData.length === 0 && status !== 'all') {
@@ -210,6 +233,28 @@ function renderCards(data) {
         const email = user.email || '<span style="color: var(--gray);">No email</span>';
         const createdDate = new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
         const permissionsText = user.permissions == 0 ? 'Only View button visible' : (user.permissions == 1 ? 'View, Edit, and Delete buttons visible' : 'View and Edit buttons visible, Delete hidden');
+        
+        // Subscription info
+        let subscriptionInfo = 'No Subscription';
+        let subscriptionClass = 'badge-secondary';
+        if (user.subscription_type) {
+            const now = new Date();
+            const endDate = user.subscription_end_date ? new Date(user.subscription_end_date) : 
+                           (user.last_payment_date ? new Date(new Date(user.last_payment_date).setMonth(new Date(user.last_payment_date).getMonth() + 1)) : null);
+            if (endDate) {
+                const daysLeft = Math.ceil((endDate - now) / (1000 * 60 * 60 * 24));
+                if (daysLeft < 0) {
+                    subscriptionInfo = 'Expired';
+                    subscriptionClass = 'badge-danger';
+                } else if (daysLeft <= 7) {
+                    subscriptionInfo = `Expires in ${daysLeft} days`;
+                    subscriptionClass = 'badge-warning';
+                } else {
+                    subscriptionInfo = `Active (${user.subscription_type})`;
+                    subscriptionClass = 'badge-success';
+                }
+            }
+        }
 
         html += `
             <div class="user-card" data-status="${status}" data-id="${user.id}">
@@ -237,6 +282,10 @@ function renderCards(data) {
                         <div class="detail-row">
                             <span class="detail-label">Type:</span>
                             <span class="detail-value">${statusType}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Subscription:</span>
+                            <span class="detail-value"><span class="badge ${subscriptionClass}">${subscriptionInfo}</span></span>
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">Permissions:</span>
@@ -282,7 +331,7 @@ function renderTable(data) {
     if (data.length === 0) {
         elements.tableBody.innerHTML = `
             <tr>
-                <td colspan="10">
+                <td colspan="11">
                     <div class="empty-state">
                         <div class="empty-icon">
                             <i class="fas fa-users"></i>
@@ -308,6 +357,12 @@ function renderTable(data) {
         const fullName = user.firstname + ' ' + (user.middlename ? user.middlename + ' ' : '') + user.lastname;
         const email = user.email || '<span style="color: var(--gray);">No email</span>';
         const permissionsText = user.permissions == 0 ? 'No Access' : (user.permissions == 1 ? 'Can Modify' : 'Can Print');
+        
+        // Subscription badge
+        let subscriptionBadge = '<span class="badge badge-secondary">No Subscription</span>';
+        if (user.subscription_badge) {
+            subscriptionBadge = user.subscription_badge;
+        }
 
         html += `
             <tr data-status="${status}" data-id="${user.id}">
@@ -319,6 +374,7 @@ function renderTable(data) {
                 <td class="text-center">
                     <span class="status-badge ${status}">${statusLabel}</span>
                 </td>
+                <td class="text-center">${subscriptionBadge}</td>
                 <td>${permissionsText}</td>
                 <td>${user.credit || 0}</td>
                 <td>${getOfficeName(user.office_id)}</td>
@@ -490,6 +546,13 @@ window.openEditModal = function(id) {
     elements.permissions.value = user.permissions;
     elements.credit.value = user.credit;
     elements.office.value = user.office_id;
+    
+    // Subscription fields
+    if (elements.subscription_type) elements.subscription_type.value = user.subscription_type || '';
+    if (elements.subscription_start_date) elements.subscription_start_date.value = user.subscription_start_date ? user.subscription_start_date.split(' ')[0] : '';
+    if (elements.subscription_end_date) elements.subscription_end_date.value = user.subscription_end_date ? user.subscription_end_date.split(' ')[0] : '';
+    if (elements.last_payment_date) elements.last_payment_date.value = user.last_payment_date ? user.last_payment_date.split(' ')[0] : '';
+    if (elements.subscription_amount) elements.subscription_amount.value = user.subscription_amount || '';
 
     document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
     document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
@@ -572,6 +635,33 @@ window.openViewModal = function(id) {
     elements.office.value = user.office_id;
     elements.office.setAttribute('disabled', true);
     elements.office.classList.add('view-only-select');
+    
+    // Subscription fields
+    if (elements.subscription_type) {
+        elements.subscription_type.value = user.subscription_type || '';
+        elements.subscription_type.setAttribute('disabled', true);
+        elements.subscription_type.classList.add('view-only-select');
+    }
+    if (elements.subscription_start_date) {
+        elements.subscription_start_date.value = user.subscription_start_date ? user.subscription_start_date.split(' ')[0] : '';
+        elements.subscription_start_date.setAttribute('readonly', true);
+        elements.subscription_start_date.classList.add('view-only-field');
+    }
+    if (elements.subscription_end_date) {
+        elements.subscription_end_date.value = user.subscription_end_date ? user.subscription_end_date.split(' ')[0] : '';
+        elements.subscription_end_date.setAttribute('readonly', true);
+        elements.subscription_end_date.classList.add('view-only-field');
+    }
+    if (elements.last_payment_date) {
+        elements.last_payment_date.value = user.last_payment_date ? user.last_payment_date.split(' ')[0] : '';
+        elements.last_payment_date.setAttribute('readonly', true);
+        elements.last_payment_date.classList.add('view-only-field');
+    }
+    if (elements.subscription_amount) {
+        elements.subscription_amount.value = user.subscription_amount || '';
+        elements.subscription_amount.setAttribute('readonly', true);
+        elements.subscription_amount.classList.add('view-only-field');
+    }
 
     elements.createdDateDisplay.textContent = new Date(user.created_at).toLocaleString();
 
@@ -663,6 +753,12 @@ async function submitUserForm() {
         permissions: elements.permissions.value,
         credit: elements.credit.value,
         office_id: elements.office.value,
+        // Subscription fields
+        subscription_type: elements.subscription_type ? elements.subscription_type.value : '',
+        subscription_start_date: elements.subscription_start_date ? elements.subscription_start_date.value : '',
+        subscription_end_date: elements.subscription_end_date ? elements.subscription_end_date.value : '',
+        last_payment_date: elements.last_payment_date ? elements.last_payment_date.value : '',
+        subscription_amount: elements.subscription_amount ? elements.subscription_amount.value : '',
         _token: csrfToken,
     };
 

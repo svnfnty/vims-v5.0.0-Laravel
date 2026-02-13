@@ -76,7 +76,14 @@ class UserController extends Controller
                     'permissions',
                     'credit',
                     'office_id',
-                    'created_at'
+                    'created_at',
+                    // Subscription fields
+                    'subscription_type',
+                    'subscription_start_date',
+                    'subscription_end_date',
+                    'last_payment_date',
+                    'subscription_amount',
+                    'notification_sent'
                 ]);
         } else {
             $officeId = $user->office_id ?? null;
@@ -95,7 +102,14 @@ class UserController extends Controller
                     'permissions',
                     'credit',
                     'office_id',
-                    'created_at'
+                    'created_at',
+                    // Subscription fields
+                    'subscription_type',
+                    'subscription_start_date',
+                    'subscription_end_date',
+                    'last_payment_date',
+                    'subscription_amount',
+                    'notification_sent'
                 ]);
         }
 
@@ -107,6 +121,32 @@ class UserController extends Controller
                 $status_class = $user->status == 1 ? 'badge-success' : 'badge-secondary';
                 $status_text = $user->status == 1 ? 'Verified' : 'Not Verified';
                 return '<span class="badge '.$status_class.'">'.$status_text.'</span>';
+            })
+            ->addColumn('subscription_badge', function($user) {
+                if (!$user->subscription_type) {
+                    return '<span class="badge badge-secondary">No Subscription</span>';
+                }
+                
+                $now = \Carbon\Carbon::now();
+                $endDate = $user->subscription_end_date 
+                    ? \Carbon\Carbon::parse($user->subscription_end_date)
+                    : ($user->last_payment_date 
+                        ? \Carbon\Carbon::parse($user->last_payment_date)->addMonth()
+                        : null);
+                
+                if (!$endDate) {
+                    return '<span class="badge badge-warning">Unknown</span>';
+                }
+                
+                $daysLeft = $now->diffInDays($endDate, false);
+                
+                if ($daysLeft < 0) {
+                    return '<span class="badge badge-danger">Expired</span>';
+                } elseif ($daysLeft <= 7) {
+                    return '<span class="badge badge-warning">Expires in '.$daysLeft.' days</span>';
+                } else {
+                    return '<span class="badge badge-success">Active ('.$user->subscription_type.')</span>';
+                }
             })
             ->addColumn('permissions_badge', function($user) {
                 $perm_text = match($user->permissions) {
@@ -124,7 +164,7 @@ class UserController extends Controller
                     <button type="button" class="btn btn-sm btn-danger delete-user" data-id="'.$user->id.'">Delete</button>
                 ';
             })
-            ->rawColumns(['status_badge', 'permissions_badge', 'action'])
+            ->rawColumns(['status_badge', 'subscription_badge', 'permissions_badge', 'action'])
             ->make(true);
     }
 
@@ -143,11 +183,20 @@ class UserController extends Controller
             'permissions' => 'required|in:0,1,2',
             'credit' => 'nullable|numeric',
             'office_id' => 'required|integer',
+            // Subscription fields
+            'subscription_type' => 'nullable|string|in:monthly,yearly,free_trial',
+            'subscription_start_date' => 'nullable|date',
+            'subscription_end_date' => 'nullable|date',
+            'last_payment_date' => 'nullable|date',
+            'subscription_amount' => 'nullable|numeric',
         ]);
 
         $data = $request->only([
             'firstname', 'middlename', 'lastname', 'username', 'email', 'avatar',
-            'type', 'status', 'permissions', 'credit', 'office_id'
+            'type', 'status', 'permissions', 'credit', 'office_id',
+            // Subscription fields
+            'subscription_type', 'subscription_start_date', 'subscription_end_date',
+            'last_payment_date', 'subscription_amount'
         ]);
         $data['firstname'] = strtoupper($data['firstname']);
         $data['middlename'] = strtoupper($data['middlename'] ?? '');
@@ -156,6 +205,14 @@ class UserController extends Controller
         $data['avatar'] = strtoupper($data['avatar'] ?? '');
         $data['password'] = Hash::make($request->password);
         $data['date_added'] = now();
+
+        // Set default subscription dates if subscription type is provided
+        if (!empty($data['subscription_type']) && empty($data['subscription_start_date'])) {
+            $data['subscription_start_date'] = now();
+        }
+        if (!empty($data['subscription_type']) && empty($data['subscription_end_date'])) {
+            $data['subscription_end_date'] = now()->addMonth(); // Default 1 month for monthly
+        }
 
         $user = User::create($data);
 
@@ -197,6 +254,12 @@ class UserController extends Controller
             'permissions' => 'required|in:0,1,2',
             'credit' => 'nullable|numeric',
             'office_id' => 'nullable|integer',
+            // Subscription fields
+            'subscription_type' => 'nullable|string|in:monthly,yearly,free_trial',
+            'subscription_start_date' => 'nullable|date',
+            'subscription_end_date' => 'nullable|date',
+            'last_payment_date' => 'nullable|date',
+            'subscription_amount' => 'nullable|numeric',
         ]);
 
         $user = auth()->user();
@@ -212,7 +275,10 @@ class UserController extends Controller
 
         $data = $request->only([
             'firstname', 'middlename', 'lastname', 'username', 'email', 'avatar',
-            'type', 'status', 'permissions', 'credit', 'office_id'
+            'type', 'status', 'permissions', 'credit', 'office_id',
+            // Subscription fields
+            'subscription_type', 'subscription_start_date', 'subscription_end_date',
+            'last_payment_date', 'subscription_amount'
         ]);
         $data['firstname'] = strtoupper($data['firstname']);
         $data['middlename'] = strtoupper($data['middlename'] ?? '');
@@ -223,6 +289,12 @@ class UserController extends Controller
             $data['password'] = Hash::make($request->password);
         }
         $data['date_updated'] = now();
+
+        // Reset notification flag if subscription is renewed
+        if ($request->filled('last_payment_date')) {
+            $data['notification_sent'] = false;
+            $data['notification_sent_at'] = null;
+        }
 
         $user->update($data);
 

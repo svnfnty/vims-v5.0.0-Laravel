@@ -40,6 +40,14 @@ class User extends Authenticatable
         'office_id',
         'email_verified_at',
         'remember_token',
+        // Subscription fields
+        'subscription_type',
+        'subscription_start_date',
+        'subscription_end_date',
+        'last_payment_date',
+        'subscription_amount',
+        'notification_sent',
+        'notification_sent_at',
     ];
 
     /**

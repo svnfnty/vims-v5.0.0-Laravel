@@ -64,6 +64,15 @@
                 <span class="stat-label">Not Verified</span>
             </div>
         </div>
+        <div class="stat-card">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                <i class="fas fa-credit-card"></i>
+            </div>
+            <div class="stat-info">
+                <span class="stat-value" id="subscribedUsers">0</span>
+                <span class="stat-label">Subscribed</span>
+            </div>
+        </div>
     </div>
 
     <!-- Users Section -->
@@ -94,6 +103,8 @@
                        <option value="all">All Users</option>
                         <option value="active">Verified</option>
                         <option value="inactive">Not Verified</option>
+                        <option value="subscribed">Subscribed</option>
+                        <option value="expired">Expired Subscription</option>
                     </select>
                 </div>
             </div>
@@ -115,6 +126,7 @@
                         <th>Email</th>
                         <th>Type</th>
                         <th>Status</th>
+                        <th>Subscription</th>
                         <th>Permissions</th>
                         <th>Credit</th>
                         <th>Office</th>
@@ -242,6 +254,48 @@
                     </select>
                     <label for="office">Office</label>
                     <span class="error-message" id="office-error"></span>
+                </div>
+
+                <!-- Subscription Fields -->
+                <div class="form-section" style="margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border);">
+                    <h4 style="margin-bottom: 15px; color: var(--primary);">
+                        <i class="fas fa-credit-card"></i> Subscription Information
+                    </h4>
+                    
+                    <div class="floating-label">
+                        <select class="form-control" id="subscription_type" name="subscription_type" placeholder=" ">
+                            <option value="">No Subscription</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                            <option value="free_trial">Free Trial</option>
+                        </select>
+                        <label for="subscription_type">Subscription Type</label>
+                        <span class="error-message" id="subscription_type-error"></span>
+                    </div>
+
+                    <div class="floating-label">
+                        <input type="date" class="form-control" id="subscription_start_date" name="subscription_start_date" placeholder=" ">
+                        <label for="subscription_start_date">Subscription Start Date</label>
+                        <span class="error-message" id="subscription_start_date-error"></span>
+                    </div>
+
+                    <div class="floating-label">
+                        <input type="date" class="form-control" id="subscription_end_date" name="subscription_end_date" placeholder=" ">
+                        <label for="subscription_end_date">Subscription End Date</label>
+                        <span class="error-message" id="subscription_end_date-error"></span>
+                    </div>
+
+                    <div class="floating-label">
+                        <input type="date" class="form-control" id="last_payment_date" name="last_payment_date" placeholder=" ">
+                        <label for="last_payment_date">Last Payment Date</label>
+                        <span class="error-message" id="last_payment_date-error"></span>
+                    </div>
+
+                    <div class="floating-label">
+                        <input type="number" step="0.01" class="form-control" id="subscription_amount" name="subscription_amount" placeholder=" ">
+                        <label for="subscription_amount">Subscription Amount</label>
+                        <span class="error-message" id="subscription_amount-error"></span>
+                    </div>
                 </div>
 
                 <div class="form-group" id="viewOnlyGroup" style="display: none;">

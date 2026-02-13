@@ -101,6 +101,48 @@
             </div>
         </div>
         
+        <!-- Subscription Notification Banner -->
+        @php
+        $currentUser = Auth::user();
+        $bannerMessage = null;
+        $bannerClass = null;
+        
+        if ($currentUser && $currentUser->subscription_type) {
+            $now = \Carbon\Carbon::now();
+            $endDate = $currentUser->subscription_end_date 
+                ? \Carbon\Carbon::parse($currentUser->subscription_end_date)
+                : ($currentUser->last_payment_date 
+                    ? \Carbon\Carbon::parse($currentUser->last_payment_date)->addMonth()
+                    : null);
+            
+            if ($endDate) {
+                $daysLeft = $now->diffInDays($endDate, false);
+                
+                if ($daysLeft < 0) {
+                    $bannerMessage = 'Your subscription has expired. Please renew immediately to continue using all features.';
+                    $bannerClass = 'bg-red-100 border-red-400 text-red-700';
+                } elseif ($daysLeft <= 7) {
+                    $bannerMessage = "Your subscription expires in {$daysLeft} day(s). Please renew soon to avoid interruption.";
+                    $bannerClass = 'bg-yellow-100 border-yellow-400 text-yellow-700';
+                } elseif ($daysLeft <= 30) {
+                    $bannerMessage = "Your subscription will expire in {$daysLeft} days. Consider renewing soon.";
+                    $bannerClass = 'bg-blue-100 border-blue-400 text-blue-700';
+                }
+            }
+        }
+        @endphp
+
+        @if($bannerMessage)
+        <div class="{{ $bannerClass }} border px-4 py-3 rounded relative mx-2 md:mx-3 lg:mx-4 mt-2" role="alert">
+            <div class="flex items-center">
+                <i class="bi bi-exclamation-triangle-fill mr-2"></i>
+                <span class="block sm:inline font-medium">{{ $bannerMessage }}</span>
+                <a href="{{ route('account.setting') }}" class="ml-auto underline font-bold">Renew Now</a>
+                <button onclick="this.parentElement.parentElement.style.display='none'" class="ml-4 text-lg font-bold">&times;</button>
+            </div>
+        </div>
+        @endif
+
         <!-- Content Area -->
         <div class="px-2 md:px-3 lg:px-4">
             <header>

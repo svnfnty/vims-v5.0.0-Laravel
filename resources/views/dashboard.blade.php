@@ -148,4 +148,56 @@
 </div>
 
 
+{{-- Subscription Expiry Notification Popup --}}
+@php
+$currentUser = Auth::user();
+$subscriptionMessage = null;
+$subscriptionType = null;
+
+if ($currentUser->subscription_type) {
+    $now = \Carbon\Carbon::now();
+    $endDate = $currentUser->subscription_end_date 
+        ? \Carbon\Carbon::parse($currentUser->subscription_end_date)
+        : ($currentUser->last_payment_date 
+            ? \Carbon\Carbon::parse($currentUser->last_payment_date)->addMonth()
+            : null);
+    
+    if ($endDate) {
+        $daysLeft = $now->diffInDays($endDate, false);
+        
+        if ($daysLeft < 0) {
+            $subscriptionMessage = 'Your subscription has expired. Please renew immediately to continue using all features.';
+            $subscriptionType = 'danger';
+        } elseif ($daysLeft <= 7) {
+            $subscriptionMessage = "Your subscription expires in {$daysLeft} day(s). Please renew soon to avoid interruption.";
+            $subscriptionType = 'warning';
+        } elseif ($daysLeft <= 30) {
+            $subscriptionMessage = "Your subscription will expire in {$daysLeft} days. Consider renewing soon.";
+            $subscriptionType = 'info';
+        }
+    }
+}
+@endphp
+
+@if($subscriptionMessage)
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        Swal.fire({
+            title: 'Subscription Notice',
+            text: '{{ $subscriptionMessage }}',
+            icon: '{{ $subscriptionType }}',
+            confirmButtonText: 'Got it',
+            confirmButtonColor: '#3085d6',
+            allowOutsideClick: false,
+            backdrop: true,
+            timer: 10000,
+            timerProgressBar: true,
+            showCloseButton: true,
+            footer: '<a href="/account/setting" style="color: #3085d6; text-decoration: none;">View Account Settings</a>'
+        });
+    });
+</script>
+@endif
+
 @endsection

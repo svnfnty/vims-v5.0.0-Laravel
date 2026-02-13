@@ -55,6 +55,42 @@ Route::post('/login', function (Request $request) {
 
     if (Auth::attempt(['email' => $credentials['email'], 'password' => $credentials['password']])) {
         $request->session()->regenerate();
+        
+        // Check subscription status
+        $user = Auth::user();
+        $subscriptionMessage = null;
+        $subscriptionAlert = null;
+        
+        if ($user->subscription_type) {
+            $now = \Carbon\Carbon::now();
+            $endDate = $user->subscription_end_date 
+                ? \Carbon\Carbon::parse($user->subscription_end_date)
+                : ($user->last_payment_date 
+                    ? \Carbon\Carbon::parse($user->last_payment_date)->addMonth()
+                    : null);
+            
+            if ($endDate) {
+                $daysLeft = $now->diffInDays($endDate, false);
+                
+                if ($daysLeft < 0) {
+                    // Subscription expired
+                    $subscriptionAlert = 'Your subscription has expired. Please renew to continue using all features.';
+                    $user->update(['status' => 0]);
+                } elseif ($daysLeft <= 7) {
+                    // Subscription expiring soon
+                    $subscriptionMessage = "Your subscription expires in {$daysLeft} day(s). Please renew soon to avoid interruption.";
+                }
+            }
+        }
+        
+        // Store messages in session
+        if ($subscriptionMessage) {
+            session()->flash('subscription_warning', $subscriptionMessage);
+        }
+        if ($subscriptionAlert) {
+            session()->flash('subscription_alert', $subscriptionAlert);
+        }
+        
         return redirect()->intended(route('dashboard'));
     }
 
