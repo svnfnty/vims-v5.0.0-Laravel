@@ -179,25 +179,4 @@ if ($currentUser->subscription_type) {
 }
 @endphp
 
-@if($subscriptionMessage)
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        Swal.fire({
-            title: 'Subscription Notice',
-            text: '{{ $subscriptionMessage }}',
-            icon: '{{ $subscriptionType }}',
-            confirmButtonText: 'Got it',
-            confirmButtonColor: '#3085d6',
-            allowOutsideClick: false,
-            backdrop: true,
-            timer: 10000,
-            timerProgressBar: true,
-            showCloseButton: true,
-            footer: '<a href="/account/setting" style="color: #3085d6; text-decoration: none;">View Account Settings</a>'
-        });
-    });
-</script>
-@endif
-
 @endsection
