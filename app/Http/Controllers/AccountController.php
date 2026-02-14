@@ -172,9 +172,24 @@ class AccountController extends Controller
         $paymentUser = $payment->user;
         if ($paymentUser) {
             $now = now();
+            
+            // Calculate new subscription end date
+            // If user has remaining days, add them to the new period
+            $currentEndDate = $paymentUser->subscription_end_date 
+                ? \Carbon\Carbon::parse($paymentUser->subscription_end_date) 
+                : null;
+            
+            if ($currentEndDate && $currentEndDate->isFuture()) {
+                // User has remaining days, add 1 month to current end date
+                $newEndDate = $currentEndDate->copy()->addMonth();
+            } else {
+                // No active subscription or expired, start fresh from now
+                $newEndDate = $now->copy()->addMonth();
+            }
+            
             $paymentUser->update([
                 'subscription_start_date' => $now->format('Y-m-d'),
-                'subscription_end_date' => $now->copy()->addMonth()->format('Y-m-d'),
+                'subscription_end_date' => $newEndDate->format('Y-m-d'),
                 'last_payment_date' => $now->format('Y-m-d'),
             ]);
         }
