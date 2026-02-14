@@ -171,7 +171,7 @@
                                 'pulse' => true
                             ];
                         }
-                    } elseif ($daysLeft <= 30) {
+                    } elseif ($daysLeft <= 7) {
                         if ($currentUser->subscription_type === 'free_trial') {
                             $bannerMessage = "Your Free Trial will expire in {$daysLeft} days. Don't miss out - upgrade to a paid plan!";
                             $bannerConfig = [
