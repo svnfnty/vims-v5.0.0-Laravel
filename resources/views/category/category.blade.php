@@ -203,6 +203,13 @@
         store: '{{ route("category.store") }}'
     };
     window.userPermissions = {{ auth()->user()->permissions ?? 0 }};
+    window.currentUserSubscription = {
+        subscription_type: '{{ auth()->user()->subscription_type }}',
+        subscription_start_date: '{{ auth()->user()->subscription_start_date }}',
+        subscription_end_date: '{{ auth()->user()->subscription_end_date }}',
+        last_payment_date: '{{ auth()->user()->last_payment_date }}',
+        subscription_amount: '{{ auth()->user()->subscription_amount }}'
+    };
 </script>
 
 <!-- Tutorial Step Completion Handler -->

@@ -6,6 +6,7 @@ const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribut
 
 // Check if user has subscription permissions
 function checkSubscriptionPermission(actionName = 'perform this action') {
+    // Check if user has no permissions (permissions = 0)
     if (window.userPermissions === 0) {
         Swal.fire({
             title: 'Subscription Required!',
@@ -25,6 +26,55 @@ function checkSubscriptionPermission(actionName = 'perform this action') {
         });
         return false;
     }
+    
+    // Check if user has no subscription at all
+    if (!window.currentUserSubscription || !window.currentUserSubscription.subscription_type) {
+        Swal.fire({
+            title: 'Subscription Required!',
+            text: `You don't have an active subscription. Please subscribe to ${actionName}.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Subscribe Now',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            allowOutsideClick: false
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/account/setting';
+            }
+        });
+        return false;
+    }
+    
+    // Check if free trial has ended
+    if (window.currentUserSubscription.subscription_type === 'free_trial') {
+        const endDate = window.currentUserSubscription.subscription_end_date 
+            ? new Date(window.currentUserSubscription.subscription_end_date)
+            : (window.currentUserSubscription.last_payment_date 
+                ? new Date(new Date(window.currentUserSubscription.last_payment_date).setMonth(new Date(window.currentUserSubscription.last_payment_date).getMonth() + 1))
+                : null);
+        
+        if (endDate && new Date() > endDate) {
+            Swal.fire({
+                title: 'Free Trial Ended!',
+                text: `Your free trial has ended. Please upgrade your subscription to ${actionName}.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Upgrade Now',
+                cancelButtonText: 'Cancel',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                allowOutsideClick: false
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = '/account/setting';
+                }
+            });
+            return false;
+        }
+    }
+    
     return true;
 }
 
