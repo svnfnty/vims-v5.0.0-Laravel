@@ -202,6 +202,14 @@ Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function ()
     // Account Routes
     Route::get('/account/setting', [AccountController::class, 'setting'])->name('account.setting');
     Route::put('/account/setting', [AccountController::class, 'update'])->name('account.update');
+    
+    // Payment Routes
+    Route::post('/account/payment', [AccountController::class, 'processPayment'])->name('account.payment');
+    Route::get('/account/payment/history', [AccountController::class, 'paymentHistory'])->name('account.payment.history');
+    Route::get('/account/payment/amount', [AccountController::class, 'getSubscriptionAmount'])->name('account.payment.amount');
+    
+    // Payment Proof Image Route
+    Route::get('/account/payment/proof/{payment}', [AccountController::class, 'viewPaymentProof'])->name('account.payment.proof');
 
     // System Settings Routes
     Route::get('/system/settings', [SettingsController::class, 'index'])->name('system.settings');
