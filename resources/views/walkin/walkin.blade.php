@@ -245,6 +245,13 @@
     window.userId = {{ auth()->user()->id ?? 0 }};
     window.userOfficeId = {{ auth()->user()->office_id ?? 0 }};
     window.isSuperAdmin = {{ $isSuperAdmin ? 'true' : 'false' }};
+    window.currentUserSubscription = {
+        subscription_type: '{{ auth()->user()->subscription_type ?? '' }}',
+        subscription_start_date: '{{ auth()->user()->subscription_start_date ?? '' }}',
+        subscription_end_date: '{{ auth()->user()->subscription_end_date ?? '' }}',
+        last_payment_date: '{{ auth()->user()->last_payment_date ?? '' }}',
+        subscription_amount: '{{ auth()->user()->subscription_amount ?? '' }}'
+    };
 </script>
 
 <!-- Tutorial Step Completion Handler -->

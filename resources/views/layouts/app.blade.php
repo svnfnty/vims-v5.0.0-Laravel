@@ -106,28 +106,75 @@
         $currentUser = Auth::user();
         $bannerMessage = null;
         $bannerClass = null;
+        $subscriptionLabel = null;
         
-        if ($currentUser && $currentUser->subscription_type) {
-            $now = \Carbon\Carbon::now();
-            $endDate = $currentUser->subscription_end_date 
-                ? \Carbon\Carbon::parse($currentUser->subscription_end_date)
-                : ($currentUser->last_payment_date 
-                    ? \Carbon\Carbon::parse($currentUser->last_payment_date)->addMonth()
-                    : null);
-            
-            if ($endDate) {
-                $daysLeft = $now->diffInDays($endDate, false);
+        // Skip banner completely for super admin (id = 1 and office_id = 0 or null)
+        $isSuperAdmin = ($currentUser && (int)$currentUser->id === 1 && ((int)$currentUser->office_id === 0 || $currentUser->office_id === null));
+        
+        if (!$isSuperAdmin) {
+            if ($currentUser && $currentUser->subscription_type) {
+                $now = \Carbon\Carbon::now();
+                $endDate = $currentUser->subscription_end_date 
+                    ? \Carbon\Carbon::parse($currentUser->subscription_end_date)
+                    : ($currentUser->last_payment_date 
+                        ? \Carbon\Carbon::parse($currentUser->last_payment_date)->addMonth()
+                        : null);
                 
-                if ($daysLeft < 0) {
-                    $bannerMessage = 'Your subscription has expired. Please renew immediately to continue using all features.';
-                    $bannerClass = 'bg-red-100 border-red-400 text-red-700';
-                } elseif ($daysLeft <= 7) {
-                    $bannerMessage = "Your subscription expires in {$daysLeft} day(s). Please renew soon to avoid interruption.";
-                    $bannerClass = 'bg-yellow-100 border-yellow-400 text-yellow-700';
-                } elseif ($daysLeft <= 30) {
-                    $bannerMessage = "Your subscription will expire in {$daysLeft} days. Consider renewing soon.";
-                    $bannerClass = 'bg-blue-100 border-blue-400 text-blue-700';
+                // Set subscription label based on type
+                switch($currentUser->subscription_type) {
+                    case 'free_trial':
+                        $subscriptionLabel = 'Free Trial';
+                        break;
+                    case 'monthly':
+                        $subscriptionLabel = 'Monthly Subscription';
+                        break;
+                    case 'yearly':
+                        $subscriptionLabel = 'Yearly Subscription';
+                        break;
+                    default:
+                        $subscriptionLabel = ucfirst($currentUser->subscription_type);
                 }
+                
+                if ($endDate) {
+                    $daysLeft = $now->diffInDays($endDate, false);
+                    
+                    if ($daysLeft < 0) {
+                        $bannerMessage = "Your {$subscriptionLabel} has expired. Please renew immediately to continue using all features.";
+                        $bannerClass = 'bg-red-100 border-red-400 text-red-700';
+                    } elseif ($daysLeft <= 7) {
+                        if ($currentUser->subscription_type === 'free_trial') {
+                            $bannerMessage = "Your Free Trial expires in {$daysLeft} day(s). Upgrade now to continue enjoying all features!";
+                            $bannerClass = 'bg-orange-100 border-orange-400 text-orange-700';
+                        } else {
+                            $bannerMessage = "Your {$subscriptionLabel} expires in {$daysLeft} day(s). Please renew soon to avoid interruption.";
+                            $bannerClass = 'bg-yellow-100 border-yellow-400 text-yellow-700';
+                        }
+                    } elseif ($daysLeft <= 30) {
+                        if ($currentUser->subscription_type === 'free_trial') {
+                            $bannerMessage = "Your Free Trial will expire in {$daysLeft} days. Don't miss out - upgrade to a paid plan!";
+                            $bannerClass = 'bg-blue-100 border-blue-400 text-blue-700';
+                        } else {
+                            $bannerMessage = "Your {$subscriptionLabel} will expire in {$daysLeft} days. Consider renewing soon.";
+                            $bannerClass = 'bg-blue-100 border-blue-400 text-blue-700';
+                        }
+                    } else {
+                        // Active subscription with more than 30 days left - show subtle info
+                        if ($currentUser->subscription_type === 'free_trial') {
+                            $bannerMessage = "You're on a Free Trial. {$daysLeft} days remaining. Upgrade anytime!";
+                            $bannerClass = 'bg-green-100 border-green-400 text-green-700';
+                        }
+                    }
+                } else {
+                    // No end date but has subscription type
+                    if ($currentUser->subscription_type === 'free_trial') {
+                        $bannerMessage = "You're currently on a Free Trial. Enjoy exploring all features!";
+                        $bannerClass = 'bg-green-100 border-green-400 text-green-700';
+                    }
+                }
+            } else {
+                // No subscription at all
+                $bannerMessage = "You don't have an active subscription. Please subscribe to access all features.";
+                $bannerClass = 'bg-gray-100 border-gray-400 text-gray-700';
             }
         }
         @endphp
@@ -137,7 +184,13 @@
             <div class="flex items-center">
                 <i class="bi bi-exclamation-triangle-fill mr-2"></i>
                 <span class="block sm:inline font-medium">{{ $bannerMessage }}</span>
-                <a href="{{ route('account.setting') }}" class="ml-auto underline font-bold">Renew Now</a>
+                @if($currentUser && $currentUser->subscription_type && ($currentUser->subscription_type === 'free_trial' || $currentUser->subscription_end_date || $currentUser->last_payment_date))
+                    <a href="{{ route('account.setting') }}" class="ml-auto underline font-bold">
+                        {{ $currentUser->subscription_type === 'free_trial' ? 'Upgrade Now' : 'Renew Now' }}
+                    </a>
+                @else
+                    <a href="{{ route('account.setting') }}" class="ml-auto underline font-bold">Subscribe Now</a>
+                @endif
                 <button onclick="this.parentElement.parentElement.style.display='none'" class="ml-4 text-lg font-bold">&times;</button>
             </div>
         </div>
