@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
+<head> 
     <meta charset="UTF-8">
     <title>{{ $systemName }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -105,8 +105,10 @@
         @php
         $currentUser = Auth::user();
         $bannerMessage = null;
-        $bannerClass = null;
+        $bannerConfig = null;
         $subscriptionLabel = null;
+        $progressPercentage = 100;
+        $daysLeft = null;
         
         // Skip banner completely for super admin (id = 1 and office_id = 0 or null)
         $isSuperAdmin = ($currentUser && (int)$currentUser->id === 1 && ((int)$currentUser->office_id === 0 || $currentUser->office_id === null));
@@ -137,63 +139,175 @@
                 
                 if ($endDate) {
                     $daysLeft = $now->diffInDays($endDate, false);
+                    $totalDays = 30; // Assume 30 days for calculation
+                    $progressPercentage = max(0, min(100, ($daysLeft / $totalDays) * 100));
                     
                     if ($daysLeft < 0) {
                         $bannerMessage = "Your {$subscriptionLabel} has expired. Please renew immediately to continue using all features.";
-                        $bannerClass = 'bg-red-100 border-red-400 text-red-700';
+                        $bannerConfig = [
+                            'gradient' => 'from-red-500 via-red-600 to-rose-600',
+                            'icon' => 'bi-exclamation-circle-fill',
+                            'iconColor' => 'text-red-100',
+                            'buttonGradient' => 'from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800',
+                            'pulse' => true
+                        ];
                     } elseif ($daysLeft <= 7) {
                         if ($currentUser->subscription_type === 'free_trial') {
                             $bannerMessage = "Your Free Trial expires in {$daysLeft} day(s). Upgrade now to continue enjoying all features!";
-                            $bannerClass = 'bg-orange-100 border-orange-400 text-orange-700';
+                            $bannerConfig = [
+                                'gradient' => 'from-orange-400 via-orange-500 to-amber-500',
+                                'icon' => 'bi-clock-fill',
+                                'iconColor' => 'text-orange-100',
+                                'buttonGradient' => 'from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700',
+                                'pulse' => true
+                            ];
                         } else {
                             $bannerMessage = "Your {$subscriptionLabel} expires in {$daysLeft} day(s). Please renew soon to avoid interruption.";
-                            $bannerClass = 'bg-yellow-100 border-yellow-400 text-yellow-700';
+                            $bannerConfig = [
+                                'gradient' => 'from-amber-400 via-yellow-500 to-orange-500',
+                                'icon' => 'bi-clock-history',
+                                'iconColor' => 'text-amber-100',
+                                'buttonGradient' => 'from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700',
+                                'pulse' => true
+                            ];
                         }
                     } elseif ($daysLeft <= 30) {
                         if ($currentUser->subscription_type === 'free_trial') {
                             $bannerMessage = "Your Free Trial will expire in {$daysLeft} days. Don't miss out - upgrade to a paid plan!";
-                            $bannerClass = 'bg-blue-100 border-blue-400 text-blue-700';
+                            $bannerConfig = [
+                                'gradient' => 'from-blue-400 via-blue-500 to-indigo-500',
+                                'icon' => 'bi-info-circle-fill',
+                                'iconColor' => 'text-blue-100',
+                                'buttonGradient' => 'from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700',
+                                'pulse' => false
+                            ];
                         } else {
                             $bannerMessage = "Your {$subscriptionLabel} will expire in {$daysLeft} days. Consider renewing soon.";
-                            $bannerClass = 'bg-blue-100 border-blue-400 text-blue-700';
+                            $bannerConfig = [
+                                'gradient' => 'from-sky-400 via-blue-500 to-cyan-500',
+                                'icon' => 'bi-calendar-event-fill',
+                                'iconColor' => 'text-sky-100',
+                                'buttonGradient' => 'from-sky-500 to-cyan-600 hover:from-sky-600 hover:to-cyan-700',
+                                'pulse' => false
+                            ];
                         }
                     } else {
                         // Active subscription with more than 30 days left - show subtle info
                         if ($currentUser->subscription_type === 'free_trial') {
                             $bannerMessage = "You're on a Free Trial. {$daysLeft} days remaining. Upgrade anytime!";
-                            $bannerClass = 'bg-green-100 border-green-400 text-green-700';
+                            $bannerConfig = [
+                                'gradient' => 'from-emerald-400 via-green-500 to-teal-500',
+                                'icon' => 'bi-check-circle-fill',
+                                'iconColor' => 'text-emerald-100',
+                                'buttonGradient' => 'from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700',
+                                'pulse' => false
+                            ];
                         }
                     }
                 } else {
                     // No end date but has subscription type
                     if ($currentUser->subscription_type === 'free_trial') {
                         $bannerMessage = "You're currently on a Free Trial. Enjoy exploring all features!";
-                        $bannerClass = 'bg-green-100 border-green-400 text-green-700';
+                        $bannerConfig = [
+                            'gradient' => 'from-emerald-400 via-green-500 to-teal-500',
+                            'icon' => 'bi-stars',
+                            'iconColor' => 'text-emerald-100',
+                            'buttonGradient' => 'from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700',
+                            'pulse' => false
+                        ];
                     }
                 }
             } else {
                 // No subscription at all
                 $bannerMessage = "You don't have an active subscription. Please subscribe to access all features.";
-                $bannerClass = 'bg-gray-100 border-gray-400 text-gray-700';
+                $bannerConfig = [
+                    'gradient' => 'from-slate-400 via-gray-500 to-zinc-500',
+                    'icon' => 'bi-exclamation-triangle-fill',
+                    'iconColor' => 'text-slate-100',
+                    'buttonGradient' => 'from-slate-500 to-zinc-600 hover:from-slate-600 hover:to-zinc-700',
+                    'pulse' => false
+                ];
             }
         }
         @endphp
 
-        @if($bannerMessage)
-        <div class="{{ $bannerClass }} border px-4 py-3 rounded relative mx-2 md:mx-3 lg:mx-4 mt-2" role="alert">
-            <div class="flex items-center">
-                <i class="bi bi-exclamation-triangle-fill mr-2"></i>
-                <span class="block sm:inline font-medium">{{ $bannerMessage }}</span>
-                @if($currentUser && $currentUser->subscription_type && ($currentUser->subscription_type === 'free_trial' || $currentUser->subscription_end_date || $currentUser->last_payment_date))
-                    <a href="{{ route('account.setting') }}" class="ml-auto underline font-bold">
-                        {{ $currentUser->subscription_type === 'free_trial' ? 'Upgrade Now' : 'Renew Now' }}
-                    </a>
-                @else
-                    <a href="{{ route('account.setting') }}" class="ml-auto underline font-bold">Subscribe Now</a>
-                @endif
-                <button onclick="this.parentElement.parentElement.style.display='none'" class="ml-4 text-lg font-bold">&times;</button>
+        @if($bannerMessage && $bannerConfig)
+        <div class="relative z-0 overflow-hidden rounded-xl shadow-lg mx-2 md:mx-3 lg:mx-4 mt-3 animate-fade-in-down" role="alert">
+            <!-- Gradient Background -->
+            <div class="absolute inset-0 bg-gradient-to-r {{ $bannerConfig['gradient'] }} opacity-95"></div>
+            
+            <!-- Glassmorphism Overlay -->
+            <div class="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+            
+            <!-- Content -->
+            <div class="relative z-10 px-4 py-4 md:px-6 md:py-5">
+                <div class="flex flex-col md:flex-row md:items-center gap-4">
+                    <!-- Icon and Message -->
+                    <div class="flex items-start gap-4 flex-1">
+                        <div class="flex-shrink-0 {{ $bannerConfig['pulse'] ? 'animate-pulse' : '' }}">
+                            <i class="bi {{ $bannerConfig['icon'] }} {{ $bannerConfig['iconColor'] }} text-2xl md:text-3xl drop-shadow-md"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-white font-semibold text-sm md:text-base leading-relaxed drop-shadow-sm">
+                                {{ $bannerMessage }}
+                            </p>
+                            @if($daysLeft !== null && $daysLeft > 0)
+                            <div class="mt-2 flex items-center gap-2">
+                                <div class="flex-1 bg-white/30 rounded-full h-2 overflow-hidden backdrop-blur-sm">
+                                    <div class="h-full bg-white rounded-full transition-all duration-1000 ease-out" 
+                                         style="width: {{ $progressPercentage }}%"></div>
+                                </div>
+                                <span class="text-white/90 text-xs font-medium whitespace-nowrap">{{ $daysLeft }} days left</span>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+                    
+                    <!-- Action Button -->
+                    <div class="flex items-center gap-3 md:ml-4">
+                        @if($currentUser && $currentUser->subscription_type && ($currentUser->subscription_type === 'free_trial' || $currentUser->subscription_end_date || $currentUser->last_payment_date))
+                            <a href="{{ route('account.setting') }}" 
+                               class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gradient-to-r {{ $bannerConfig['buttonGradient'] }} text-white font-semibold text-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 backdrop-blur-sm bg-white/20">
+                                <i class="bi {{ $currentUser->subscription_type === 'free_trial' ? 'bi-arrow-up-circle' : 'bi-arrow-repeat' }} mr-2"></i>
+                                {{ $currentUser->subscription_type === 'free_trial' ? 'Upgrade Now' : 'Renew Now' }}
+                            </a>
+                        @else
+                            <a href="{{ route('account.setting') }}" 
+                               class="inline-flex items-center px-5 py-2.5 rounded-lg bg-gradient-to-r {{ $bannerConfig['buttonGradient'] }} text-white font-semibold text-sm shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 backdrop-blur-sm bg-white/20">
+                                <i class="bi bi-credit-card mr-2"></i>
+                                Subscribe Now
+                            </a>
+                        @endif
+                        
+                        <!-- Close Button -->
+                        <button onclick="this.closest('[role=alert]').style.display='none'" 
+                                class="flex-shrink-0 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all duration-200 hover:rotate-90 backdrop-blur-sm">
+                            <i class="bi bi-x-lg text-sm"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
+            
+            <!-- Decorative Elements -->
+            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl"></div>
+            <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-16 h-16 bg-white/10 rounded-full blur-xl"></div>
         </div>
+
+        <style>
+            @keyframes fade-in-down {
+                0% {
+                    opacity: 0;
+                    transform: translateY(-10px);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .animate-fade-in-down {
+                animation: fade-in-down 0.5s ease-out;
+            }
+        </style>
         @endif
 
         <!-- Content Area -->
