@@ -50,11 +50,11 @@ class AccountController extends Controller
     {
         $user = Auth::user();
 
-        // Validate the request
+        // Validate the request - proof_image is now optional
         $request->validate([
             'payment_method' => 'required|in:gcash,maya',
             'reference_number' => 'required|string|max:100|unique:payments,reference_number',
-            'proof_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'proof_image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'payment_date' => 'required|date',
         ]);
 
@@ -63,7 +63,7 @@ class AccountController extends Controller
             return back()->withErrors(['payment' => 'No subscription amount configured. Please contact administrator.']);
         }
 
-        // Handle image upload
+        // Handle image upload (now optional)
         $imagePath = null;
         if ($request->hasFile('proof_image')) {
             $imagePath = $request->file('proof_image')->store('payment_proofs', 'public');

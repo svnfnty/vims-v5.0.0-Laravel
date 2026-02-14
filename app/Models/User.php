@@ -48,6 +48,9 @@ class User extends Authenticatable
         'subscription_amount',
         'notification_sent',
         'notification_sent_at',
+        // QR Code fields
+        'gcash_qr_path',
+        'maya_qr_path',
     ];
 
     /**

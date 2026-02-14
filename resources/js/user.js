@@ -629,6 +629,11 @@ window.openCreateModal = function() {
         elements.password.setAttribute('required', 'required');
         elements.password.placeholder = ' ';
     }
+    
+    // Clear QR code previews for new user
+    if (window.clearQRCodePreviews) {
+        window.clearQRCodePreviews();
+    }
 
     // Show modal with animation
     elements.userModal.style.display = 'flex';
@@ -701,6 +706,11 @@ window.openEditModal = function(id) {
     document.querySelectorAll('.form-control').forEach(el => el.classList.remove('error'));
     elements.viewOnlyGroup.style.display = 'none';
     elements.userForm.style.display = 'block';
+    
+    // Load QR code previews for existing user
+    if (window.loadQRCodePreviews) {
+        window.loadQRCodePreviews(user);
+    }
 
     // Show modal with animation
     elements.userModal.style.display = 'flex';
@@ -883,31 +893,43 @@ async function submitUserForm() {
     const url = elements.userForm.action;
     const method = elements.formMethod.value;
 
-    const formData = {
-        firstname: elements.firstname.value,
-        middlename: elements.middlename.value,
-        lastname: elements.lastname.value,
-        username: elements.username.value,
-        email: elements.email.value,
-        password: elements.password.value,
-        avatar: elements.avatar.value,
-        type: elements.type.value,
-        status: elements.status.value,
-        permissions: elements.permissions.value,
-        credit: elements.credit.value,
-        office_id: elements.office.value,
-        // Subscription fields
-        subscription_type: elements.subscription_type ? elements.subscription_type.value : '',
-        subscription_start_date: elements.subscription_start_date ? elements.subscription_start_date.value : '',
-        subscription_end_date: elements.subscription_end_date ? elements.subscription_end_date.value : '',
-        last_payment_date: elements.last_payment_date ? elements.last_payment_date.value : '',
-        subscription_amount: elements.subscription_amount ? elements.subscription_amount.value : '',
-        _token: csrfToken,
-    };
+    // Use FormData to support file uploads
+    const formData = new FormData();
+    formData.append('firstname', elements.firstname.value);
+    formData.append('middlename', elements.middlename.value);
+    formData.append('lastname', elements.lastname.value);
+    formData.append('username', elements.username.value);
+    formData.append('email', elements.email.value);
+    formData.append('password', elements.password.value);
+    formData.append('avatar', elements.avatar.value);
+    formData.append('type', elements.type.value);
+    formData.append('status', elements.status.value);
+    formData.append('permissions', elements.permissions.value);
+    formData.append('credit', elements.credit.value);
+    formData.append('office_id', elements.office.value);
+    
+    // Subscription fields
+    if (elements.subscription_type) formData.append('subscription_type', elements.subscription_type.value);
+    if (elements.subscription_start_date) formData.append('subscription_start_date', elements.subscription_start_date.value);
+    if (elements.subscription_end_date) formData.append('subscription_end_date', elements.subscription_end_date.value);
+    if (elements.last_payment_date) formData.append('last_payment_date', elements.last_payment_date.value);
+    if (elements.subscription_amount) formData.append('subscription_amount', elements.subscription_amount.value);
+    
+    // QR Code file uploads
+    const gcashQrInput = document.getElementById('gcash_qr');
+    const mayaQrInput = document.getElementById('maya_qr');
+    if (gcashQrInput && gcashQrInput.files.length > 0) {
+        formData.append('gcash_qr', gcashQrInput.files[0]);
+    }
+    if (mayaQrInput && mayaQrInput.files.length > 0) {
+        formData.append('maya_qr', mayaQrInput.files[0]);
+    }
+    
+    formData.append('_token', csrfToken);
 
     // Add _method field for PUT requests
     if (method === 'PUT') {
-        formData._method = 'PUT';
+        formData.append('_method', 'PUT');
     }
 
     try {
@@ -916,9 +938,9 @@ async function submitUserForm() {
             headers: {
                 'X-CSRF-TOKEN': csrfToken,
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
+                // Note: Don't set Content-Type when using FormData, browser will set it automatically with boundary
             },
-            body: JSON.stringify(formData),
+            body: formData,
         });
 
         const data = await response.json();

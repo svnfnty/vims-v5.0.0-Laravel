@@ -7,6 +7,7 @@ use App\Models\Office;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -83,7 +84,10 @@ class UserController extends Controller
                     'subscription_end_date',
                     'last_payment_date',
                     'subscription_amount',
-                    'notification_sent'
+                    'notification_sent',
+                    // QR Code fields
+                    'gcash_qr_path',
+                    'maya_qr_path'
                 ]);
         } else {
             $officeId = $user->office_id ?? null;
@@ -109,7 +113,10 @@ class UserController extends Controller
                     'subscription_end_date',
                     'last_payment_date',
                     'subscription_amount',
-                    'notification_sent'
+                    'notification_sent',
+                    // QR Code fields
+                    'gcash_qr_path',
+                    'maya_qr_path'
                 ]);
         }
 
@@ -189,6 +196,9 @@ class UserController extends Controller
             'subscription_end_date' => 'nullable|date',
             'last_payment_date' => 'nullable|date',
             'subscription_amount' => 'nullable|numeric',
+            // QR Code validation
+            'gcash_qr' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'maya_qr' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $data = $request->only([
@@ -214,6 +224,14 @@ class UserController extends Controller
             $data['subscription_end_date'] = now()->addMonth(); // Default 1 month for monthly
         }
 
+        // Handle QR Code uploads
+        if ($request->hasFile('gcash_qr')) {
+            $data['gcash_qr_path'] = $request->file('gcash_qr')->store('qr_codes', 'public');
+        }
+        if ($request->hasFile('maya_qr')) {
+            $data['maya_qr_path'] = $request->file('maya_qr')->store('qr_codes', 'public');
+        }
+
         $user = User::create($data);
 
         return response()->json([
@@ -236,6 +254,15 @@ class UserController extends Controller
         }
         
         $user = $userQuery->firstOrFail();
+        
+        // Add full URLs for QR codes
+        if ($user->gcash_qr_path) {
+            $user->gcash_qr_url = asset('storage/' . $user->gcash_qr_path);
+        }
+        if ($user->maya_qr_path) {
+            $user->maya_qr_url = asset('storage/' . $user->maya_qr_path);
+        }
+        
         return response()->json($user);
     }
 
@@ -260,6 +287,9 @@ class UserController extends Controller
             'subscription_end_date' => 'nullable|date',
             'last_payment_date' => 'nullable|date',
             'subscription_amount' => 'nullable|numeric',
+            // QR Code validation
+            'gcash_qr' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'maya_qr' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         $user = auth()->user();
@@ -294,6 +324,22 @@ class UserController extends Controller
         if ($request->filled('last_payment_date')) {
             $data['notification_sent'] = false;
             $data['notification_sent_at'] = null;
+        }
+
+        // Handle QR Code uploads
+        if ($request->hasFile('gcash_qr')) {
+            // Delete old QR code if exists
+            if ($user->gcash_qr_path && Storage::disk('public')->exists($user->gcash_qr_path)) {
+                Storage::disk('public')->delete($user->gcash_qr_path);
+            }
+            $data['gcash_qr_path'] = $request->file('gcash_qr')->store('qr_codes', 'public');
+        }
+        if ($request->hasFile('maya_qr')) {
+            // Delete old QR code if exists
+            if ($user->maya_qr_path && Storage::disk('public')->exists($user->maya_qr_path)) {
+                Storage::disk('public')->delete($user->maya_qr_path);
+            }
+            $data['maya_qr_path'] = $request->file('maya_qr')->store('qr_codes', 'public');
         }
 
         $user->update($data);

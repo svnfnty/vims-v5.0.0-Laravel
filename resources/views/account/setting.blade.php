@@ -206,7 +206,7 @@
                             <label for="payment_method" class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
                             <div class="grid grid-cols-2 gap-4">
                                 <label class="relative flex cursor-pointer">
-                                    <input type="radio" name="payment_method" value="gcash" class="peer sr-only" required>
+                                    <input type="radio" name="payment_method" value="gcash" class="peer sr-only" required onchange="toggleQRCode('gcash')">
                                     <div class="w-full p-3 border-2 border-gray-200 rounded-lg peer-checked:border-blue-500 peer-checked:bg-blue-50 hover:bg-gray-50 transition-all">
                                         <div class="flex items-center justify-center">
                                             <span class="font-semibold text-blue-600">GCash</span>
@@ -214,7 +214,7 @@
                                     </div>
                                 </label>
                                 <label class="relative flex cursor-pointer">
-                                    <input type="radio" name="payment_method" value="maya" class="peer sr-only">
+                                    <input type="radio" name="payment_method" value="maya" class="peer sr-only" onchange="toggleQRCode('maya')">
                                     <div class="w-full p-3 border-2 border-gray-200 rounded-lg peer-checked:border-green-500 peer-checked:bg-green-50 hover:bg-gray-50 transition-all">
                                         <div class="flex items-center justify-center">
                                             <span class="font-semibold text-green-600">Maya</span>
@@ -224,23 +224,69 @@
                             </div>
                         </div>
 
+                        <!-- QR Code Display Section -->
+                        <div id="qrCodeSection" class="hidden">
+                            <div class="bg-gradient-to-r from-gray-50 to-gray-100 p-4 rounded-lg border-2 border-dashed border-gray-300">
+                                <h4 class="text-sm font-semibold text-gray-800 mb-3 flex items-center">
+                                    <i class="bi bi-qr-code mr-2"></i>
+                                    Scan QR Code to Pay
+                                </h4>
+                                
+                                <!-- GCash QR Code -->
+                                <div id="gcashQRDisplay" class="hidden text-center">
+                                    @if($user->gcash_qr_path)
+                                        <img src="{{ asset('storage/' . $user->gcash_qr_path) }}" alt="GCash QR Code" class="mx-auto max-w-[250px] max-h-[250px] rounded-lg shadow-md border-2 border-blue-200">
+                                        <p class="text-xs text-gray-600 mt-2">Scan this GCash QR code with your GCash app</p>
+                                    @else
+                                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                            <i class="bi bi-exclamation-triangle text-yellow-600 text-2xl mb-2"></i>
+                                            <p class="text-sm text-yellow-800">GCash QR code not available. Please contact administrator.</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <!-- Maya QR Code -->
+                                <div id="mayaQRDisplay" class="hidden text-center">
+                                    @if($user->maya_qr_path)
+                                        <img src="{{ asset('storage/' . $user->maya_qr_path) }}" alt="Maya QR Code" class="mx-auto max-w-[250px] max-h-[250px] rounded-lg shadow-md border-2 border-green-200">
+                                        <p class="text-xs text-gray-600 mt-2">Scan this Maya QR code with your Maya app</p>
+                                    @else
+                                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                            <i class="bi bi-exclamation-triangle text-yellow-600 text-2xl mb-2"></i>
+                                            <p class="text-sm text-yellow-800">Maya QR code not available. Please contact administrator.</p>
+                                        </div>
+                                    @endif
+                                </div>
+
+                                <div class="mt-3 p-3 bg-blue-50 rounded-lg">
+                                    <p class="text-xs text-blue-800">
+                                        <i class="bi bi-info-circle mr-1"></i>
+                                        After scanning and completing the payment, enter the reference number below. Proof of payment is optional when using QR code.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Reference Number -->
                         <div>
-                            <label for="reference_number" class="block text-sm font-medium text-gray-700 mb-1">Reference Number</label>
+                            <label for="reference_number" class="block text-sm font-medium text-gray-700 mb-1">Reference Number <span class="text-red-500">*</span></label>
                             <input type="text" id="reference_number" name="reference_number" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Enter transaction reference number" required>
                         </div>
 
                         <!-- Payment Date -->
                         <div>
-                            <label for="payment_date" class="block text-sm font-medium text-gray-700 mb-1">Payment Date</label>
+                            <label for="payment_date" class="block text-sm font-medium text-gray-700 mb-1">Payment Date <span class="text-red-500">*</span></label>
                             <input type="date" id="payment_date" name="payment_date" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required max="{{ date('Y-m-d') }}">
                         </div>
 
-                        <!-- Proof of Payment -->
+                        <!-- Proof of Payment (Optional) -->
                         <div>
-                            <label for="proof_image" class="block text-sm font-medium text-gray-700 mb-1">Proof of Payment (Screenshot)</label>
-                            <input type="file" id="proof_image" name="proof_image" accept="image/jpeg,image/png,image/jpg" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
-                            <p class="text-xs text-gray-500 mt-1">Upload screenshot of your payment receipt (JPG, PNG, max 2MB)</p>
+                            <label for="proof_image" class="block text-sm font-medium text-gray-700 mb-1">
+                                Proof of Payment (Screenshot) 
+                                <span class="text-xs text-gray-500 font-normal">- Optional when using QR code</span>
+                            </label>
+                            <input type="file" id="proof_image" name="proof_image" accept="image/jpeg,image/png,image/jpg" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <p class="text-xs text-gray-500 mt-1">Upload screenshot of your payment receipt (JPG, PNG, max 2MB). Optional when paying via QR code scan.</p>
                         </div>
 
                         <!-- Submit Button -->
@@ -413,6 +459,22 @@
         modal.classList.add('hidden');
         img.src = '';
         document.body.style.overflow = 'auto';
+    }
+
+    function toggleQRCode(method) {
+        const qrSection = document.getElementById('qrCodeSection');
+        const gcashDisplay = document.getElementById('gcashQRDisplay');
+        const mayaDisplay = document.getElementById('mayaQRDisplay');
+        
+        qrSection.classList.remove('hidden');
+        
+        if (method === 'gcash') {
+            gcashDisplay.classList.remove('hidden');
+            mayaDisplay.classList.add('hidden');
+        } else if (method === 'maya') {
+            gcashDisplay.classList.add('hidden');
+            mayaDisplay.classList.remove('hidden');
+        }
     }
 
     document.addEventListener('keydown', function(event) {
