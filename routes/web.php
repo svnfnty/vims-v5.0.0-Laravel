@@ -210,6 +210,11 @@ Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function ()
     
     // Payment Proof Image Route
     Route::get('/account/payment/proof/{payment}', [AccountController::class, 'viewPaymentProof'])->name('account.payment.proof');
+    
+    // Admin Payment Management Routes (Admin only: id=1, office_id=0)
+    Route::get('/admin/payments', [AccountController::class, 'adminPayments'])->name('admin.payments');
+    Route::post('/admin/payments/{payment}/approve', [AccountController::class, 'approvePayment'])->name('admin.payments.approve');
+    Route::post('/admin/payments/{payment}/reject', [AccountController::class, 'rejectPayment'])->name('admin.payments.reject');
 
     // System Settings Routes
     Route::get('/system/settings', [SettingsController::class, 'index'])->name('system.settings');

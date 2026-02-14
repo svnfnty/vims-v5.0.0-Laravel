@@ -53,7 +53,7 @@ class AccountController extends Controller
         // Validate the request
         $request->validate([
             'payment_method' => 'required|in:gcash,maya',
-            'reference_number' => 'required|string|max:100',
+            'reference_number' => 'required|string|max:100|unique:payments,reference_number',
             'proof_image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'payment_date' => 'required|date',
         ]);
@@ -104,8 +104,8 @@ class AccountController extends Controller
     {
         $user = Auth::user();
         
-        // Ensure user can only view their own payment proofs
-        if ($payment->user_id !== $user->id) {
+        // Ensure user can only view their own payment proofs (or admin can view all)
+        if ($payment->user_id !== $user->id && !($user->id === 1 && $user->office_id === 0)) {
             abort(403, 'Unauthorized access to this payment proof.');
         }
         
@@ -116,5 +116,94 @@ class AccountController extends Controller
         
         // Return the image file
         return Storage::disk('public')->response($payment->proof_image_path);
+    }
+
+    // Admin Methods for Payment Management
+    
+    public function adminPayments()
+    {
+        $user = Auth::user();
+        
+        // Check if user is admin (id=1 and office_id=0)
+        if (!($user->id === 1 && $user->office_id === 0)) {
+            abort(403, 'Unauthorized access. Admin only.');
+        }
+        
+        // Get all pending payments
+        $pendingPayments = Payment::with('user')
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
+        // Get recent approved/rejected payments (last 30 days)
+        $recentPayments = Payment::with('user')
+            ->whereIn('status', ['approved', 'rejected'])
+            ->where('updated_at', '>=', now()->subDays(30))
+            ->orderBy('updated_at', 'desc')
+            ->take(20)
+            ->get();
+            
+        return view('account.admin-payments', compact('pendingPayments', 'recentPayments'));
+    }
+    
+    public function approvePayment(Request $request, Payment $payment)
+    {
+        $user = Auth::user();
+        
+        // Check if user is admin (id=1 and office_id=0)
+        if (!($user->id === 1 && $user->office_id === 0)) {
+            abort(403, 'Unauthorized access. Admin only.');
+        }
+        
+        // Validate request
+        $request->validate([
+            'admin_notes' => 'nullable|string|max:500',
+        ]);
+        
+        // Update payment status
+        $payment->update([
+            'status' => 'approved',
+            'admin_notes' => $request->admin_notes,
+            'approved_at' => now(),
+            'approved_by' => $user->id,
+        ]);
+        
+        // Update user's subscription dates based on payment
+        $paymentUser = $payment->user;
+        if ($paymentUser) {
+            $now = now();
+            $paymentUser->update([
+                'subscription_start_date' => $now->format('Y-m-d'),
+                'subscription_end_date' => $now->copy()->addMonth()->format('Y-m-d'),
+                'last_payment_date' => $now->format('Y-m-d'),
+            ]);
+        }
+        
+        return back()->with('success', 'Payment approved successfully. User subscription has been updated.');
+    }
+    
+    public function rejectPayment(Request $request, Payment $payment)
+    {
+        $user = Auth::user();
+        
+        // Check if user is admin (id=1 and office_id=0)
+        if (!($user->id === 1 && $user->office_id === 0)) {
+            abort(403, 'Unauthorized access. Admin only.');
+        }
+        
+        // Validate request
+        $request->validate([
+            'admin_notes' => 'required|string|max:500',
+        ]);
+        
+        // Update payment status
+        $payment->update([
+            'status' => 'rejected',
+            'admin_notes' => $request->admin_notes,
+            'approved_at' => now(),
+            'approved_by' => $user->id,
+        ]);
+        
+        return back()->with('success', 'Payment rejected successfully.');
     }
 }

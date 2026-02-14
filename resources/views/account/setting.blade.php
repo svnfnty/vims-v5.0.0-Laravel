@@ -108,6 +108,43 @@
                     Subscription & Payment
                 </h2>
                 
+                @if($user->id === 1 && $user->office_id === 0)
+                <!-- Admin Panel -->
+                <div class="bg-white p-6 rounded-md mb-4 shadow-sm border-l-4 border-blue-500">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                        <i class="bi bi-shield-check mr-2 text-blue-600"></i>Admin Payment Management
+                    </h3>
+                    <p class="text-gray-600 mb-4">As an administrator, you can review and manage user payment submissions. Approve payments to activate user subscriptions.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-blue-50 p-4 rounded-lg text-center">
+                            <i class="bi bi-clock-history text-3xl text-yellow-600 mb-2"></i>
+                            <p class="text-sm text-gray-600">Pending Payments</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                {{ \App\Models\Payment::where('status', 'pending')->count() }}
+                            </p>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg text-center">
+                            <i class="bi bi-check-circle text-3xl text-green-600 mb-2"></i>
+                            <p class="text-sm text-gray-600">Approved (30 days)</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                {{ \App\Models\Payment::where('status', 'approved')->where('updated_at', '>=', now()->subDays(30))->count() }}
+                            </p>
+                        </div>
+                        <div class="bg-red-50 p-4 rounded-lg text-center">
+                            <i class="bi bi-x-circle text-3xl text-red-600 mb-2"></i>
+                            <p class="text-sm text-gray-600">Rejected (30 days)</p>
+                            <p class="text-2xl font-bold text-gray-800">
+                                {{ \App\Models\Payment::where('status', 'rejected')->where('updated_at', '>=', now()->subDays(30))->count() }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <a href="{{ route('admin.payments') }}" class="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition duration-200 font-semibold">
+                        <i class="bi bi-arrow-right-circle mr-2"></i>Manage Payments
+                    </a>
+                </div>
+                @else
                 <!-- Current Subscription Info -->
                 <div class="bg-white p-4 rounded-md mb-4 shadow-sm">
                     <h3 class="text-md font-medium text-gray-700 mb-3">Current Subscription</h3>
@@ -221,6 +258,7 @@
                         <p class="text-sm text-yellow-800">No subscription amount configured. Please contact your administrator to set up your subscription.</p>
                     </div>
                 </div>
+                @endif
                 @endif
 
                 <!-- Recent Payments -->
