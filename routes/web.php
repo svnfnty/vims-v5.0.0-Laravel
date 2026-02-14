@@ -222,6 +222,17 @@ Route::middleware(['auth', MaintenanceModeMiddleware::class])->group(function ()
     
     // Maintenance Mode Toggle Route (Admin only)
     Route::post('/system/maintenance/toggle', [SettingsController::class, 'toggleMaintenance'])->name('system.maintenance.toggle');
+
+    // Chatbot Routes
+    Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
+    Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
+    Route::get('/chatbot/models', [ChatbotController::class, 'getModels'])->name('chatbot.models');
+    Route::get('/chatbot/history', [ChatbotController::class, 'getHistory'])->name('chatbot.history');
+    Route::post('/chatbot/clear', [ChatbotController::class, 'clearHistory'])->name('chatbot.clear');
+
+    // Chatbot Session Management Routes
+    Route::get('/chatbot/sessions', [ChatbotController::class, 'getUserSessions'])->name('chatbot.sessions');
+    Route::delete('/chatbot/sessions/{session_id}', [ChatbotController::class, 'deleteSession'])->name('chatbot.sessions.delete');
 });
 
 Route::get('/', function () {
@@ -230,14 +241,3 @@ Route::get('/', function () {
     }
     return view('welcome', ['wrapperClass' => 'table-responsive']);
 })->name('welcome');
-
-// Chatbot Routes
-Route::get('/chatbot', [ChatbotController::class, 'index'])->name('chatbot.index');
-Route::post('/chatbot/chat', [ChatbotController::class, 'chat'])->name('chatbot.chat');
-Route::get('/chatbot/models', [ChatbotController::class, 'getModels'])->name('chatbot.models');
-Route::get('/chatbot/history', [ChatbotController::class, 'getHistory'])->name('chatbot.history');
-Route::post('/chatbot/clear', [ChatbotController::class, 'clearHistory'])->name('chatbot.clear');
-
-// Chatbot Session Management Routes
-Route::get('/chatbot/sessions', [ChatbotController::class, 'getUserSessions'])->name('chatbot.sessions');
-Route::delete('/chatbot/sessions/{session_id}', [ChatbotController::class, 'deleteSession'])->name('chatbot.sessions.delete');

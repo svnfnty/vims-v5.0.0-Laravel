@@ -25,6 +25,13 @@ class ChatbotController extends Controller
      */
     public function chat(Request $request)
     {
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return response()->json([
+                'error' => 'Authentication required. Please log in to use the chatbot.'
+            ], 401);
+        }
+
         $request->validate([
             'message' => 'required|string|max:2000',
             'session_id' => 'nullable|string',
@@ -229,6 +236,14 @@ class ChatbotController extends Controller
      */
     public function getHistory(Request $request)
     {
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return response()->json([
+                'error' => 'Authentication required. Please log in to view chat history.',
+                'history' => []
+            ], 401);
+        }
+
         $request->validate([
             'session_id' => 'required|string',
         ]);
@@ -258,6 +273,14 @@ class ChatbotController extends Controller
      */
     public function getUserSessions(Request $request)
     {
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return response()->json([
+                'error' => 'Authentication required. Please log in to view sessions.',
+                'sessions' => []
+            ], 401);
+        }
+
         $userId = auth()->id();
         $limit = $request->input('limit', 10);
         
@@ -286,6 +309,13 @@ class ChatbotController extends Controller
      */
     public function deleteSession(Request $request)
     {
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return response()->json([
+                'error' => 'Authentication required. Please log in to delete sessions.'
+            ], 401);
+        }
+
         $request->validate([
             'session_id' => 'required|string',
         ]);
@@ -313,6 +343,13 @@ class ChatbotController extends Controller
      */
     public function clearHistory(Request $request)
     {
+        // Check if user is authenticated
+        if (!auth()->check()) {
+            return response()->json([
+                'error' => 'Authentication required. Please log in to clear history.'
+            ], 401);
+        }
+
         $request->validate([
             'session_id' => 'required|string',
         ]);
