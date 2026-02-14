@@ -164,7 +164,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <form id="userForm" method="POST">
+            <form id="userForm" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" id="formMethod" name="_method" value="POST">
                 <input type="hidden" id="office_id" name="office_id" value="{{ $officeId }}">
@@ -298,6 +298,48 @@
                     </div>
                 </div>
 
+                <!-- QR Code Payment Fields -->
+                <div class="form-section" style="margin-top: 20px; padding-top: 15px; border-top: 2px solid var(--border);">
+                    <h4 style="margin-bottom: 15px; color: var(--primary);">
+                        <i class="fas fa-qrcode"></i> Payment QR Codes
+                    </h4>
+                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 15px;">
+                        Upload QR codes for GCash and Maya payment methods. Users will see these when making payments.
+                    </p>
+                    
+                    <!-- GCash QR Code -->
+                    <div class="floating-label" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-primary);">
+                            <i class="fas fa-mobile-alt" style="color: #007bff;"></i> GCash QR Code
+                        </label>
+                        <input type="file" class="form-control" id="gcash_qr" name="gcash_qr" accept="image/jpeg,image/png,image/jpg" style="padding: 8px;">
+                        <span class="error-message" id="gcash_qr-error"></span>
+                        <p style="font-size: 11px; color: var(--text-secondary); margin-top: 5px;">Upload QR code image (JPG, PNG, max 2MB)</p>
+                        
+                        <!-- GCash QR Preview -->
+                        <div id="gcash_qr_preview_container" style="margin-top: 10px; display: none;">
+                            <p style="font-size: 12px; font-weight: 500; margin-bottom: 5px;">Current GCash QR:</p>
+                            <img id="gcash_qr_preview" src="" alt="GCash QR Code" style="max-width: 200px; max-height: 200px; border: 1px solid var(--border); border-radius: 8px; padding: 5px;">
+                        </div>
+                    </div>
+
+                    <!-- Maya QR Code -->
+                    <div class="floating-label" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-primary);">
+                            <i class="fas fa-wallet" style="color: #28a745;"></i> Maya QR Code
+                        </label>
+                        <input type="file" class="form-control" id="maya_qr" name="maya_qr" accept="image/jpeg,image/png,image/jpg" style="padding: 8px;">
+                        <span class="error-message" id="maya_qr-error"></span>
+                        <p style="font-size: 11px; color: var(--text-secondary); margin-top: 5px;">Upload QR code image (JPG, PNG, max 2MB)</p>
+                        
+                        <!-- Maya QR Preview -->
+                        <div id="maya_qr_preview_container" style="margin-top: 10px; display: none;">
+                            <p style="font-size: 12px; font-weight: 500; margin-bottom: 5px;">Current Maya QR:</p>
+                            <img id="maya_qr_preview" src="" alt="Maya QR Code" style="max-width: 200px; max-height: 200px; border: 1px solid var(--border); border-radius: 8px; padding: 5px;">
+                        </div>
+                    </div>
+                </div>
+
                 <div class="form-group" id="viewOnlyGroup" style="display: none;">
                     <label class="form-label">Created Date</label>
                     <div class="form-control" style="background: #f8f9fa; border: 1px solid var(--border);" id="createdDateDisplay"></div>
@@ -339,5 +381,78 @@
         last_payment_date: '{{ auth()->user()->last_payment_date ?? '' }}',
         subscription_amount: '{{ auth()->user()->subscription_amount ?? '' }}'
     };
+    window.storageUrl = '{{ asset('storage') }}';
+</script>
+
+<script>
+    // QR Code file input preview handlers
+    document.addEventListener('DOMContentLoaded', function() {
+        const gcashQrInput = document.getElementById('gcash_qr');
+        const mayaQrInput = document.getElementById('maya_qr');
+        const gcashPreview = document.getElementById('gcash_qr_preview');
+        const mayaPreview = document.getElementById('maya_qr_preview');
+        const gcashContainer = document.getElementById('gcash_qr_preview_container');
+        const mayaContainer = document.getElementById('maya_qr_preview_container');
+
+        // Handle GCash QR file selection
+        if (gcashQrInput) {
+            gcashQrInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        gcashPreview.src = e.target.result;
+                        gcashContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Handle Maya QR file selection
+        if (mayaQrInput) {
+            mayaQrInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        mayaPreview.src = e.target.result;
+                        mayaContainer.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+
+        // Function to load existing QR codes when editing
+        window.loadQRCodePreviews = function(user) {
+            // Use the full URL from the server if available, otherwise construct it
+            if (user.gcash_qr_url || user.gcash_qr_path) {
+                gcashPreview.src = user.gcash_qr_url || (window.storageUrl + '/' + user.gcash_qr_path);
+                gcashContainer.style.display = 'block';
+            } else {
+                gcashPreview.src = '';
+                gcashContainer.style.display = 'none';
+            }
+            
+            if (user.maya_qr_url || user.maya_qr_path) {
+                mayaPreview.src = user.maya_qr_url || (window.storageUrl + '/' + user.maya_qr_path);
+                mayaContainer.style.display = 'block';
+            } else {
+                mayaPreview.src = '';
+                mayaContainer.style.display = 'none';
+            }
+        };
+
+        // Clear QR code previews when creating new user
+        window.clearQRCodePreviews = function() {
+            gcashPreview.src = '';
+            mayaPreview.src = '';
+            gcashContainer.style.display = 'none';
+            mayaContainer.style.display = 'none';
+            if (gcashQrInput) gcashQrInput.value = '';
+            if (mayaQrInput) mayaQrInput.value = '';
+        };
+    });
 </script>
 @endsection
