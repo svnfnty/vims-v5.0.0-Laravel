@@ -8,82 +8,82 @@
     "name": "sweetalert2.esm.all"
   },
   "resources/css/account.css": {
-    "file": "assets/account-Dmqp7Kul.css",
+    "file": "assets/account-D-tygh8X.css",
     "src": "resources/css/account.css",
     "isEntry": true
   },
   "resources/css/admin-payments.css": {
-    "file": "assets/admin-payments-DbbnoYNU.css",
+    "file": "assets/admin-payments-DK5NpUPz.css",
     "src": "resources/css/admin-payments.css",
     "isEntry": true
   },
   "resources/css/app.css": {
-    "file": "assets/app-G9e6j4IS.css",
+    "file": "assets/app-SOtI0JpC.css",
     "src": "resources/css/app.css",
     "isEntry": true
   },
   "resources/css/category.css": {
-    "file": "assets/category-ggjO-vjQ.css",
+    "file": "assets/category-DOvBtzXZ.css",
     "src": "resources/css/category.css",
     "isEntry": true
   },
   "resources/css/client.css": {
-    "file": "assets/client-C37zWWzd.css",
+    "file": "assets/client-B4H5hvSP.css",
     "src": "resources/css/client.css",
     "isEntry": true
   },
   "resources/css/insurance.css": {
-    "file": "assets/insurance-Ca9iyB9x.css",
+    "file": "assets/insurance-BSSWO92O.css",
     "src": "resources/css/insurance.css",
     "isEntry": true
   },
   "resources/css/login.css": {
-    "file": "assets/login-D8oF-7nN.css",
+    "file": "assets/login-Cvi8s3Ln.css",
     "src": "resources/css/login.css",
     "isEntry": true
   },
   "resources/css/office.css": {
-    "file": "assets/office-CznQ2-i9.css",
+    "file": "assets/office-qlJrx-zJ.css",
     "src": "resources/css/office.css",
     "isEntry": true
   },
   "resources/css/policies.css": {
-    "file": "assets/policies-c9fMTEqu.css",
+    "file": "assets/policies-CZYW8NrF.css",
     "src": "resources/css/policies.css",
     "isEntry": true
   },
   "resources/css/select2search.css": {
-    "file": "assets/select2search-DCbrqQ2u.css",
+    "file": "assets/select2search-CvceLsM2.css",
     "src": "resources/css/select2search.css",
     "isEntry": true
   },
   "resources/css/series.css": {
-    "file": "assets/series-Bh5gFVR7.css",
+    "file": "assets/series-BAtr5340.css",
     "src": "resources/css/series.css",
     "isEntry": true
   },
   "resources/css/system.css": {
-    "file": "assets/system-CdCIDDDI.css",
+    "file": "assets/system-DOoR5y_s.css",
     "src": "resources/css/system.css",
     "isEntry": true
   },
   "resources/css/tutorial.css": {
-    "file": "assets/tutorial-CWDVzgQi.css",
+    "file": "assets/tutorial-Ud0fa_pX.css",
     "src": "resources/css/tutorial.css",
     "isEntry": true
   },
   "resources/css/user.css": {
-    "file": "assets/user-D3VgEgj8.css",
+    "file": "assets/user-Dd2_Vg-m.css",
     "src": "resources/css/user.css",
     "isEntry": true
   },
   "resources/css/view.css": {
-    "file": "assets/view-C3HgZrcc.css",
+    "file": "assets/view-BVT01TpL.css",
     "src": "resources/css/view.css",
     "isEntry": true
   },
   "resources/css/walkin.css": {
-    "file": "assets/walkin-BXfpLbmQ.css",
+    "file": "assets/walkin-C0BErjzN.css",
     "src": "resources/css/walkin.css",
     "isEntry": true
   },
@@ -194,7 +194,7 @@
     ]
   },
   "resources/js/user.js": {
-    "file": "assets/user-BEXRByVJ.js",
+    "file": "assets/user-Bk2Rk1l-.js",
     "name": "user",
     "src": "resources/js/user.js",
     "isEntry": true,
