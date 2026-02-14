@@ -1,66 +1,67 @@
 @extends('layouts.app')
 
 @section('content')
+@vite(['resources/css/admin-payments.css'])
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-8 px-4">
-    <div class="max-w-7xl mx-auto">
-        
-        <!-- Header Card -->
-        <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-6">
-            <div class="bg-[#0d6efd] px-6 py-5">
+<br>
+<!-- Dashboard Header -->
+<div class="dashboard-header-app">
+    <div class="flex justify-between items-center">
+        <div>
+            <h2 class="mb-1 text-2xl font-bold"><i class="bi bi-shield-check mr-2"></i>Payment Management</h2>
+            <div>Review, approve, and manage user subscription payments</div>
+        </div>
+        <div class="flex items-center">
+            <span class="bg-white/20 text-white px-3 py-1 rounded-md text-sm font-medium mr-2 flex items-center">
+                <i class="bi bi-calendar-event mr-1"></i> {{ now()->format('F d, Y') }}
+            </span>
+            <span class="bg-white/20 text-white px-3 py-1 rounded-md text-sm font-medium flex items-center">
+                <i class="bi bi-clock mr-1"></i> {{ now()->format('h:i A') }}
+            </span>
+            <a href="{{ route('account.setting') }}" class="ml-2 bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-md text-sm font-medium flex items-center transition-colors">
+                <i class="bi bi-arrow-left mr-1"></i> Back
+            </a>
+        </div>
+    </div>
+</div>
 
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="bg-white/20 backdrop-blur-sm p-3 rounded-xl">
-                            <i class="bi bi-shield-check text-3xl text-white"></i>
-                        </div>
-                        <div>
-                            <h1 class="text-2xl md:text-3xl font-bold text-white">Payment Management</h1>
-                            <p class="text-blue-100 text-sm mt-1">Review, approve, and manage user subscription payments</p>
-                        </div>
-                    </div>
-                    <a href="{{ route('account.setting') }}" class="inline-flex items-center px-5 py-2.5 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white rounded-xl transition-all duration-300 border border-white/20 hover:border-white/40">
-                        <i class="bi bi-arrow-left mr-2"></i>
-                        <span>Back to Account</span>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Quick Stats Bar -->
-            <div class="grid grid-cols-3 divide-x divide-gray-200 bg-gray-50">
-                <div class="p-4 flex items-center justify-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
-                        <i class="bi bi-clock-history text-lg text-yellow-600"></i>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-xl font-bold text-gray-800">{{ $pendingPayments->count() }}</p>
-                        <p class="text-xs text-gray-500">Pending</p>
-                    </div>
-                </div>
-                <div class="p-4 flex items-center justify-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                        <i class="bi bi-check-circle text-lg text-green-600"></i>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-xl font-bold text-gray-800">
-                            {{ \App\Models\Payment::where('status', 'approved')->where('updated_at', '>=', now()->subDays(30))->count() }}
-                        </p>
-                        <p class="text-xs text-gray-500">Approved</p>
-                    </div>
-                </div>
-                <div class="p-4 flex items-center justify-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <i class="bi bi-currency-exchange text-lg text-blue-600"></i>
-                    </div>
-                    <div class="text-center">
-                        <p class="text-xl font-bold text-gray-800">
-                            ₱{{ number_format(\App\Models\Payment::where('status', 'approved')->where('updated_at', '>=', now()->subDays(30))->sum('amount'), 0) }}
-                        </p>
-                        <p class="text-xs text-gray-500">Revenue</p>
-                    </div>
-                </div>
+<!-- Dashboard Stats Cards -->
+<div class="dashboard-cards grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+    <div>
+        <div class="payment-stats-card">
+            <div class="p-4">
+                <i class="bi bi-clock-history card-icon-warning"></i>
+                <h3 class="mt-2 mb-0 text-3xl font-bold">{{ $pendingPayments->count() }}</h3>
+                <div class="text-gray-500">Pending Payments</div>
             </div>
         </div>
+    </div>
+    <div>
+        <div class="payment-stats-card">
+            <div class="p-4">
+                <i class="bi bi-check-circle card-icon-success"></i>
+                <h3 class="mt-2 mb-0 text-3xl font-bold">
+                    {{ \App\Models\Payment::where('status', 'approved')->where('updated_at', '>=', now()->subDays(30))->count() }}
+                </h3>
+                <div class="text-gray-500">Approved (30 days)</div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="payment-stats-card">
+            <div class="p-4">
+                <i class="bi bi-currency-exchange card-icon-primary"></i>
+                <h3 class="mt-2 mb-0 text-3xl font-bold">
+                    ₱{{ number_format(\App\Models\Payment::where('status', 'approved')->where('updated_at', '>=', now()->subDays(30))->sum('amount'), 0) }}
+                </h3>
+                <div class="text-gray-500">Revenue (30 days)</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="max-w-7xl mx-auto px-4">
+
 
 
         <!-- Pending Payments Section -->
