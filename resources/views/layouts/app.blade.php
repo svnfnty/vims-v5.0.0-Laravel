@@ -51,11 +51,14 @@
             </a>
             
             <!-- Report Dropdown -->
-            <div class="nav-dropdown">
+            @php
+                $isReportActive = request()->routeIs('policy.series');
+            @endphp
+            <div class="nav-dropdown {{ $isReportActive ? 'active' : '' }}">
                 <button class="nav-link nav-dropdown-toggle">
                     <i class="bi bi-file-earmark-text"></i> 
                     <span class="nav-text">Report</span>
-                    <i class="bi bi-chevron-down ml-auto arrow"></i>
+                    <i class="bi bi-chevron-down ml-auto arrow {{ $isReportActive ? 'rotate' : '' }}"></i>
                 </button>
                 <div class="nav-dropdown-menu">
                     <a class="nav-link {{ request()->routeIs('policy.series') ? 'active' : '' }}" href="{{ route('policy.series') }}">
@@ -65,11 +68,14 @@
             </div>
             
             <!-- Maintenance Dropdown -->
-            <div class="nav-dropdown">
+            @php
+                $isMaintenanceActive = request()->routeIs('policies.index') || request()->routeIs('category.index') || request()->routeIs('walkin.index');
+            @endphp
+            <div class="nav-dropdown {{ $isMaintenanceActive ? 'active' : '' }}">
                 <button class="nav-link nav-dropdown-toggle">
                     <i class="bi bi-tools"></i> 
                     <span class="nav-text">Maintenance</span>
-                    <i class="bi bi-chevron-down ml-auto arrow"></i>
+                    <i class="bi bi-chevron-down ml-auto arrow {{ $isMaintenanceActive ? 'rotate' : '' }}"></i>
                 </button>
                 <div class="nav-dropdown-menu">
                     <a class="nav-link {{ request()->routeIs('policies.index') ? 'active' : '' }}" href="{{ route('policies.index') }}">
@@ -86,11 +92,14 @@
             
             @if(Auth::user()->id == 1 && Auth::user()->type == 1)
             <!-- Admin Dropdown -->
-            <div class="nav-dropdown">
+            @php
+                $isAdminActive = request()->routeIs('users.index') || request()->routeIs('office.index') || request()->routeIs('system.settings');
+            @endphp
+            <div class="nav-dropdown {{ $isAdminActive ? 'active' : '' }}">
                 <button class="nav-link nav-dropdown-toggle">
                     <i class="bi bi-shield-lock"></i> 
                     <span class="nav-text">Admin</span>
-                    <i class="bi bi-chevron-down ml-auto arrow"></i>
+                    <i class="bi bi-chevron-down ml-auto arrow {{ $isAdminActive ? 'rotate' : '' }}"></i>
                 </button>
                 <div class="nav-dropdown-menu">
                     <a class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}" href="{{ route('users.index') }}">
