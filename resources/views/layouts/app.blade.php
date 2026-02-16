@@ -29,56 +29,95 @@
     </div>
     
     <!-- Sidebar -->
-    <div class="sidebar custom-scrollbar">
-        <div class="sidebar-header flex items-center mb-3">
-            <img src="{{ $systemLogo ? asset('storage/' . $systemLogo) : asset('logo.png') }}" width="32" class="mr-2" alt="Logo"/>
-            <span class="hidden xl:inline font-bold">{{ $systemShortName }}</span>
-            <span class="xl:hidden font-bold">{{ $systemShortName }}</span>
+    <div class="sidebar custom-scrollbar" id="sidebar">
+        <div class="sidebar-header flex items-center justify-between mb-3">
+            <div class="flex items-center">
+                <img src="{{ $systemLogo ? asset('storage/' . $systemLogo) : asset('logo.png') }}" width="32" class="mr-2 logo-img" alt="Logo"/>
+                <span class="font-bold nav-text">{{ $systemShortName }}</span>
+            </div>
+            <button class="minimize-btn hidden lg:flex" id="minimizeBtn" title="Minimize">
+                <i class="bi bi-chevron-left"></i>
+            </button>
         </div>
         <nav class="flex flex-col px-2 space-y-1">
             <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">
-                <i class="bi bi-speedometer2 mr-2"></i> <span class="nav-text">Dashboard</span>
+                <i class="bi bi-speedometer2"></i> <span class="nav-text">Dashboard</span>
             </a>
             <a class="nav-link {{ request()->routeIs('clients.index') ? 'active' : '' }}" href="{{ route('clients.index') }}">
-                <i class="bi bi-people mr-2"></i> <span class="nav-text">Client List</span>
+                <i class="bi bi-people"></i> <span class="nav-text">Client List</span>
             </a>
             <a class="nav-link {{ request()->routeIs('insurances.index') ? 'active' : '' }}" href="{{ route('insurances.index') }}">
-                <i class="bi bi-journal-check mr-2"></i> <span class="nav-text">Issue Insurances</span>
+                <i class="bi bi-journal-check"></i> <span class="nav-text">Issue Insurances</span>
             </a>
-            <div class="mt-6 mb-2 text-xs uppercase text-gray-400 px-2 font-semibold tracking-wider">Report</div>
-            <a class="nav-link {{ request()->routeIs('policy.series') ? 'active' : '' }}" href="{{ route('policy.series') }}">
-                <i class="bi bi-card-list mr-2"></i> <span class="nav-text">Policy Series</span>
-            </a>
-            <div class="mt-6 mb-2 text-xs uppercase text-gray-400 px-2 font-semibold tracking-wider">Maintenance</div>
-            <a class="nav-link {{ request()->routeIs('policies.index') ? 'active' : '' }}" href="{{ route('policies.index') }}">
-                <i class="bi bi-list-check mr-2"></i> <span class="nav-text">Policies List</span>
-            </a>
-            <a class="nav-link {{ request()->routeIs('category.index') ? 'active' : '' }}" href="{{ route('category.index') }}">
-                <i class="bi bi-tags mr-2"></i> <span class="nav-text">Category List</span>
-            </a>
-            <a class="nav-link {{ request()->routeIs('walkin.index') ? 'active' : '' }}" href="{{ route('walkin.index') }}">
-                <i class="bi bi-person-lines-fill mr-2"></i> <span class="nav-text">Walkin List</span>
-            </a>
+            
+            <!-- Report Dropdown -->
+            <div class="nav-dropdown">
+                <button class="nav-link nav-dropdown-toggle">
+                    <i class="bi bi-file-earmark-text"></i> 
+                    <span class="nav-text">Report</span>
+                    <i class="bi bi-chevron-down ml-auto arrow"></i>
+                </button>
+                <div class="nav-dropdown-menu">
+                    <a class="nav-link {{ request()->routeIs('policy.series') ? 'active' : '' }}" href="{{ route('policy.series') }}">
+                        <i class="bi bi-card-list"></i> <span class="nav-text">Policy Series</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Maintenance Dropdown -->
+            <div class="nav-dropdown">
+                <button class="nav-link nav-dropdown-toggle">
+                    <i class="bi bi-tools"></i> 
+                    <span class="nav-text">Maintenance</span>
+                    <i class="bi bi-chevron-down ml-auto arrow"></i>
+                </button>
+                <div class="nav-dropdown-menu">
+                    <a class="nav-link {{ request()->routeIs('policies.index') ? 'active' : '' }}" href="{{ route('policies.index') }}">
+                        <i class="bi bi-list-check"></i> <span class="nav-text">Policies List</span>
+                    </a>
+                    <a class="nav-link {{ request()->routeIs('category.index') ? 'active' : '' }}" href="{{ route('category.index') }}">
+                        <i class="bi bi-tags"></i> <span class="nav-text">Category List</span>
+                    </a>
+                    <a class="nav-link {{ request()->routeIs('walkin.index') ? 'active' : '' }}" href="{{ route('walkin.index') }}">
+                        <i class="bi bi-person-lines-fill"></i> <span class="nav-text">Walkin List</span>
+                    </a>
+                </div>
+            </div>
+            
             @if(Auth::user()->id == 1 && Auth::user()->type == 1)
-            <a class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}" href="{{ route('users.index') }}">
-                <i class="bi bi-people-fill mr-2"></i> <span class="nav-text">User List</span>
-            </a>
-            <a class="nav-link {{ request()->routeIs('office.index') ? 'active' : '' }}" href="{{ route('office.index') }}">
-                <i class="bi bi-person-lines-fill mr-2"></i> <span class="nav-text">Office List</span>
-            </a>
-            <a class="nav-link {{ request()->routeIs('system.settings') ? 'active' : '' }}" href="{{ route('system.settings') }}">
-                <i class="bi bi-gear mr-2"></i> <span class="nav-text">System</span>
-            </a>
+            <!-- Admin Dropdown -->
+            <div class="nav-dropdown">
+                <button class="nav-link nav-dropdown-toggle">
+                    <i class="bi bi-shield-lock"></i> 
+                    <span class="nav-text">Admin</span>
+                    <i class="bi bi-chevron-down ml-auto arrow"></i>
+                </button>
+                <div class="nav-dropdown-menu">
+                    <a class="nav-link {{ request()->routeIs('users.index') ? 'active' : '' }}" href="{{ route('users.index') }}">
+                        <i class="bi bi-people-fill"></i> <span class="nav-text">User List</span>
+                    </a>
+                    <a class="nav-link {{ request()->routeIs('office.index') ? 'active' : '' }}" href="{{ route('office.index') }}">
+                        <i class="bi bi-building"></i> <span class="nav-text">Office List</span>
+                    </a>
+                    <a class="nav-link {{ request()->routeIs('system.settings') ? 'active' : '' }}" href="{{ route('system.settings') }}">
+                        <i class="bi bi-gear"></i> <span class="nav-text">System</span>
+                    </a>
+                </div>
+            </div>
             @endif
         </nav>
     </div>
+
     
     <!-- Main Content -->
     <div class="main-content">
         <!-- Top Navbar -->
-        <div class="top-navbar">
+        <div class="top-navbar" id="topNavbar">
             <div class="flex items-center">
-                <span class="sidebar-toggle hidden lg:inline mr-3 text-2xl cursor-pointer" id="sidebarToggle">☰</span>
+                <span class="sidebar-toggle hidden lg:inline mr-3 text-2xl cursor-pointer" id="sidebarToggle" title="Toggle Sidebar">☰</span>
+                <span class="minimize-toggle hidden lg:inline mr-2 text-xl cursor-pointer" id="minimizeToggle" title="Minimize Sidebar">
+                    <i class="bi bi-chevron-double-left"></i>
+                </span>
                 <span class="font-bold text-base md:text-lg lg:text-sl">{{ $officeName }} - Admin</span>
             </div>
             <div class="flex items-center">
@@ -322,21 +361,121 @@
     <script>
         // Sidebar Toggle Functionality
         document.getElementById('sidebarToggle').addEventListener('click', function() {
-            const sidebar = document.querySelector('.sidebar');
+            const sidebar = document.getElementById('sidebar');
             const mainContent = document.querySelector('.main-content');
             const header = document.querySelector('.top-navbar');
-            sidebar.classList.toggle('sidebar-hidden');
-            mainContent.classList.toggle('fullscreen');
-            header.classList.toggle('top-navbar-fullscreen');
+            
+            // Check if sidebar is minimized
+            const isMinimized = sidebar.classList.contains('sidebar-minimized');
+            
+            if (isMinimized) {
+                // If minimized, first expand it, then hide it after a short delay
+                sidebar.classList.remove('sidebar-minimized');
+                mainContent.classList.remove('main-content-minimized');
+                header.classList.remove('top-navbar-minimized');
+                
+                // Update minimize button icon
+                updateMinimizeIcon(false);
+                
+                // Small delay to allow expansion before hiding
+                setTimeout(() => {
+                    sidebar.classList.add('sidebar-hidden');
+                    mainContent.classList.add('fullscreen');
+                    header.classList.add('top-navbar-fullscreen');
+                }, 50);
+            } else {
+                // Normal toggle behavior
+                sidebar.classList.toggle('sidebar-hidden');
+                mainContent.classList.toggle('fullscreen');
+                header.classList.toggle('top-navbar-fullscreen');
+            }
+        });
+
+        // Minimize Toggle Functionality
+        const minimizeBtn = document.getElementById('minimizeBtn');
+        const minimizeToggle = document.getElementById('minimizeToggle');
+        
+        function toggleMinimize() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const header = document.querySelector('.top-navbar');
+            
+            const isMinimized = sidebar.classList.contains('sidebar-minimized');
+            
+            if (isMinimized) {
+                // Expand
+                sidebar.classList.remove('sidebar-minimized');
+                mainContent.classList.remove('main-content-minimized');
+                header.classList.remove('top-navbar-minimized');
+                updateMinimizeIcon(false);
+                localStorage.setItem('sidebarMinimized', 'false');
+            } else {
+                // Minimize
+                sidebar.classList.add('sidebar-minimized');
+                mainContent.classList.add('main-content-minimized');
+                header.classList.add('top-navbar-minimized');
+                updateMinimizeIcon(true);
+                localStorage.setItem('sidebarMinimized', 'true');
+            }
+        }
+        
+        function updateMinimizeIcon(isMinimized) {
+            const icon = minimizeBtn.querySelector('i');
+            const toggleIcon = minimizeToggle.querySelector('i');
+            if (isMinimized) {
+                icon.classList.remove('bi-chevron-left');
+                icon.classList.add('bi-chevron-right');
+                toggleIcon.classList.remove('bi-chevron-double-left');
+                toggleIcon.classList.add('bi-chevron-double-right');
+            } else {
+                icon.classList.remove('bi-chevron-right');
+                icon.classList.add('bi-chevron-left');
+                toggleIcon.classList.remove('bi-chevron-double-right');
+                toggleIcon.classList.add('bi-chevron-double-left');
+            }
+        }
+        
+        minimizeBtn.addEventListener('click', toggleMinimize);
+        minimizeToggle.addEventListener('click', toggleMinimize);
+
+        // Restore minimize state on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const header = document.querySelector('.top-navbar');
+            
+            const isMinimized = localStorage.getItem('sidebarMinimized') === 'true';
+            if (isMinimized) {
+                sidebar.classList.add('sidebar-minimized');
+                mainContent.classList.add('main-content-minimized');
+                header.classList.add('top-navbar-minimized');
+                updateMinimizeIcon(true);
+            }
         });
 
         // Mobile Menu Toggle
         document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
+            const sidebar = document.getElementById('sidebar');
             const menuToggle = document.querySelector('.menu-toggle');
 
             menuToggle.addEventListener('click', function() {
                 sidebar.classList.toggle('active');
+            });
+        });
+
+        // Dropdown Toggle Functionality
+        document.querySelectorAll('.nav-dropdown-toggle').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const dropdown = this.parentElement;
+                const arrow = this.querySelector('.arrow');
+                
+                // Toggle active class
+                dropdown.classList.toggle('active');
+                
+                // Rotate arrow
+                if (arrow) {
+                    arrow.classList.toggle('rotate');
+                }
             });
         });
 
@@ -351,11 +490,12 @@
         document.addEventListener('click', function(event) {
             const dropdown = document.querySelector('.relative');
             const menu = document.getElementById('userDropdownMenu');
-            if (!dropdown.contains(event.target)) {
+            if (dropdown && !dropdown.contains(event.target)) {
                 menu.classList.add('hidden');
             }
         });
     </script>
+
     
     @yield('scripts')
     
