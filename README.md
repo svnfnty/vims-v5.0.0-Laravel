@@ -166,7 +166,7 @@ The legacy system is **fully deployed and operational** in **Northern Mindanao (
 
 ## 📞 **Contact**
 
-**Developer**: Jundel Caroz  - SvnfntyDev
+**Developer**: Jundel Caroz  - svnfntyDev
 **Project**: ECTPL-VIMSYS Version 5 (Laravel Rebuild)  
 **Status**: In Development  
 **Target**: Replace Version 4 with modern Laravel framework
