@@ -13,7 +13,7 @@
 
 ---
 
-## 📍 Current Production System (Version 4)
+## 📍 Current Production System Version 4
 
 The legacy system is **fully deployed and operational** in **Northern Mindanao (Region 10)**:
 
