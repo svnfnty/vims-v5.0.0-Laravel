@@ -13,7 +13,7 @@
 
 ---
 
-## 📍 Current Production System (Version 4)
+## 📍 Current Production System Version 4
 
 The legacy system is **fully deployed and operational** in **Northern Mindanao (Region 10)**:
 
@@ -166,7 +166,7 @@ The legacy system is **fully deployed and operational** in **Northern Mindanao (
 
 ## 📞 **Contact**
 
-**Developer**: Jundel Caroz  
+**Developer**: Jundel Caroz  - svnfntyDev
 **Project**: ECTPL-VIMSYS Version 5 (Laravel Rebuild)  
 **Status**: In Development  
 **Target**: Replace Version 4 with modern Laravel framework
