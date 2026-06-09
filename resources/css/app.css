@@ -36,11 +36,14 @@
 @layer components {
   /* Sidebar Component */
   .sidebar {
-    @apply flex flex-col fixed left-0 top-0 z-[100] overflow-y-auto transition-transform duration-300 ease-in-out;
+    @apply flex flex-col fixed left-0 top-0 z-[100] overflow-y-auto;
     width: 260px;
     min-height: 100vh;
     background: #23272e;
     color: #fff;
+    overflow-x: hidden;
+    transition: transform 0.3s ease-in-out;
+    will-change: transform;
   }
   
   .sidebar-header {
@@ -53,6 +56,10 @@
     @apply flex items-center px-4 py-2 text-[#bfc9da] transition-colors duration-300;
   }
   
+  .nav-link i {
+    @apply w-8 flex-shrink-0;
+  }
+  
   .nav-link:hover {
     @apply text-white;
     background: #2c313a;
@@ -61,6 +68,53 @@
   .nav-link.active {
     @apply text-white rounded-lg;
     background: #1976d2;
+  }
+  
+  /* Navigation Dropdown */
+  .nav-dropdown {
+    position: relative;
+  }
+  
+  .nav-dropdown-toggle {
+    @apply flex items-center justify-between w-full cursor-pointer;
+  }
+  
+  .nav-dropdown-toggle .arrow {
+    transition: transform 0.3s ease;
+    font-size: 12px;
+  }
+  
+  .nav-dropdown-toggle .arrow.rotate {
+    transform: rotate(180deg);
+  }
+  
+  .nav-dropdown-menu {
+    @apply overflow-hidden transition-all duration-300 ease-in-out;
+    max-height: 0;
+    opacity: 0;
+  }
+  
+  .nav-dropdown.active .nav-dropdown-menu {
+    max-height: 500px;
+    opacity: 1;
+  }
+  
+  .nav-dropdown-menu .nav-link {
+    @apply px-4 py-2;
+    padding-left: 48px;
+  }
+  
+  /* Minimize Button */
+  .minimize-btn {
+    @apply p-1 rounded text-gray-400 hover:text-white hover:bg-gray-700 transition-colors;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* Sidebar Toggle Icons */
+  .minimize-toggle {
+    @apply text-gray-500 hover:text-gray-700 transition-colors;
   }
   
   /* Top Navbar */
@@ -142,19 +196,109 @@
   /* Sidebar States */
   .sidebar-hidden {
     transform: translateX(-100%);
+    visibility: hidden;
+    pointer-events: none;
   }
   
   .sidebar-active {
     transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+  
+  /* Sidebar Minimized State (Icons Only) */
+  .sidebar-minimized {
+    width: 70px !important;
+    transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+  }
+  
+  /* When minimized and visible - normal state */
+  .sidebar.sidebar-minimized:not(.sidebar-hidden) {
+    width: 70px !important;
+    transform: translateX(0) !important;
+  }
+  
+  /* When both minimized and hidden - stay at 70px, only slide out */
+  .sidebar.sidebar-minimized.sidebar-hidden {
+    width: 70px !important;
+    transform: translateX(-100%) !important;
+    /* Override: only transition transform, NOT width - prevents expansion glitch */
+    transition-property: transform !important;
+    transition-duration: 0.3s !important;
+    transition-timing-function: ease-in-out !important;
+  }
+  
+  .sidebar-minimized .nav-text,
+  .sidebar-minimized .logo-img,
+  .sidebar-minimized .minimize-btn {
+    display: none !important;
+  }
+  
+  .sidebar-minimized .nav-link {
+    justify-content: center;
+    padding: 12px;
+  }
+  
+  /* In minimized state, show only the main icon centered, hide arrow and text */
+  .sidebar-minimized .nav-dropdown-toggle {
+    justify-content: center !important;
+    padding: 12px !important;
+    position: relative;
+  }
+  
+  .sidebar-minimized .nav-dropdown-toggle i:first-child {
+    display: flex !important;
+    margin: 0 !important;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .sidebar-minimized .nav-dropdown-toggle .arrow,
+  .sidebar-minimized .nav-dropdown-toggle .nav-text {
+    display: none !important;
+  }
+  
+  .sidebar-minimized .nav-dropdown-menu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    min-width: 180px;
+    background: #2c313a;
+    border-radius: 0 8px 8px 0;
+    box-shadow: 4px 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+  }
+  
+  .sidebar-minimized .nav-dropdown:hover .nav-dropdown-menu {
+    display: block;
+  }
+  
+  .sidebar-minimized .nav-dropdown:hover > .nav-dropdown-toggle {
+    background: #2c313a;
+  }
+  
+  .sidebar-minimized .sidebar-header {
+    justify-content: center;
+    padding: 16px 8px;
   }
   
   /* Fullscreen States */
   .fullscreen {
-    @apply w-full ml-0;
+    margin-left: 0 !important;
   }
   
   .top-navbar-fullscreen {
-    @apply fixed top-0 left-0 w-full z-[1050] bg-gray-50;
+    left: 0 !important;
+  }
+  
+  /* Minimized States */
+  .main-content-minimized {
+    margin-left: 70px !important;
+  }
+  
+  .top-navbar-minimized {
+    left: 70px !important;
   }
   
   /* Dashboard Header - Exact match from original */
@@ -320,13 +464,58 @@
   }
   
   .sidebar {
-    @apply fixed top-0 left-0 h-full w-[250px] z-[1050] transition-transform duration-300 ease-in-out;
+    @apply fixed top-0 left-0 h-full z-[1050] transition-transform duration-300 ease-in-out;
     background-color: #343a40;
     transform: translateX(-100%);
+    width: 250px !important;
   }
   
   .sidebar.active {
     transform: translateX(0);
+    width: 250px !important;
+  }
+  
+  /* Force full width on mobile regardless of minimized state */
+  .sidebar.sidebar-minimized {
+    width: 250px !important;
+  }
+  
+  /* Show all elements when mobile menu is active */
+  .sidebar.active .nav-text,
+  .sidebar.active .logo-img,
+  .sidebar.active .minimize-btn,
+  .sidebar.active .arrow {
+    display: inline-flex !important;
+  }
+  
+  .sidebar.active .nav-link,
+  .sidebar.active .nav-dropdown-toggle {
+    justify-content: flex-start !important;
+    padding: 12px 16px !important;
+  }
+  
+  .sidebar.active .nav-dropdown-menu {
+    max-height: none;
+    opacity: 1;
+    display: block;
+  }
+  
+  /* When sidebar is both minimized and active (mobile), show full layout */
+  .sidebar.sidebar-minimized.active {
+    width: 250px !important;
+  }
+  
+  .sidebar.sidebar-minimized.active .nav-text,
+  .sidebar.sidebar-minimized.active .logo-img,
+  .sidebar.sidebar-minimized.active .minimize-btn,
+  .sidebar.sidebar-minimized.active .arrow {
+    display: inline-flex !important;
+  }
+  
+  .sidebar.sidebar-minimized.active .nav-link,
+  .sidebar.sidebar-minimized.active .nav-dropdown-toggle {
+    justify-content: flex-start !important;
+    padding: 12px 16px !important;
   }
   
   .sidebar .nav-link {
