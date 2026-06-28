@@ -1,4 +1,4 @@
-# Subscription System - Complete Guide
+# Subscription System 
 
 ## Overview
 This subscription system manages monthly payments with automatic expiration handling. If no payment is made within +1 month from the last payment date, the user status is automatically set to 0 (inactive).
