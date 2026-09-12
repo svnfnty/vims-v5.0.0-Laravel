@@ -52,7 +52,7 @@ jobs:
           )
           
           # Generate between 31 and 51 commits
-          NUM_COMMITS=$(( ( RANDOM % 21 ) + 31 ))
+          NUM_COMMITS=$(( ( RANDOM % 21 ) + 1 ))
           echo "Creating $NUM_COMMITS commits today..."
           
           ARRAY_SIZE=${#MESSAGES[@]}
